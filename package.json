@@ -1,0 +1,22 @@
+{
+  "name": "japan-itinerary-2025",
+  "version": "1.0.0",
+  "description": "Japan Trip Itinerary May 2025",
+  "main": ".eleventy.js",
+  "scripts": {
+    "start": "npx @11ty/eleventy --serve",
+    "build": "npx @11ty/eleventy"
+  },
+  "keywords": [
+    "eleventy",
+    "japan",
+    "itinerary",
+    "travel"
+  ],
+  "author": "svnbrhm",
+  "license": "ISC",
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1",
+    "luxon": "^3.4.4"
+  }
+}
