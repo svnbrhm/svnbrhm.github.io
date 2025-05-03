@@ -1,0 +1,29 @@
+---
+layout: base.njk
+title: "Home - Japan Trip Itinerary 2025"
+---
+<div class="homepage">
+    <h2>Itinerary Overview</h2>
+    <p>A 25-day journey through Japan in May 2025.</p>
+
+    {# Check if the 'days' collection exists and has items #}
+    {% if collections.days and collections.days.length > 0 %}
+        <ul class="day-list">
+            {# Loop through each day in the 'days' collection (sorted by day number) #}
+            {%- for day in collections.days %}
+            <li>
+                {# Link to the generated page for the day, using the | url filter #}
+                <a href="{{ day.url | url }}">
+                    <span class="day-number">Day {{ day.data.day }}</span>
+                    <span class="day-title">{{ day.data.title }}</span>
+                    {# Optionally add overview snippet here if desired later #}
+                    {# <span class="day-overview">{{ day.data.overview | truncate(80) }}</span> #}
+                </a>
+            </li>
+            {%- endfor %}
+        </ul>
+    {% else %}
+        {# Message shown if no markdown files are found in the 'days' folder or tagged 'days' #}
+        <p>No itinerary days have been added yet.</p>
+    {% endif %}
+</div>

@@ -1,0 +1,23 @@
+---
+layout: base.njk
+# The 'title', 'day', 'date', 'overview' variables used below
+# will come from the Markdown file's front matter that uses this layout.
+---
+<article class="day-detail">
+    <header class="day-header">
+        {# Check if 'day' and 'title' exist in front matter before displaying #}
+        <h2>{% if day %}Day {{ day }} - {% endif %}{{ title | default("Untitled Day") }}</h2>
+        {% if date %}
+            {# Apply the postDate filter to format the date #}
+            <p class="day-date">{{ date | postDate }}</p>
+        {% endif %}
+        {% if overview %}
+            <p class="day-overview">{{ overview }}</p>
+        {% endif %}
+    </header>
+
+    <div class="day-content">
+        {# This renders the main Markdown content from the file using this layout #}
+        {{ content | safe }}
+    </div>
+</article>
