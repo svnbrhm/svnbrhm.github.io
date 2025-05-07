@@ -17,6 +17,11 @@
   "license": "ISC",
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
-    "luxon": "^3.4.4"
+    "luxon": "^3.4.4",
+    "maximatch": "^0.1.0",
+    "recursive-copy": "^2.0.14"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0"
   }
 }

@@ -4,6 +4,9 @@ node_modules/
 # Eleventy build output directory
 _site/
 
+# Environment variables
+.env
+
 # macOS specific files
 .DS_Store
 *.swp

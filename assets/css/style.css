@@ -1,8 +1,36 @@
-/* Basic Reset */
+/* --- Base Reset & Variables --- */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+:root {
+    /* Colors */
+    --color-background: #f8f9fa; /* Soft gray background */
+    --color-surface: #ffffff;    /* White content surfaces */
+    --color-border: #dee2e6;    /* Subtle border gray */
+    --color-text-primary: #212529; /* Dark primary text */
+    --color-text-secondary: #6c757d; /* Muted secondary text */
+    --color-accent: #c8504a;       /* Muted warm red accent */
+    --color-link: #0056b3;        /* Link blue */
+    --color-link-hover: #003d80;   /* Darker link hover */
+    --color-icon: #888;           /* Icon color */
+
+    /* Fonts */
+    --font-primary: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+    /* Spacing */
+    --space-xs: 0.25rem; /* 4px */
+    --space-sm: 0.5rem;  /* 8px */
+    --space-md: 1rem;    /* 16px */
+    --space-lg: 1.5rem;  /* 24px */
+    --space-xl: 2rem;    /* 32px */
+
+    /* Borders */
+    --border-radius: 8px;
+    --border-width: 1px;
+    --border-style: solid;
 }
 
 html {
@@ -11,82 +39,95 @@ html {
 }
 
 body {
-    font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: var(--font-primary);
     line-height: 1.6;
-    background-color: #f8f9fa; /* Soft gray background */
-    color: #212529; /* Darker text for better contrast */
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    padding: 0; /* Remove padding for edge-to-edge header/footer */
+    padding: 0;
 }
 
 main {
     flex-grow: 1;
-    padding: 1rem; /* Add padding only to main content area */
-    max-width: 800px; /* Max width for readability on larger screens */
-    margin: 1rem auto; /* Center content and add top/bottom margin */
+    padding: var(--space-md);
+    max-width: 800px;
+    margin: var(--space-md) auto;
     width: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
     line-height: 1.3;
     margin-bottom: 0.75em;
-    font-weight: 700; /* Bolder headings */
+    font-weight: 700;
 }
 h1 { font-size: 1.8rem; }
-h2 { font-size: 1.5rem; margin-top: 1.5em; }
-h3 { font-size: 1.2rem; margin-top: 1em; font-weight: 400; } /* Less bold H3 */
+h2 { font-size: 1.5rem; margin-top: var(--space-lg); }
+h3 { font-size: 1.3rem; margin-top: var(--space-xl); font-weight: 400; color: var(--color-text-secondary); border-bottom: var(--border-width) var(--border-style) var(--color-border); padding-bottom: var(--space-sm); } /* Day section titles (e.g., Airport Arrival) */
+h4 { font-size: 1.1rem; margin-top: var(--space-lg); margin-bottom: var(--space-sm); font-weight: 700; color: var(--color-accent);} /* Sub-section titles within details (e.g., Vibe, Details) */
 
 a {
-    color: #0056b3; /* Slightly darker blue for links */
+    color: var(--color-link);
     text-decoration: none;
+    transition: color 0.2s ease-in-out;
+    word-break: break-word; /* Prevent long URLs breaking layout */
 }
 a:hover, a:focus {
     text-decoration: underline;
-    color: #003d80; /* Darker hover */
+    color: var(--color-link-hover);
 }
 
 img {
     max-width: 100%;
     height: auto;
-    display: block; /* Prevents bottom space */
-    border-radius: 4px; /* Slightly rounded images */
+    display: block;
+    border-radius: 4px;
 }
 
-/* Header & Footer */
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+/* --- Header & Footer --- */
 .site-header, .site-footer {
-    background-color: #ffffff; /* White header/footer */
-    padding: 1rem;
+    background-color: var(--color-surface);
+    padding: var(--space-md);
     text-align: center;
-    border-bottom: 1px solid #dee2e6; /* Subtle border */
-    flex-shrink: 0; /* Prevent shrinking */
+    border-bottom: var(--border-width) var(--border-style) var(--color-border);
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 .site-header h1 a {
-     color: #343a40; /* Dark gray heading */
+     color: var(--color-text-primary);
      text-decoration: none;
-     font-size: 1.5rem; /* Slightly smaller H1 */
+     font-size: 1.5rem;
 }
 
 .site-footer {
-    margin-top: 2rem;
+    margin-top: var(--space-xl);
     font-size: 0.85rem;
-    color: #6c757d; /* Muted text */
-    border-top: 1px solid #dee2e6;
+    color: var(--color-text-secondary);
+    border-top: var(--border-width) var(--border-style) var(--color-border);
     border-bottom: none;
+    box-shadow: none;
+}
+.site-footer p {
+    margin-bottom: var(--space-xs);
 }
 
-/* Homepage Day List */
+/* --- Homepage Day List --- */
 .homepage h2 {
     text-align: center;
-    margin-bottom: 1.5rem;
-    font-weight: 400; /* Lighter weight for overview title */
-    color: #495057;
+    margin-bottom: var(--space-md);
+    font-weight: 400;
+    color: var(--color-text-secondary);
 }
-.homepage > p { /* Target only direct paragraph children */
+.homepage > p {
     text-align: center;
-    color: #6c757d;
-    margin-bottom: 2rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
 }
 
 .day-list {
@@ -95,233 +136,377 @@ img {
     margin: 0;
 }
 .day-list li {
-    margin-bottom: 0.75rem; /* Slightly more space */
+    margin-bottom: var(--space-sm);
 }
 .day-list a {
-    display: flex; /* Use flexbox for alignment */
+    display: flex;
     align-items: center;
-    background-color: #ffffff;
-    padding: 0.8rem 1rem;
-    border-radius: 8px; /* Rounded corners */
+    background-color: var(--color-surface);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--border-radius);
     text-decoration: none;
-    color: #343a40;
-    border: 1px solid #dee2e6;
+    color: var(--color-text-primary);
+    border: var(--border-width) var(--border-style) var(--color-border);
     transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    gap: 0.75em; /* Space between elements */
+    gap: var(--space-md);
 }
 .day-list a:hover, .day-list a:focus {
-    background-color: #e9ecef; /* Slightly darker on hover */
+    background-color: #e9ecef;
     text-decoration: none;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.07); /* Soft shadow on hover */
+    box-shadow: 0 3px 6px rgba(0,0,0,0.07);
 }
 .day-list .day-number {
     font-weight: 700;
-    color: #c8504a; /* Muted warm accent */
-    flex-shrink: 0; /* Prevent shrinking */
-    min-width: 50px; /* Ensure consistent width */
+    color: var(--color-accent);
+    flex-shrink: 0;
+    min-width: 50px;
     text-align: right;
 }
 .day-list .day-title {
-    flex-grow: 1; /* Allow title to take remaining space */
+    flex-grow: 1;
     font-weight: 400;
 }
 
 
-/* Day Detail Page */
+/* --- Day Detail Page --- */
 .day-detail {
-    background-color: #ffffff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
-    margin-top: 1rem; /* Space from header */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Subtle shadow */
+    background-color: var(--color-surface);
+    padding: var(--space-lg);
+    border-radius: var(--border-radius);
+    border: var(--border-width) var(--border-style) var(--color-border);
+    margin-top: var(--space-md);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 .day-header {
-    border-bottom: 1px solid #dee2e6;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
+    border-bottom: var(--border-width) var(--border-style) var(--color-border);
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-md);
 }
- .day-header h2 { margin-top: 0; font-size: 1.6rem; /* Slightly larger day title */ }
+ .day-header h2 { margin-top: 0; font-size: 1.6rem; }
 .day-date {
      font-style: italic;
-     color: #6c757d;
-     margin-bottom: 0.5rem;
+     color: var(--color-text-secondary);
+     margin-bottom: var(--space-sm);
      font-size: 0.9rem;
  }
 .day-overview {
-    color: #495057; /* Slightly darker overview text */
+    color: var(--color-text-primary);
     font-size: 1rem;
+    font-weight: 300;
 }
 
-/* Accordion Styling */
-.day-content h2 { /* Section titles */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #dee2e6;
-    padding-bottom: 0.6rem;
-    cursor: pointer; /* Indicate clickability */
-    margin-top: 2rem; /* More space between sections */
-    font-size: 1.3rem; /* Slightly smaller section titles */
-    font-weight: 400; /* Lighter weight */
-    color: #495057;
-}
-.day-content h2:first-of-type {
-    margin-top: 0; /* No top margin for the very first section */
+/* --- Accordion Sections (<details>) --- */
+.day-content h3:first-of-type {
+    margin-top: var(--space-md);
 }
 
-.accordion-toggle {
-    background: none;
-    border: 1px solid #adb5bd; /* Slightly darker border */
-    border-radius: 50%;
-    width: 28px; /* Slightly larger button */
-    height: 28px;
-    cursor: pointer;
-    padding: 0;
-    margin-left: 1rem;
-    position: relative; /* For pseudo-element */
-    transition: transform 0.3s ease, background-color 0.2s ease;
-    flex-shrink: 0; /* Prevent shrinking */
-    display: inline-flex; /* Align pseudo-elements */
-    justify-content: center;
-    align-items: center;
-}
-.day-content h2:hover .accordion-toggle {
-    background-color: #e9ecef; /* Highlight on hover */
+details {
+    margin-bottom: var(--space-lg);
+    border: var(--border-width) var(--border-style) var(--color-border);
+    border-radius: var(--border-radius);
+    background-color: var(--color-surface);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    /* Remove padding here, apply to summary/content */
 }
 
-/* Simple + icon using pseudo-elements */
-.accordion-toggle::before,
-.accordion-toggle::after {
-    content: '';
-    position: absolute;
-    width: 12px; /* Adjust size */
-    height: 2px; /* Adjust thickness */
-    background-color: #495057; /* Icon color */
-    transition: transform 0.3s ease;
-}
-/* Horizontal line */
-.accordion-toggle::before {
-    transform: translate(-50%, -50%) rotate(0deg);
-     left: 50%; /* Center horizontally */
-     top: 50%; /* Center vertically */
-}
-/* Vertical line */
-.accordion-toggle::after {
-    transform: translate(-50%, -50%) rotate(90deg);
-     left: 50%;
-     top: 50%;
-}
-/* Change vertical line to horizontal when expanded (forms minus sign) */
-.accordion-toggle[aria-expanded="true"]::after {
-    transform: translate(-50%, -50%) rotate(0deg);
-}
-
-
-.accordion-content {
-    padding: 1rem 0 1rem 1rem; /* Indent content slightly */
-    border-left: 3px solid #e9ecef; /* Subtle left border */
-    margin-left: 5px; /* Align with heading */
-    margin-top: 1rem; /* Space below header */
-    display: none; /* Hidden by default */
-    animation: fadeIn 0.5s ease; /* Simple fade-in */
-}
-.accordion-content.active {
-    display: block; /* Shown when active */
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
- /* Style details within accordion */
-.accordion-content h3 { /* Location/Activity Name */
-    margin-top: 0;
-    margin-bottom: 0.75rem;
-    color: #c8504a; /* Accent for location names */
+summary {
     font-size: 1.1rem;
-    font-weight: 700; /* Bolder location name */
-}
-.accordion-content h3:not(:first-child) {
-    margin-top: 1.5rem; /* Space between multiple entries in one section */
-     padding-top: 1rem;
-     border-top: 1px dashed #dee2e6; /* Separator */
+    font-weight: 700;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    padding: var(--space-md); /* Add padding to summary */
+    padding-right: calc(var(--space-md) + var(--space-lg)); /* Space for custom marker */
 }
 
-.accordion-content ul {
-    list-style: none;
-    padding-left: 0.5rem; /* Slight indent for details */
-    margin-bottom: 1rem;
+summary::-webkit-details-marker,
+summary::marker {
+    display: none;
 }
-.accordion-content ul li {
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem; /* Slightly smaller detail text */
-    color: #343a40;
+
+/* Custom Arrow Marker */
+summary::after {
+    content: '+';
+    position: absolute;
+    right: var(--space-md); /* Position marker */
+    top: 50%;
+    transform: translateY(-50%) rotate(0deg);
+    font-size: 1.4em;
+    font-weight: 300;
+    color: var(--color-accent);
+    transition: transform 0.2s ease-in-out;
 }
- .accordion-content ul li strong {
-      /* display: inline-block; */ /* Let it flow naturally */
-      font-weight: 700; /* Use font-weight instead of strong tag maybe? */
-      margin-right: 0.5em;
-      color: #495057; /* Slightly muted key */
- }
-.accordion-content p { /* Paragraphs within accordion */
-    margin-bottom: 1rem;
+
+details[open] > summary::after {
+    transform: translateY(-50%) rotate(45deg);
+}
+
+/* Content within <details> */
+details > .details-content-wrapper { /* Use a wrapper div for padding/border */
+    padding: 0 var(--space-md) var(--space-md) var(--space-md); /* Padding inside */
+    border-top: var(--border-width) var(--border-style) var(--color-border); /* Separator line */
+    margin-top: var(--space-sm); /* Space between summary and content */
+}
+
+.details-content-wrapper h4 {
+    margin-top: var(--space-md); /* Space before Vibe/Details headings */
+}
+
+.details-content-wrapper > p,
+.details-content-wrapper > ul {
+    padding-left: 0; /* Remove previous indent */
+    border-left: none; /* Remove previous border */
     font-size: 0.95rem;
-    color: #343a40;
+    color: var(--color-text-primary);
 }
-.accordion-content a { /* Links within accordion */
-     font-weight: 700; /* Make links stand out more */
+
+/* Specific item details formatting with Icons */
+.details-content-wrapper ul li {
+    margin-bottom: var(--space-sm);
+    display: flex;
+    align-items: flex-start; /* Align items to top */
+    gap: var(--space-sm);
 }
-.accordion-content img {
-    margin-top: 0.75rem;
-    margin-bottom: 0.75rem;
+
+.details-content-wrapper ul li i.fas, /* Font Awesome Solid Icons */
+.details-content-wrapper ul li i.far { /* Font Awesome Regular Icons */
+    color: var(--color-icon);
+    margin-top: 0.15em; /* Align icon slightly better with text */
+    width: 1.2em; /* Fixed width for alignment */
+    text-align: center;
+    flex-shrink: 0;
 }
+
+.details-content-wrapper ul li .detail-label { /* Use a span for the label */
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+    /* min-width: 80px; /* Remove min-width, let flexbox handle it */
+}
+.details-content-wrapper ul li .detail-value { /* Use a span for the value */
+    flex-grow: 1;
+}
+
+/* Nested list styling (e.g., Ichiran customization) */
+ .details-content-wrapper ul ul {
+    margin-top: var(--space-xs);
+    margin-left: var(--space-md); /* Indent nested list */
+    list-style: disc; /* Use standard bullets for nested */
+ }
+ .details-content-wrapper ul ul li {
+     display: list-item; /* Revert nested items to standard list display */
+     margin-bottom: var(--space-xs);
+     align-items: baseline;
+ }
+
+
 /* Simple Image Slider Placeholder Style */
 .image-slider {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    gap: 10px; /* Space between images */
-    padding-bottom: 10px; /* Space for scrollbar if visible */
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    background-color: #e9ecef; /* Background for the slider area */
-    padding: 10px; /* Padding around images */
+    gap: 10px;
+    padding-bottom: 10px;
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-md);
+    background-color: #e9ecef;
+    padding: 10px;
     border-radius: 4px;
 }
 .image-slider img {
     scroll-snap-align: start;
-    flex: 0 0 auto; /* Prevent shrinking/growing */
-    width: 80%; /* Show more than one image potentially */
-    max-width: 300px; /* Limit max image width in slider */
+    flex: 0 0 auto;
+    width: 80%;
+    max-width: 300px;
     height: auto;
-    border: 1px solid #dee2e6; /* Border around each image */
+    border: var(--border-width) var(--border-style) var(--color-border);
 }
 
 
-/* Utilities */
-.visually-hidden { /* For accessibility, hide text meant only for screen readers */
+/* --- Utilities --- */
+.visually-hidden {
     position: absolute !important;
     height: 1px; width: 1px;
     overflow: hidden;
     clip: rect(1px, 1px, 1px, 1px);
-    white-space: nowrap; /* Keep screen reader content on one line */
+    white-space: nowrap;
 }
 
 
-/* Basic Responsive Adjustments */
+/* --- Responsive Adjustments --- */
 @media (min-width: 600px) {
-    html { font-size: 17px; } /* Slightly larger base font on larger screens */
+    html { font-size: 17px; }
     h1 { font-size: 2.2rem; }
     h2 { font-size: 1.8rem; }
     h3 { font-size: 1.4rem; }
-    .site-header, .site-footer { padding: 1.5rem; }
-    main { padding: 1.5rem; margin-top: 1.5rem; margin-bottom: 1.5rem; }
-    .day-detail { padding: 2rem; }
-    .accordion-content { padding: 1.5rem 0 1.5rem 1.5rem; }
-    .day-list .day-number { min-width: 60px; }
+    .site-header, .site-footer { padding: var(--space-lg); }
+    main { padding: var(--space-lg); margin-top: var(--space-lg); margin-bottom: var(--space-lg); }
+    .day-detail { padding: var(--space-xl); }
+    summary { padding: var(--space-lg); padding-right: calc(var(--space-lg) * 2); }
+    summary::after { right: var(--space-lg); }
+    details > .details-content-wrapper { padding: 0 var(--space-lg) var(--space-lg) var(--space-lg); }
 }
 @media (min-width: 800px) {
-     .day-list a { padding: 1rem 1.5rem; }
+     .day-list a { padding: var(--space-md) var(--space-lg); }
+}
+
+/* Styling for Definition Lists (used for Ichiran details) */
+.details-content-wrapper dl {
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+.details-content-wrapper dt { /* Term (e.g., Flavor Strength:) */
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    margin-top: var(--space-sm);
+}
+.details-content-wrapper dd { /* Definition/Value */
+    margin-left: var(--space-md);
+    margin-bottom: var(--space-xs);
+    color: var(--color-text-primary);
+}
+
+/* Styling for Map Embed Wrapper */
+.map-embed-wrapper {
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-md);
+    border-radius: var(--border-radius);
+    overflow: hidden; /* Ensures border-radius is applied to iframe */
+    line-height: 0; /* Prevent extra space below iframe */
+    border: var(--border-width) var(--border-style) var(--color-border);
+}
+
+/* --- Section-level Collapsible Styling --- */
+.section-details {
+    margin-bottom: var(--space-xl);
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.section-summary {
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    padding: var(--space-sm) 0;
+    padding-right: calc(var(--space-md) + var(--space-lg));
+    border-bottom: var(--border-width) var(--border-style) var(--color-border);
+}
+
+.section-summary::-webkit-details-marker,
+.section-summary::marker {
+    display: none;
+}
+
+/* Custom Arrow Marker for Section */
+.section-summary::after {
+    content: '+';
+    position: absolute;
+    right: var(--space-sm);
+    top: 50%;
+    transform: translateY(-50%) rotate(0deg);
+    font-size: 1.4em;
+    font-weight: 300;
+    color: var(--color-accent);
+    transition: transform 0.2s ease-in-out;
+}
+
+.section-details[open] > .section-summary::after {
+    transform: translateY(-50%) rotate(45deg);
+}
+
+/* Content wrapper for section */
+.section-content-wrapper {
+    padding: var(--space-md) 0 0 0;
+}
+
+/* Adjust nested details inside sections */
+.section-content-wrapper > details {
+    margin-bottom: var(--space-md);
+}
+
+/* Responsive adjustments for section collapsibles */
+@media (min-width: 600px) {
+    .section-summary {
+        padding: var(--space-md) 0;
+        padding-right: calc(var(--space-lg) * 2);
+    }
+    
+    .section-summary::after {
+        right: var(--space-md);
+    }
+}
+
+/* Day Jump Navigation Styles */
+.day-jumper {
+    margin: 20px auto;
+    text-align: center;
+    max-width: 500px;
+    padding: 15px;
+    background-color: var(--color-surface);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border: var(--border-width) var(--border-style) var(--color-border);
+}
+
+.day-jumper label {
+    font-weight: 700;
+    margin-right: 10px;
+    color: var(--color-text-primary);
+}
+
+.day-jumper select {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: var(--border-width) var(--border-style) var(--color-border);
+    border-radius: var(--border-radius);
+    width: 70%;
+    cursor: pointer;
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+}
+
+.day-jumper select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(200, 80, 74, 0.2); /* Using your accent color with transparency */
+}
+
+.day-jumper select option {
+    padding: 8px;
+}
+
+/* Back to Overview Link */
+.back-to-overview {
+    margin: 20px auto;
+    max-width: 800px;
+    width: 100%;
+}
+
+.back-to-overview a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    background-color: var(--color-surface);
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    color: var(--color-text-primary);
+    font-weight: 700;
+    transition: all 0.2s ease;
+    border: var(--border-width) var(--border-style) var(--color-border);
+}
+
+.back-to-overview a:hover {
+    background-color: #e9ecef;
+    text-decoration: none;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.07);
+}
+
+.back-to-overview a i {
+    color: var(--color-accent);
 }
