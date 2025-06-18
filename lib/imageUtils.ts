@@ -16,7 +16,7 @@ export function getDefaultCrewPicture(): string {
 
 // --- REMOVED SECTIONS ---
 // The following sections have been removed because the logic is now handled by
-// fetching direct URLs from Airtable's CrewMedia table via airtableService.ts:
+// fetching direct URLs from the Airtable's CrewMedia table via airtableService.ts:
 // - availableLogoFiles, availablePhotoFiles
 // - exactLogoMapping, abbreviationMapping
 // - normalizeString, extractKeywords, calculateSimilarity, calculateKeywordSimilarity
