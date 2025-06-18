@@ -19,7 +19,7 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
   const [localSearchQuery, setLocalSearchQuery] = useState(initialSearchQuery || searchQuery);
   const [selectedContinent, setSelectedContinent] = useState<string>('all');
   const [selectedCrewSize, setSelectedCrewSize] = useState<string>('all');
-  const [selectedActivityLevel, setSelectedActivityLevel] = useState<string>('all');
+  // Activity level filter removed - schedules not available in basic crew data
   const [sortBy, setSortBy] = useState<'name' | 'country' | 'members'>('name');
   
   // Use provided crews or fallback to mock data
@@ -76,18 +76,8 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
       });
     }
     
-    // Apply activity level filter (based on schedule frequency)
-    if (selectedActivityLevel !== 'all') {
-      filtered = filtered.filter(crew => {
-        const scheduleCount = crew.schedules?.length || 0;
-        switch (selectedActivityLevel) {
-          case 'low': return scheduleCount <= 1;
-          case 'medium': return scheduleCount > 1 && scheduleCount <= 3;
-          case 'high': return scheduleCount > 3;
-          default: return true;
-        }
-      });
-    }
+    // Activity level filter removed - schedules not available in basic crew data
+    // Users can view detailed schedule info on individual crew pages
     
     // Apply sorting
     filtered.sort((a, b) => {
@@ -104,7 +94,7 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
     });
     
     return filtered;
-  }, [allCrews, localSearchQuery, selectedContinent, selectedCrewSize, selectedActivityLevel, sortBy]);
+  }, [allCrews, localSearchQuery, selectedContinent, selectedCrewSize, sortBy]);
   
   // Get unique continents for filter
   const continents = React.useMemo(() => {
@@ -282,16 +272,7 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
               <option value="large">Large (50+ members)</option>
             </select>
             
-            <select
-              value={selectedActivityLevel}
-              onChange={(e) => setSelectedActivityLevel(e.target.value)}
-              className="filter-select"
-            >
-              <option value="all">All Activity Levels</option>
-              <option value="low">Low Activity (≤1 run/week)</option>
-              <option value="medium">Medium Activity (2-3 runs/week)</option>
-              <option value="high">High Activity (3+ runs/week)</option>
-            </select>
+            {/* Activity Level filter removed - schedules not available in basic crew data */}
             
             <select
                value={sortBy}

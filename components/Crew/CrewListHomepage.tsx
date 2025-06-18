@@ -26,9 +26,7 @@ const CrewListHomepage: React.FC<CrewListHomepageProps> = ({ crews }) => {
     return new Date(foundingDate).getFullYear();
   };
 
-  const getActiveSchedulesCount = (schedules: any[] | undefined) => {
-    return schedules?.filter(schedule => schedule.RunSchedulesStatus === 'Active').length || 0;
-  };
+  // Schedule-related functions removed - schedules not available in basic crew data
 
   return (
     <section className="crew-homepage-section">

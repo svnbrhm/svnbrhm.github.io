@@ -231,7 +231,7 @@ function transformCrewRecord(record: AirtableRecord<AirtableCrewFields>): Crew {
     
     const crewName = fields.CrewName || 'Unknown Crew';
     
-    // Initialize image URLs with defaults - will be populated from Airtable media
+    // Initialize image URLs with defaults - will be populated from Airtable media (NEW IMAGE HANDLING)
     let primaryImageUrl = getDefaultCrewLogo();
     let logoUrl = getDefaultCrewLogo();
     let heroImageUrl = getDefaultCrewPicture();
@@ -551,7 +551,7 @@ export const airtableService = {
     }
   },
 
-  // Extract image URLs from crew media
+  // NEW FUNCTION: Extract image URLs from crew media based on MediaType
   extractImageUrls(media: CrewMedia[]): { logoUrl: string; heroImageUrl: string } {
     let logoUrl = getDefaultCrewLogo();
     let heroImageUrl = getDefaultCrewPicture();
@@ -888,8 +888,9 @@ export const airtableService = {
   async getRandomRoutes(limit: number = 3): Promise<RunningRoute[]> {
     try {
       // Fetch all published routes
+      // CONSISTENCY FIX: Use table ID instead of table name for reliability
       const response = await makeAirtableRequest<any>(
-        `/Routes?filterByFormula=Status='Published'`
+        `/tbl605OnaGj8t0gCd?filterByFormula=Status='Published'`
       );
       
       if (response.records.length === 0) {

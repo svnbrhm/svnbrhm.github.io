@@ -2,7 +2,7 @@ import React from 'react';
 import { Crew } from '@/types/crew';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getCrewLogoPath, getDefaultCrewLogo, getDefaultCrewPicture, getCrewPhotoGallery } from '../../lib/imageUtils';
+import { getDefaultCrewLogo, getDefaultCrewPicture } from '../../lib/imageUtils';
 
 interface CrewCardProps {
   crew: Crew;
@@ -14,12 +14,23 @@ const CrewCard: React.FC<CrewCardProps> = ({ crew, featured = false }) => {
   const foundingMonth = foundingDate ? foundingDate.toLocaleDateString('en-US', { month: 'short' }) : null;
   const foundingYear = foundingDate ? foundingDate.getFullYear() : null;
 
-  // Get crew logo - use logoUrl from crew object with fallback
-  const crewLogo = crew.logoUrl || getCrewLogoPath(crew.CrewName);
+  // Get crew logo - use logoUrl from Airtable with local fallback
+  const crewLogo = crew.logoUrl || getDefaultCrewLogo();
   
   // Get crew picture - use heroImageUrl with fallback to PrimaryImageUrl
   const crewPicture = crew.heroImageUrl || crew.PrimaryImageUrl;
-  const crewGallery = getCrewPhotoGallery(crew.CrewName, crew.media);
+  
+  // Get crew gallery from Airtable media data
+  const crewGallery = crew.media ? crew.media
+    .filter(media => 
+      media.MediaType === 'Crew Picture' && 
+      media.Status === 'Published' && 
+      media.FileURL
+    )
+    .map(media => ({
+      url: media.FileURL!,
+      caption: media.MediaTitle || media.AltText || `${crew.CrewName} image`
+    })) : [];
 
   return (
     <div className={`crew-card-new ${featured ? 'featured-crew-card' : ''}`}>

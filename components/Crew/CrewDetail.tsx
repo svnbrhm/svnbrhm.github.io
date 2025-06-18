@@ -221,10 +221,18 @@ const CrewDetail: React.FC<CrewDetailProps> = ({ crew, otherCrewsInCity, related
     }
   }, [crew.id, crew.CrewName, crew.City, crew.Country, crew.HeadquarterLatitude, crew.HeadquarterLongitude, fallbackCoords]);
 
-  // Media gallery - use crew's primary image if available, otherwise show placeholder message
-  const mediaGallery = crew.PrimaryImageUrl ? [
-    { type: 'image', url: crew.PrimaryImageUrl, caption: `${crew.CrewName} group photo` }
-  ] : [];
+  // Media gallery - use crew.media array from Airtable
+  const mediaGallery = crew.media ? crew.media
+    .filter(media => 
+      (media.MediaType === 'Crew Picture' || media.MediaType === 'Running Picture') && 
+      media.Status === 'Published' && 
+      media.FileURL
+    )
+    .map(media => ({
+      type: 'image',
+      url: media.FileURL!,
+      caption: media.MediaTitle || media.AltText || `${crew.CrewName} image`
+    })) : [];
 
   const activeSchedules = crew.schedules?.filter(schedule => schedule.RunSchedulesStatus === 'Active') || [];
   const displayedSchedules = showAllSchedules ? activeSchedules : activeSchedules.slice(0, 3);
@@ -253,13 +261,13 @@ const CrewDetail: React.FC<CrewDetailProps> = ({ crew, otherCrewsInCity, related
       <div className="crew-hero">
         <div className="hero-background">
           <Image
-             src={crew.heroImageUrl || '/images/default-crew-hero.jpg'}
+             src={crew.heroImageUrl || '/images/default-crew-hero.svg'}
              alt={`${crew.CrewName} hero image`}
              fill
              style={{ objectFit: 'cover' }}
              onError={(e) => {
                const target = e.target as HTMLImageElement;
-               target.src = '/images/default-crew-hero.jpg';
+               target.src = '/images/default-crew-hero.svg';
              }}
           />
         </div>
