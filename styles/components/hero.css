@@ -1,0 +1,463 @@
+/* Hero Section */
+.hero {
+  position: relative;
+  height: 70vh;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-green) 100%);
+  color: white;
+  text-align: center;
+  overflow: hidden;
+  padding-top: 120px; /* Consistent spacing with navigation */
+  box-sizing: border-box;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(47, 47, 47, 0.8) 0%, rgba(92, 129, 71, 0.6) 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 4rem;
+  font-weight: 900;
+  margin-bottom: 1.5rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  line-height: 1.1;
+  color: #f5f5f5; /* Explicitly set off-white */
+}
+
+.hero p {
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+  opacity: 0.95;
+  line-height: 1.6;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  color: #f5f5f5; /* Explicitly set off-white */
+}
+
+.hero-search {
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.hero-search-input {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  padding-right: 4rem;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--primary-dark);
+  box-shadow: var(--shadow-medium);
+  transition: all 0.3s ease;
+}
+
+.hero-search-button {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--primary-green);
+  border: none;
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-small);
+}
+
+.hero-search-button:hover {
+  background: var(--secondary-green);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.hero-search-input:focus {
+  outline: none;
+  background: white;
+  box-shadow: var(--shadow-heavy);
+  transform: translateY(-2px);
+}
+
+.hero-search-input::placeholder {
+  color: rgba(47, 47, 47, 0.6);
+  font-weight: 400;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+/* Responsive Hero */
+@media (max-width: 768px) {
+  .hero {
+    padding-top: 100px; /* Adjusted spacing for mobile navigation */
+  }
+  
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+  
+  .hero p {
+    font-size: 1.1rem;
+  }
+  
+  .hero-search-input {
+    font-size: 1rem;
+    padding: 0.875rem 1.25rem;
+  }
+  
+  .hero-content {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding-top: 90px; /* Further adjusted for smaller screens */
+  }
+  
+  .hero h1 {
+    font-size: 2rem;
+  }
+  
+  .hero-content {
+    padding: 0 1rem;
+  }
+}
+
+
+.page-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* Remove margin-top and add padding-top instead */
+  padding-top: 120px; /* Increased spacing between navigation and hero header */
+  background: linear-gradient(135deg, var(--crew-primary) 0%, var(--crew-primary-dark) 100%);
+}
+
+.page-hero.h-64 {
+  height: 16rem; /* 256px */
+}
+
+.page-hero.h-80 {
+  height: 20rem; /* 320px */
+}
+
+.page-hero.h-96 {
+  height: 24rem; /* 384px */
+}
+
+.page-hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2); /* Light overlay for better text readability */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-hero-content {
+  text-align: center;
+  color: white;
+  z-index: 2;
+  max-width: 800px;
+  padding: 0 2rem;
+}
+
+.page-hero-title {
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.page-hero-subtitle {
+  font-size: 1.25rem;
+  font-weight: 400;
+  opacity: 0.95;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  line-height: 1.6;
+}
+
+/* Page-specific hero backgrounds */
+.page-hero.crews {
+  background: linear-gradient(135deg, var(--crew-primary) 0%, var(--crew-primary-dark) 100%);
+}
+
+.page-hero.events {
+  background: linear-gradient(135deg, var(--event-orange) 0%, var(--event-orange-dark) 100%);
+}
+
+.page-hero.blog {
+  background: linear-gradient(135deg, var(--blog-orange) 0%, var(--blog-yellow) 100%);
+}
+
+.page-hero.routes {
+  background: linear-gradient(135deg, var(--route-green) 0%, var(--route-brown) 100%);
+}
+
+.page-hero.homepage {
+  background: linear-gradient(135deg, var(--secondary-green) 0%, var(--green-hover) 100%);
+}
+
+@media (max-width: 768px) {
+  .page-hero {
+    /* Remove margin-top and add padding-top instead */
+    padding-top: 100px; /* Increased spacing for mobile */
+  }
+  
+  .page-hero-title {
+    font-size: 2rem;
+  }
+  
+  .page-hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .page-hero.h-64 {
+    height: 12rem;
+  }
+  
+  .page-hero.h-80 {
+    height: 16rem;
+  }
+  
+  .page-hero.h-96 {
+    height: 20rem;
+  }
+}
+
+/* Add new height classes for much larger hero sections */
+.page-hero.h-112 {
+  height: 28rem; /* 448px */
+}
+
+.page-hero.h-128 {
+  height: 32rem; /* 512px */
+}
+
+.page-hero.h-144 {
+  height: 36rem; /* 576px */
+}
+
+.page-hero.h-160 {
+  height: 40rem; /* 640px */
+}
+
+/* Enhanced search section styling within hero */
+.hero-search-section {
+  margin-top: 3rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-search {
+  margin-bottom: 2rem;
+}
+
+.hero-search-input {
+  width: 100%;
+  padding: 1.25rem 2rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--primary-dark);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.hero-search-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.hero-search-input::placeholder {
+  color: rgba(47, 47, 47, 0.6);
+  font-weight: 400;
+}
+
+/* Filter buttons styling within hero */
+.hero-filters {
+  display: flex;
+  justify-content: center;
+}
+
+/* Enhanced filter buttons styling for multiple filters */
+.hero-filter-buttons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-filter-btn {
+  padding: 0.6rem 1.2rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
+}
+
+.hero-filter-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.hero-filter-btn.active {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--crew-primary);
+  border-color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  text-shadow: none;
+}
+
+.hero-filter-btn.clear {
+  background: rgba(255, 87, 87, 0.8);
+  border-color: rgba(255, 87, 87, 0.8);
+  color: white;
+  font-weight: 600;
+}
+
+.hero-filter-btn.clear:hover {
+  background: rgba(255, 87, 87, 0.9);
+  border-color: rgba(255, 87, 87, 0.9);
+}
+
+/* Responsive adjustments for multiple filters */
+@media (max-width: 768px) {
+  .hero-filter-buttons {
+    gap: 0.5rem;
+  }
+  
+  .hero-filter-btn {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-filter-buttons {
+    gap: 0.4rem;
+  }
+  
+  .hero-filter-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Responsive adjustments for larger hero */
+@media (max-width: 768px) {
+  .page-hero.h-112 {
+    height: 24rem;
+  }
+  
+  .page-hero.h-128 {
+    height: 28rem;
+  }
+  
+  .page-hero.h-144 {
+    height: 32rem;
+  }
+  
+  .page-hero.h-160 {
+    height: 36rem;
+  }
+  
+  .hero-search-section {
+    margin-top: 2rem;
+    max-width: 90%;
+  }
+  
+  .hero-search-input {
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+  }
+  
+  .hero-filter-buttons {
+    gap: 0.75rem;
+  }
+  
+  .hero-filter-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-search-section {
+    margin-top: 1.5rem;
+  }
+  
+  .hero-filter-buttons {
+    gap: 0.5rem;
+  }
+  
+  .hero-filter-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+}

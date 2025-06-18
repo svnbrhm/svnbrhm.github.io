@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Running Crew Database</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --primary-dark: #2f2f2f;
+            --secondary-green: #5C8147;
+            --green-hover: #4A6B3A;
+            --green-light: #6D9258;
+            --tertiary-red: #C0342D;
+            --red-hover: #A82E28;
+            --red-light: #D8423B;
+            --background: #FAFAFA;
+            --crew-blue: #6A8B9C;
+            --crew-blue-light: #9ABCC9;
+            --blog-yellow: #F7C75C;
+            --blog-orange: #F29D4E;
+            --event-orange: #FF6B3D;
+            --event-orange-dark: #E05A2A;
+            --route-green: #6B8E23;
+            --route-brown: #8B7D6B;
+            --white: #ffffff;
+            --shadow-light: 0 2px 10px rgba(47, 47, 47, 0.1);
+            --shadow-medium: 0 4px 20px rgba(47, 47, 47, 0.15);
+            --shadow-heavy: 0 8px 30px rgba(47, 47, 47, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: var(--background);
+            color: var(--primary-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(250, 250, 250, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--primary-dark);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--secondary-green);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary-green);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .global-search {
+            position: relative;
+            margin-left: 2rem;
+        }
+
+        .global-search input {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--secondary-green);
+            border-radius: 25px;
+            background: var(--white);
+            font-size: 0.9rem;
+            width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        .global-search input:focus {
+            outline: none;
+            width: 250px;
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(92, 129, 71, 0.9), rgba(74, 107, 58, 0.9)), url('https://placehold.co/1920x1080/2f2f2f/ffffff?text=URBAN+RUNNERS+COMMUNITY') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 2rem;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--white);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--white);
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .hero-search {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-search input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            background: var(--white);
+            box-shadow: var(--shadow-heavy);
+            transition: all 0.3s ease;
+        }
+
+        .hero-search input:focus {
+            outline: none;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .video-controls:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Section Styling */
+        .section {
+            padding: 5rem 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--secondary-green);
+        }
+
+        /* Interactive World Map */
+        .map-section {
+            background: var(--white);
+            box-shadow: var(--shadow-light);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+
+        /* Crew Gallery */
+        .crew-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .crew-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s ease;
+            position: relative;
+            height: 350px;
+        }
+
+        .crew-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .crew-image {
+            width: 100%;
+            height: 70%;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .crew-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(106, 139, 156, 0.9));
+            padding: 1.5rem;
+            color: var(--white);
+        }
+
+        .crew-name {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .crew-location {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .crew-info {
+            padding: 1rem 1.5rem;
+            height: 30%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .view-crew-btn {
+            background: var(--crew-blue);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-crew-btn:hover {
+            background: var(--crew-blue-light);
+            transform: translateY(-2px);
+        }
+
+        /* Blog Preview */
+        .blog-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .blog-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s ease;
+            border-left: 5px solid var(--blog-orange);
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-heavy);
+            border-left-color: var(--blog-yellow);
+        }
+
+        .blog-image {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .blog-content {
+            padding: 1.5rem;
+        }
+
+        .blog-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+
+        .blog-date {
+            color: var(--blog-orange);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .blog-snippet {
+            color: var(--primary-dark);
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* Events Section */
+        .events-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .event-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow-light);
+            border-left: 5px solid var(--event-orange);
+            transition: all 0.3s ease;
+        }
+
+        .event-card:hover {
+            transform: translateX(10px);
+            box-shadow: var(--shadow-heavy);
+            border-left-color: var(--event-orange-dark);
+        }
+
+        .event-date {
+            background: var(--event-orange);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .event-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+
+        .event-location {
+            color: var(--event-orange);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        /* Routes Section */
+        .routes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .route-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow-light);
+            border-top: 5px solid var(--route-green);
+            transition: all 0.3s ease;
+        }
+
+        .route-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .route-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+
+        .route-city {
+            color: var(--route-green);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .distance-tag {
+            background: var(--route-brown);
+            color: var(--white);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        /* Statistics Section */
+        .stats-section {
+            background: linear-gradient(135deg, var(--secondary-green), var(--green-light));
+            color: var(--white);
+            text-align: center;
+            padding: 4rem 2rem;
+            margin: 3rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* CTA Buttons */
+        .cta-button {
+            display: inline-block;
+            background: var(--tertiary-red);
+            color: var(--white);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-medium);
+            margin-top: 2rem;
+        }
+
+        .cta-button:hover {
+            background: var(--red-hover);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary-dark);
+            color: var(--white);
+            padding: 3rem 0 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-green);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--secondary-green);
+            color: var(--white);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--green-light);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+          
+            .nav-links {
+                display: none;
+            }
+          
+            .global-search {
+                margin-left: 1rem;
+            }
+          
+            .global-search input {
+                width: 150px;
+            }
+          
+            .section-title {
+                font-size: 2rem;
+            }
+          
+            .crew-gallery,
+            .blog-preview,
+            .events-list,
+            .routes-grid {
+                grid-template-columns: 1fr;
+            }
+          
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s ease;
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stat-number.animate {
+            animation: countUp 0.8s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">RunCrew</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#crews">Crews</a></li>
+                    <li><a href="#blog">Blog</a></li>
+                    <li><a href="#events">Events</a></li>
+                    <li><a href="#routes">Routes</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </nav>
+            <div class="global-search">
+                <input type="text" placeholder="Search crews, cities...">
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content fade-in">
+            <h1>Explore the Global Running Crew Database</h1>
+            <p>Connect with running communities worldwide and discover your next adventure</p>
+            <div class="hero-search">
+                <input type="text" placeholder="Search crews by name, continent, country, city...">
+            </div>
+        </div>
+        <button class="video-controls">⏸️ Pause</button>
+    </section>
+
+    <!-- Interactive World Map Section -->
+    <section class="section scroll-reveal">
+        <h2 class="section-title">Discover Crews Worldwide</h2>
+        <div class="map-section">
+            <div id="map"></div>
+        </div>
+    </section>
+
+    <!-- Randomized Crew Photo Gallery -->
+    <section class="section scroll-reveal" id="crews">
+        <h2 class="section-title">Featured Running Crews</h2>
+        <div class="crew-gallery">
+            <div class="crew-card">
+                <div class="crew-image" style="background-image: url('https://placehold.co/400x300/6A8B9C/ffffff?text=NYC+RUNNERS');">
+                    <div class="crew-overlay">
+                        <div class="crew-name">Brooklyn Street Runners</div>
+                        <div class="crew-location">New York City, USA</div>
+                    </div>
+                </div>
+                <div class="crew-info">
+                    <button class="view-crew-btn">View Crew</button>
+                </div>
+            </div>
+            <div class="crew-card">
+                <div class="crew-image" style="background-image: url('https://placehold.co/400x300/9ABCC9/ffffff?text=BERLIN+CREW');">
+                    <div class="crew-overlay">
+                        <div class="crew-name">Berlin Urban Runners</div>
+                        <div class="crew-location">Berlin, Germany</div>
+                    </div>
+                </div>
+                <div class="crew-info">
+                    <button class="view-crew-btn">View Crew</button>
+                </div>
+            </div>
+            <div class="crew-card">
+                <div class="crew-image" style="background-image: url('https://placehold.co/400x300/6A8B9C/ffffff?text=TOKYO+SQUAD');">
+                    <div class="crew-overlay">
+                        <div class="crew-name">Tokyo Night Runners</div>
+                        <div class="crew-location">Tokyo, Japan</div>
+                    </div>
+                </div>
+                <div class="crew-info">
+                    <button class="view-crew-btn">View Crew</button>
+                </div>
+            </div>
+            <div class="crew-card">
+                <div class="crew-image" style="background-image: url('https://placehold.co/400x300/9ABCC9/ffffff?text=LONDON+PACK');">
+                    <div class="crew-overlay">
+                        <div class="crew-name">London Bridge Runners</div>
+                        <div class="crew-location">London, United Kingdom</div>
+                    </div>
+                </div>
+                <div class="crew-info">
+                    <button class="view-crew-btn">View Crew</button>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center;">
+            <a href="#" class="cta-button">Explore All Crews</a>
+        </div>
+    </section>
+
+    <!-- Blog Preview Section -->
+    <section class="section scroll-reveal" id="blog">
+        <h2 class="section-title">Community Stories</h2>
+        <div class="blog-preview">
+            <div class="blog-card">
+                <div class="blog-image" style="background-image: url('https://placehold.co/400x200/F7C75C/ffffff?text=RUNNING+STORY');"></div>
+                <div class="blog-content">
+                    <div class="blog-date">December 5, 2024</div>
+                    <h3 class="blog-title">From Couch to 5K: My Journey with Berlin Runners</h3>
+                    <p class="blog-snippet">How joining a local running crew transformed my fitness journey and introduced me to lifelong friends...</p>
+                </div>
+            </div>
+            <div class="blog-card">
+                <div class="blog-image" style="background-image: url('https://placehold.co/400x200/F29D4E/ffffff?text=MARATHON+PREP');"></div>
+                <div class="blog-content">
+                    <div class="blog-date">November 28, 2024</div>
+                    <h3 class="blog-title">Marathon Training Tips from NYC Veterans</h3>
+                    <p class="blog-snippet">Seasoned runners from Brooklyn Street Runners share their top tips for marathon preparation...</p>
+                </div>
+            </div>
+            <div class="blog-card">
+                <div class="blog-image" style="background-image: url('https://placehold.co/400x200/F7C75C/ffffff?text=NIGHT+RUNNING');"></div>
+                <div class="blog-content">
+                    <div class="blog-date">November 20, 2024</div>
+                    <h3 class="blog-title">The Magic of Night Running in Tokyo</h3>
+                    <p class="blog-snippet">Discover why Tokyo's neon-lit streets provide the perfect backdrop for evening runs...</p>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center;">
+            <a href="#" class="cta-button">See All Stories</a>
+        </div>
+    </section>
+
+    <!-- Upcoming Events Section -->
+    <section class="section scroll-reveal" id="events">
+        <h2 class="section-title">Upcoming Runs & Events</h2>
+        <div class="events-list">
+            <div class="event-card">
+                <div class="event-date">Dec 15, 2024</div>
+                <h3 class="event-title">Brooklyn Bridge Sunrise Run</h3>
+                <div class="event-location">Brooklyn, New York</div>
+                <p>Join Brooklyn Street Runners for an early morning run across the iconic Brooklyn Bridge with stunning sunrise views over Manhattan.</p>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Dec 22, 2024</div>
+                <div class="event-title">Berlin Winter Solstice Marathon</div>
+                <div class="event-location">Berlin, Germany</div>
+                <p>Celebrate the winter solstice with Berlin Urban Runners in this special marathon through the city's historic districts.</p>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Jan 1, 2025</div>
+                <div class="event-title">New Year Tokyo Night Run</div>
+                <div class="event-location">Tokyo, Japan</div>
+                <p>Start the new year right with Tokyo Night Runners in a spectacular midnight run through Shibuya and Harajuku.</p>
+            </div>
+            <div class="event-card">
+                <div class="event-date">Jan 8, 2025</div>
+                <div class="event-title">Thames Path Challenge</div>
+                <div class="event-location">London, United Kingdom</div>
+                <p>London Bridge Runners invite you to tackle the Thames Path in this scenic riverside running challenge.</p>
+            </div>
+        </div>
+        <div style="text-align: center;">
+            <a href="#" class="cta-button">Explore All Events</a>
+        </div>
+    </section>
+
+    <!-- Running Routes Section -->
+    <section class="section scroll-reveal" id="routes">
+        <h2 class="section-title">Discover Running Routes</h2>
+        <div class="routes-grid">
+            <div class="route-card">
+                <h3 class="route-title">Central Park Loop</h3>
+                <div class="route-city">New York City</div>
+                <span class="distance-tag">Medium</span>
+                <p>A classic 6.1-mile loop through Manhattan's green heart, perfect for morning runs with varied terrain and beautiful scenery.</p>
+            </div>
+            <div class="route-card">
+                <h3 class="route-title">Tiergarten Trail</h3>
+                <div class="route-city">Berlin</div>
+                <span class="distance-tag">Short</span>
+                <p>A peaceful 3.5-mile route through Berlin's largest park, featuring tree-lined paths and historical monuments.</p>
+            </div>
+            <div class="route-card">
+                <h3 class="route-title">Imperial Palace Circuit</h3>
+                <div class="route-city">Tokyo</div>
+                <span class="distance-tag">Medium</span>
+                <p>Run around the Emperor's residence on this popular 5km route, combining urban running with traditional Japanese architecture.</p>
+            </div>
+            <div class="route-card">
+                <h3 class="route-title">Thames Riverside Path</h3>
+                <div class="route-city">London</div>
+                <span class="distance-tag">Long</span>
+                <p>An 8-mile stretch along the Thames, passing iconic landmarks like Tower Bridge, London Eye, and Big Ben.</p>
+            </div>
+        </div>
+        <div style="text-align: center;">
+            <a href="#" class="cta-button">View All Routes</a>
+        </div>
+    </section>
+
+    <!-- Animated Statistics Section -->
+    <section class="stats-section scroll-reveal">
+        <h2 class="section-title" style="color: white; margin-bottom: 3rem;">Global Impact</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-number" data-target="247">0</span>
+                <div class="stat-label">Active Crews</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" data-target="15420">0</span>
+                <div class="stat-label">Runners</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" data-target="68">0</span>
+                <div class="stat-label">Countries</div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" data-target="892">0</span>
+                <div class="stat-label">Routes & Events</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#crews">Crews</a>
+                <a href="#blog">Blog</a>
+                <a href="#events">Events</a>
+                <a href="#routes">Routes</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="social-links">
+                <a href="#">f</a>
+                <a href="#">t</a>
+                <a href="#">i</a>
+                <a href="#">y</a>
+            </div>
+            <p>&copy; 2024 RunCrew Global Database. All rights reserved.</p>
+            <p>Connecting runners worldwide, one step at a time.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Leaflet Map
+        const map = L.map('map').setView([40.7128, -74.0060], 2);
+      
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Add crew markers
+        const crews = [
+            {lat: 40.6782, lng: -73.9442, name: "Brooklyn Street Runners", city: "New York City, USA"},
+            {lat: 52.5200, lng: 13.4050, name: "Berlin Urban Runners", city: "Berlin, Germany"},
+            {lat: 35.6762, lng: 139.6503, name: "Tokyo Night Runners", city: "Tokyo, Japan"},
+            {lat: 51.5074, lng: -0.1278, name: "London Bridge Runners", city: "London, UK"},
+            {lat: 34.0522, lng: -118.2437, name: "LA Coast Runners", city: "Los Angeles, USA"},
+            {lat: 48.8566, lng: 2.3522, name: "Paris Street Squad", city: "Paris, France"}
+        ];
+
+        crews.forEach(crew => {
+            const marker = L.marker([crew.lat, crew.lng]).addTo(map);
+            marker.bindPopup(`
+                <div style="text-align: center; padding: 10px;">
+                    <h3 style="margin: 0 0 5px 0; color: #2f2f2f;">${crew.name}</h3>
+                    <p style="margin: 0 0 10px 0; color: #6A8B9C;">${crew.city}</p>
+                    <button style="background: #5C8147; color: white; border: none; padding: 5px 15px; border-radius: 15px; cursor: pointer;">View Crew</button>
+                </div>
+            `);
+        });
+
+        // Scroll reveal animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                  
+                    // Animate statistics when they come into view
+                    if (entry.target.classList.contains('stats-section')) {
+                        animateStats();
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Animate statistics counters
+        function animateStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+          
+            statNumbers.forEach(stat => {
+                const target = parseInt(stat.getAttribute('data-target'));
+                const increment = target / 100;
+                let current = 0;
+              
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    stat.textContent = Math.floor(current).toLocaleString();
+                }, 20);
+              
+                stat.classList.add('animate');
+            });
+        }
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(250, 250, 250, 0.98)';
+                header.style.boxShadow = '0 4px 20px rgba(47, 47, 47, 0.15)';
+            } else {
+                header.style.background = 'rgba(250, 250, 250, 0.95)';
+                header.style.boxShadow = '0 2px 10px rgba(47, 47, 47, 0.1)';
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Video controls (placeholder functionality)
+        document.querySelector('.video-controls').addEventListener('click', function() {
+            if (this.textContent.includes('⏸️')) {
+                this.textContent = '▶️ Play';
+            } else {
+                this.textContent = '⏸️ Pause';
+            }
+        });
+
+        // Search functionality placeholder
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+          
+            input.addEventListener('blur', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

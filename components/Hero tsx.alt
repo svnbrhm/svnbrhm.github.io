@@ -1,0 +1,37 @@
+const Hero = () => {
+  return (
+    <section
+      id="home"
+      className="h-screen w-full flex flex-col items-center justify-center text-center px-6"
+      style={{
+        backgroundImage: "url('https://images.pexels.com/photos/3764558/pexels-photo-3764558.jpeg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+      <h1
+        className="text-white uppercase font-extrabold mb-4"
+        style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '4rem', letterSpacing: '3px', textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}
+      >
+        Explore the Global Running Crew Database
+      </h1>
+      <p className="text-white text-xl mb-8 opacity-90 max-w-xl drop-shadow-lg">
+        Connect with running communities worldwide and discover your next adventure
+      </p>
+      <input
+        type="text"
+        placeholder="Search crews by name, continent, country, city..."
+        className="max-w-md w-full px-6 py-4 rounded-full shadow-lg text-lg focus:outline-none focus:shadow-2xl"
+      />
+      <button
+        className="mt-8 px-6 py-3 rounded-full bg-white bg-opacity-20 text-white font-semibold uppercase tracking-wider backdrop-blur-md hover:bg-opacity-30 transition"
+        onClick={() => alert('Video control placeholder')}
+      >
+        ⏸️ Pause
+      </button>
+    </section>
+  );
+};
+
+export default Hero;

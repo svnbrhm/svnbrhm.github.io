@@ -1,0 +1,124 @@
+import React, { useState, useEffect } from 'react';
+
+const Header = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isSticky, setIsSticky] = useState(false);
+
+  // Sticky Header on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsSticky(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close menu on link click
+  const handleLinkClick = () => {
+    setMenuOpen(false);
+  };
+
+  return (
+    <header
+      className={`fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 transition-all duration-300 ${
+        isSticky ? 'shadow-md' : 'shadow-sm'
+      }`}
+      style={{
+        boxShadow: isSticky
+          ? '0 4px 20px rgba(47, 47, 47, 0.15)'
+          : '0 2px 10px rgba(47, 47, 47, 0.1)',
+      }}
+    >
+      <div className="max-w-6xl mx-auto px-8 py-4 flex items-center justify-between">
+        <div
+          className="font-black text-2xl uppercase tracking-wider"
+          style={{ fontFamily: 'Montserrat, sans-serif', color: '#2f2f2f' }}
+        >
+          RUNNINGCREWS
+        </div>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex">
+          <ul className="flex items-center gap-8">
+            {['home', 'crews', 'blog', 'events', 'routes', 'about'].map((item) => (
+              <li key={item}>
+                <a
+                  href={`#${item}`}
+                  className="font-semibold uppercase tracking-wide text-primary-dark hover:text-secondary-green transition-colors"
+                  onClick={handleLinkClick}
+                >
+                  {item.charAt(0).toUpperCase() + item.slice(1)}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* Search input desktop */}
+        <div className="hidden md:block ml-8">
+          <input
+            type="text"
+            placeholder="Search crews, cities..."
+            className="px-4 py-2 text-sm w-48 rounded-full border-2 border-secondary-green bg-white transition-all duration-300 focus:w-60 focus:outline-none focus:shadow-md"
+          />
+        </div>
+
+        {/* Burger Button mobile */}
+        <button
+          className="md:hidden flex items-center justify-center w-10 h-10 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary-green"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
+          aria-expanded={menuOpen}
+        >
+          <div className="space-y-1.5">
+            <span
+              className={`block h-0.5 w-6 bg-primary-dark transform transition duration-300 ease-in-out ${
+                menuOpen ? 'rotate-45 translate-y-2' : ''
+              }`}
+            />
+            <span
+              className={`block h-0.5 w-6 bg-primary-dark transition duration-300 ease-in-out ${
+                menuOpen ? 'opacity-0' : 'opacity-100'
+              }`}
+            />
+            <span
+              className={`block h-0.5 w-6 bg-primary-dark transform transition duration-300 ease-in-out ${
+                menuOpen ? '-rotate-45 -translate-y-2' : ''
+              }`}
+            />
+          </div>
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      <nav
+        className={`md:hidden fixed top-16 left-0 w-full bg-white shadow-lg transition-transform duration-300 ease-in-out ${
+          menuOpen ? 'translate-y-0' : '-translate-y-full'
+        }`}
+      >
+        <ul className="flex flex-col items-center space-y-6 py-6 font-semibold uppercase tracking-wide text-primary-dark">
+          {['home', 'crews', 'blog', 'events', 'routes', 'about'].map((item) => (
+            <li key={item}>
+              <a
+                href={`#${item}`}
+                className="hover:text-secondary-green transition-colors text-lg"
+                onClick={handleLinkClick}
+              >
+                {item.charAt(0).toUpperCase() + item.slice(1)}
+              </a>
+            </li>
+          ))}
+          <li>
+            <input
+              type="text"
+              placeholder="Search crews, cities..."
+              className="px-4 py-2 text-sm w-64 rounded-full border-2 border-secondary-green bg-white transition-all duration-300 focus:outline-none focus:shadow-md"
+            />
+          </li>
+        </ul>
+      </nav>
+    </header>
+  );
+};
+
+export default Header;

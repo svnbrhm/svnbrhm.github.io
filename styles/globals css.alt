@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Urban Cool Color Palette */
+  --primary-dark: #2f2f2f;
+  --secondary-green: #5C8147;
+  --green-hover: #4A6B3A;
+  --green-light: #6D9258;
+  --tertiary-red: #C0342D;
+  --red-hover: #A82E28;
+  --red-light: #D8423B;
+  --background: #FAFAFA;
+  
+  /* Category Colors */
+  --crew-blue: #6A8B9C;
+  --crew-blue-light: #9ABCC9;
+  --blog-yellow: #F7C75C;
+  --blog-orange: #F29D4E;
+  --event-orange: #FF6B3D;
+  --event-orange-dark: #E05A2A;
+  --route-green: #6B8E23;
+  --route-brown: #8B7D6B;
+  
+  /* Shadows */
+  --shadow-light: 0 2px 10px rgba(47, 47, 47, 0.1);
+  --shadow-medium: 0 4px 20px rgba(47, 47, 47, 0.15);
+  --shadow-heavy: 0 8px 30px rgba(47, 47, 47, 0.2);
+}
+
+/* Typography */
+.font-heading {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.font-body {
+  font-family: 'Lato', sans-serif;
+}
+
+/* Body base styles */
+body {
+  @apply font-body bg-background text-primary-dark leading-relaxed m-0 p-0 overflow-x-hidden;
+}
+
+/* Custom Components */
+.section-padding {
+  @apply py-20;
+}
+
+.container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.section-title {
+  @apply font-heading text-4xl font-bold text-center mb-12 uppercase tracking-wider;
+  color: var(--primary-dark);
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: var(--secondary-green);
+}
+
+.cta-button {
+  @apply inline-block px-8 py-4 rounded-full font-heading font-bold uppercase tracking-wider transition-all duration-300;
+  background: var(--tertiary-red);
+  color: white;
+  box-shadow: var(--shadow-medium);
+}
+
+.cta-button:hover {
+  background: var(--red-hover);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-heavy);
+}
+
+/* Map Skeleton */
+.map-skeleton {
+  @apply w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center;
+  animation: pulse 2s infinite;
+}
+
+/* Scroll Animations */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.6s ease;
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Background utilities */
+.bg-background {
+  background-color: var(--background);
+}
+
+/* --- HINZUGEFÜGTER CODE FÜR HEADER UND MOBILES MENÜ --- */
+
+.header.scrolled {
+  background: rgba(250, 250, 250, 0.98);
+  box-shadow: var(--shadow-medium);
+}
+
+.mobile-nav {
+  background: white;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  padding: 1rem;
+  box-shadow: var(--shadow-light);
+  text-align: center;
+}
+
+.mobile-nav ul {
+  list-style: none;
+}
+
+.mobile-nav ul li {
+  padding: 0.8rem 0;
+}
+
+.mobile-nav ul li a {
+  text-decoration: none;
+  color: var(--primary-dark);
+  font-weight: 600;
+  text-transform: uppercase;
+}

@@ -1,0 +1,226 @@
+/* Header Component Styles */
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: transparent;
+  box-shadow: none;
+  z-index: 1000;
+  padding: 1rem 0;
+  transition: all 0.3s ease;
+}
+
+.header.scrolled {
+  background: rgba(250, 250, 250, 0.98) !important;
+  box-shadow: var(--shadow-medium);
+}
+
+/* Navigation Container - Perfect Alignment */
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px; /* Fixed height instead of min-height */
+  gap: 2rem; /* Add gap between sections for better spacing */
+}
+
+/* Logo Styles - Centered */
+.logo {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  height: 100%; /* Match container height */
+  transition: all 0.3s ease;
+  flex-shrink: 0; /* Prevent logo from shrinking */
+}
+
+/* Navigation Links - Perfect Vertical Centering */
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  height: 100%; /* Match container height */
+  flex-grow: 1; /* Allow nav to take available space */
+  justify-content: center; /* Center the navigation items */
+}
+
+.nav-links li {
+  display: flex;
+  align-items: center;
+  height: 100%; /* Match parent height */
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  position: relative;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  height: 100%; /* Match parent height for perfect centering */
+  padding: 0; /* Remove padding that might offset alignment */
+}
+
+.nav-links a:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 20px; /* Adjust bottom position for underline */
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: white;
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* Global Search - Perfect Centering */
+.global-search {
+  display: flex;
+  align-items: center;
+  height: 100%; /* Match container height */
+  flex-shrink: 0; /* Prevent search from shrinking */
+}
+
+.global-search .transparent-input {
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  outline: none;
+  line-height: 1;
+  height: 40px; /* Fixed height for consistency */
+  display: flex;
+  align-items: center;
+}
+
+.global-search .transparent-input::placeholder {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Scrolled State Styles */
+.header.scrolled .logo,
+.header.scrolled .nav-links a {
+  color: var(--primary-dark) !important;
+}
+
+.header.scrolled .nav-links a:hover {
+  color: var(--crew-primary) !important;
+}
+
+.header.scrolled .nav-links a::after {
+  background: var(--crew-primary);
+}
+
+.header.scrolled .global-search .transparent-input {
+  border-color: var(--crew-primary);
+  color: var(--crew-primary);
+}
+
+.header.scrolled .global-search .transparent-input::placeholder {
+  color: var(--crew-primary);
+}
+
+/* Mobile Menu Button - Centered */
+.mobile-menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+  background: white;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  padding: 1rem;
+  box-shadow: var(--shadow-light);
+  text-align: center;
+}
+
+.mobile-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mobile-nav ul li {
+  padding: 0.8rem 0;
+}
+
+.mobile-nav ul li a {
+  text-decoration: none;
+  color: var(--primary-dark);
+  font-weight: 600;
+  text-transform: uppercase;
+  display: block;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .nav-container {
+    gap: 1.5rem;
+  }
+  
+  .nav-links {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 0 1rem;
+    gap: 1rem;
+  }
+  
+  .nav-links {
+    display: none; /* Hide on mobile, show mobile menu instead */
+  }
+  
+  .global-search {
+    display: none; /* Hide search on mobile to save space */
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-container {
+    padding: 0 0.5rem;
+  }
+  
+  .logo {
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+  }
+}

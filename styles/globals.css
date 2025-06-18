@@ -1,0 +1,344 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import modular CSS files */
+@import './base/variables.css';
+@import './base/typography.css';
+@import './components/hero.css';
+@import './components/buttons.css';
+@import './components/crew.css';
+@import './components/statistics.css';
+@import './components/cards.css';
+@import './components/footer.css';
+@import './pages/crews.css';
+@import './components/header.css';
+@import './components/airtable.css';
+
+/* Essential Base Styles */
+body {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  background: var(--background);
+  color: var(--primary-dark);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---- HIER: KEINE Header/Navi/Logo/MobileNav Styles mehr ---- */
+
+/* General Sections */
+.section {
+    padding: 3rem 2rem;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.homepage-section {
+    padding: 2.5rem 2rem;
+}
+
+.homepage-section:first-of-type {
+    padding-top: 1.5rem;
+}
+
+.section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(47, 47, 47, 0.1), transparent);
+    margin: 1rem 0;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--primary-dark);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: var(--secondary-green);
+}
+
+/* Info Cards - Essential for homepage */
+.info-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    transition: all 0.3s ease;
+    border-left: 5px solid gray;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-heavy);
+}
+
+.info-card.crew-card {
+    border-left-color: #6A8B9C;
+}
+
+.info-card.blog-card {
+    border-left-color: #F29D4E;
+}
+
+.info-card.event-card {
+    border-left-color: #FF6B3D;
+}
+
+.info-card.route-card {
+    border-left-color: #6B8E23;
+}
+
+.info-card-image {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    background-color: #e0e0e0;
+    position: relative;
+}
+
+.crew-card .info-card-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(106, 139, 156, 0.4) 0%, rgba(154, 188, 201, 0.2) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.blog-card .info-card-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(247, 199, 92, 0.2) 0%, rgba(242, 157, 78, 0.05) 100%);
+    pointer-events: none;
+}
+
+.event-card .info-card-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 107, 61, 0.2) 0%, rgba(224, 90, 42, 0.05) 100%);
+    pointer-events: none;
+}
+
+.route-card .info-card-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(107, 142, 35, 0.2) 0%, rgba(139, 125, 107, 0.05) 100%);
+    pointer-events: none;
+}
+
+.info-card-content {
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    align-items: flex-start;
+}
+
+.info-card-date {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+.info-card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--primary-dark);
+    flex-grow: 1;
+    margin-top: 0;
+}
+
+.info-card-snippet {
+    color: var(--primary-dark);
+    opacity: 0.8;
+    line-height: 1.5;
+    margin-top: 0;
+    font-size: 0.85rem;
+}
+
+.info-card-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+.info-card-cta {
+    display: inline-block;
+    background: var(--background);
+    border: 1px solid #e0e0e0;
+    color: var(--primary-dark);
+    padding: 0.5rem 1.2rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.info-card-cta:hover {
+    background: var(--primary-dark);
+    color: white;
+    border-color: var(--primary-dark);
+}
+
+/* Badges */
+.card-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 400;
+    border: 1px solid;
+    margin-right: 0.3rem;
+    margin-bottom: 0.3rem;
+    color: #f8f9fa !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.15);
+    border-top: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.2s ease;
+    position: relative;
+    opacity: 0.9;
+}
+
+.card-badge:hover {
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.15);
+    opacity: 1;
+}
+
+.crew-badge {
+    background-color: #6A8B9C;
+    border-color: #5A7B8C;
+}
+
+.blog-badge {
+    background-color: #F29D4E;
+    border-color: #E28D3E;
+}
+
+.event-badge {
+    background-color: #FF6B3D;
+    border-color: #EF5B2D;
+}
+
+.route-badge {
+    background-color: #6B8E23;
+    border-color: #5B7E13;
+}
+
+/* Map Styles - Updated for 4:3 aspect ratio and consistent sizing */
+#map {
+  width: 100%;
+  aspect-ratio: 4/3; /* 4:3 aspect ratio for better visual presentation */
+  min-height: 400px;
+  max-height: 600px;
+  border-radius: 10px;
+  z-index: 1;
+}
+
+.map-section {
+  background: white;
+  box-shadow: var(--shadow-light);
+  border-radius: 15px;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  max-width: 1200px; /* Consistent max width */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Map view container for crews page */
+.map-view-container {
+  background: white;
+  box-shadow: var(--shadow-light);
+  border-radius: 15px;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    #map {
+        min-height: 350px;
+        max-height: 500px;
+    }
+    
+    .map-section,
+    .map-view-container {
+        margin: 0 1rem 3rem 1rem;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .section {
+        padding: 2rem 1rem;
+    }
+
+    .container {
+        padding: 0 1rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    #map {
+        min-height: 300px;
+        max-height: 400px;
+    }
+    
+    .map-section,
+    .map-view-container {
+        margin: 0 0.5rem 2rem 0.5rem;
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #map {
+        min-height: 250px;
+        max-height: 350px;
+    }
+}
