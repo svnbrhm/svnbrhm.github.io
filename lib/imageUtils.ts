@@ -4,7 +4,7 @@
  * to fetch image URLs directly from Airtable CrewMedia table.
  */
 
-// Function to get default logo if crew logo doesn't exist
+// Function to get default logo if crew logo  doesn't exist
 export function getDefaultCrewLogo(): string {
   return '/images/crew/logos/default-crew-logo.svg';
 }
@@ -14,7 +14,7 @@ export function getDefaultCrewPicture(): string {
   return '/images/crew/photos/default-crew-picture.svg';
 }
 
-// --- REMOVED SECTIONS ---
+// ---- REMOVED SECTIONS ----
 // The following sections have been removed because the logic is now handled by
 // fetching direct URLs from the Airtable's CrewMedia table via airtableService.ts:
 // - availableLogoFiles, availablePhotoFiles
