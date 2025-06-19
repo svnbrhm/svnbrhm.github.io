@@ -70,7 +70,7 @@ git log --oneline
 git reset --soft HEAD~1
 ```
 
-## Troubleshooting
+## Troubleshooting 
 
 **Build fails?**
 1. Check Vercel build logs
