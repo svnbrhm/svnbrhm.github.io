@@ -1,20 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { getRandomCrewPhoto } from '../lib/imageUtils';
+import { getRandomCrewHeroImage } from '../lib/randomImageUtils';
 
 interface HeroProps {
   onSearch?: (query: string) => void;
+  title?: string;
+  subtitle?: string;
+  backgroundImage?: string;
 }
 
-const Hero: React.FC<HeroProps> = ({ onSearch }) => {
+const Hero: React.FC<HeroProps> = ({ onSearch, title = "EXPLORE THE\nGLOBAL RUNNING\nCREW DATABASE", subtitle = "Connect with running communities worldwide and discover your next adventure", backgroundImage }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [heroBackground, setHeroBackground] = useState('/images/hero-bg.jpg');
   const router = useRouter();
 
   useEffect(() => {
-    // Set random crew photo as background
-    setHeroBackground(getRandomCrewPhoto());
-  }, []);
+    // Use provided background image or set random crew photo as background
+    if (backgroundImage) {
+      setHeroBackground(backgroundImage);
+    } else {
+      const loadRandomImage = async () => {
+        const randomImage = await getRandomCrewHeroImage();
+        setHeroBackground(randomImage);
+      };
+      loadRandomImage();
+    }
+  }, [backgroundImage]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

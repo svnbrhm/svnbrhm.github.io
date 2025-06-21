@@ -6,7 +6,8 @@ import CrewList from '../../components/Crew/CrewList';
 import { Crew } from '../../types/crew';
 import airtableService from '../../lib/airtable';
 import { mockCrews } from '../../lib/mockData';
-import { getRandomCrewPhoto } from '../../lib/imageUtils';
+import { getRandomCrewHeroImage } from '../../lib/randomImageUtils';
+
 
 // Create a Hero component specifically for the crews page
 const CrewsHero: React.FC<{ onSearch?: (query: string) => void }> = ({ onSearch }) => {
@@ -15,7 +16,11 @@ const CrewsHero: React.FC<{ onSearch?: (query: string) => void }> = ({ onSearch 
 
   useEffect(() => {
     // Set random crew photo as background
-    setHeroBackground(getRandomCrewPhoto());
+    const loadRandomImage = async () => {
+      const randomImage = await getRandomCrewHeroImage();
+      setHeroBackground(randomImage);
+    };
+    loadRandomImage();
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -105,8 +110,8 @@ export const getStaticProps: GetStaticProps<CrewsPageProps> = async () => {
   
   try {
     console.log('Attempting to fetch crews from Airtable...');
-    // Fetch all crews from Airtable
-    const crews = await airtableService.getAllCrews();
+    // Fetch all crews from Airtable with media data for images
+    const crews = await airtableService.getAllCrewsWithMedia();
     
     console.log('Successfully fetched crews:', crews.length, 'crews');
     

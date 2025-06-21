@@ -17,7 +17,7 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [localSearchQuery, setLocalSearchQuery] = useState(initialSearchQuery || searchQuery);
-  const [selectedContinent, setSelectedContinent] = useState<string>('all');
+  const [selectedCity, setSelectedCity] = useState<string>('all');
   const [selectedCrewSize, setSelectedCrewSize] = useState<string>('all');
   // Activity level filter removed - schedules not available in basic crew data
   const [sortBy, setSortBy] = useState<'name' | 'country' | 'members'>('name');
@@ -58,9 +58,9 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
       });
     }
     
-    // Apply continent filter
-    if (selectedContinent !== 'all') {
-      filtered = filtered.filter(crew => crew.Continent === selectedContinent);
+    // Apply city filter
+    if (selectedCity !== 'all') {
+      filtered = filtered.filter(crew => crew.City === selectedCity);
     }
     
     // Apply crew size filter
@@ -94,11 +94,11 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
     });
     
     return filtered;
-  }, [allCrews, localSearchQuery, selectedContinent, selectedCrewSize, sortBy]);
+  }, [allCrews, localSearchQuery, selectedCity, selectedCrewSize, sortBy]);
   
-  // Get unique continents for filter
-  const continents = React.useMemo(() => {
-    const unique = Array.from(new Set(allCrews.map(crew => crew.Continent).filter(Boolean)));
+  // Get unique cities for filter
+  const cities = React.useMemo(() => {
+    const unique = Array.from(new Set(allCrews.map(crew => crew.City).filter(Boolean)));
     return unique.sort();
   }, [allCrews]);
   
@@ -138,7 +138,7 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
   useEffect(() => {
     setCurrentPage(1);
     setDisplayedCrews([]);
-  }, [localSearchQuery, selectedContinent, selectedCrewSize, selectedActivityLevel, sortBy]);
+  }, [localSearchQuery, selectedCity, selectedCrewSize, sortBy]);
   
   // Initialize with first page of crews (or all crews if showAll strategy)
   useEffect(() => {
@@ -162,9 +162,8 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
   // Clear all filters
   const clearFilters = () => {
     setLocalSearchQuery('');
-    setSelectedContinent('all');
+    setSelectedCity('all');
     setSelectedCrewSize('all');
-    setSelectedActivityLevel('all');
     setSortBy('name');
     if (onSearchChange) {
       onSearchChange('');
@@ -172,7 +171,7 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
   };
   
   // Check if any filters are active
-  const hasActiveFilters = localSearchQuery.trim() || selectedContinent !== 'all' || selectedCrewSize !== 'all' || selectedActivityLevel !== 'all' || sortBy !== 'name';
+  const hasActiveFilters = localSearchQuery.trim() || selectedCity !== 'all' || selectedCrewSize !== 'all' || sortBy !== 'name';
 
   // Load more crews function
   const loadMoreCrews = async () => {
@@ -251,13 +250,13 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
         <div className="crew-filters">
           <div className="filter-controls">
             <select
-              value={selectedContinent}
-              onChange={(e) => setSelectedContinent(e.target.value)}
+              value={selectedCity}
+              onChange={(e) => setSelectedCity(e.target.value)}
               className="filter-select"
             >
-              <option value="all">All Continents</option>
-              {continents.map(continent => (
-                <option key={continent} value={continent}>{continent}</option>
+              <option value="all">All Cities</option>
+              {cities.map(city => (
+                <option key={city} value={city}>{city}</option>
               ))}
             </select>
             
@@ -320,12 +319,11 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
             <p>Showing {displayedCrews.length} of {filteredCrews.length} crews
               {allCrews.length !== filteredCrews.length && ` (${allCrews.length - filteredCrews.length} filtered out)`}
             </p>
-            {(localSearchQuery || selectedContinent !== 'all' || selectedCrewSize !== 'all' || selectedActivityLevel !== 'all') && (
+            {(localSearchQuery || selectedCity !== 'all' || selectedCrewSize !== 'all') && (
               <div className="active-filters">
                 {localSearchQuery && <span className="filter-tag">Search: "{localSearchQuery}"</span>}
-                {selectedContinent !== 'all' && <span className="filter-tag">Continent: {selectedContinent}</span>}
+                {selectedCity !== 'all' && <span className="filter-tag">City: {selectedCity}</span>}
                 {selectedCrewSize !== 'all' && <span className="filter-tag">Size: {selectedCrewSize}</span>}
-                {selectedActivityLevel !== 'all' && <span className="filter-tag">Activity: {selectedActivityLevel}</span>}
               </div>
             )}
           </div>

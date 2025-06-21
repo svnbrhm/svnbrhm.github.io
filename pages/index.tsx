@@ -64,8 +64,8 @@ const Home: NextPage<HomeProps> = ({ crews }) => {
 // Static Site Generation - Pre-build crew data at build time
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   try {
-    // Fetch all crews from Airtable
-    const crews = await airtableService.getAllCrews();
+    // Fetch all crews from Airtable with media data for images
+    const crews = await airtableService.getAllCrewsWithMedia();
     
     return {
       props: {

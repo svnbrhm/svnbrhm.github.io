@@ -10,6 +10,15 @@ interface CrewCardProps {
 }
 
 const CrewCard: React.FC<CrewCardProps> = ({ crew, featured = false }) => {
+  // Debug logging to check crew data
+  console.log('CrewCard Debug:', {
+    crewName: crew.CrewName,
+    logoUrl: crew.logoUrl,
+    heroImageUrl: crew.heroImageUrl,
+    PrimaryImageUrl: crew.PrimaryImageUrl,
+    mediaCount: crew.media?.length || 0
+  });
+  
   const foundingDate = crew.FoundingDate ? new Date(crew.FoundingDate) : null;
   const foundingMonth = foundingDate ? foundingDate.toLocaleDateString('en-US', { month: 'short' }) : null;
   const foundingYear = foundingDate ? foundingDate.getFullYear() : null;

@@ -3,14 +3,19 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import PageHero from '../../components/Hero/PageHero';
 import RouteList from '../../components/Route/RouteList';
-import { getRandomCrewPhoto } from '../../lib/imageUtils';
+import { getRandomCrewHeroImage } from '../../lib/randomImageUtils';
+
 
 const RoutesPage: NextPage = () => {
   const [heroBackground, setHeroBackground] = useState<string>('');
 
   useEffect(() => {
     // Set random crew photo as background on each page visit
-    setHeroBackground(getRandomCrewPhoto());
+    const loadRandomImage = async () => {
+      const randomImage = await getRandomCrewHeroImage();
+      setHeroBackground(randomImage);
+    };
+    loadRandomImage();
   }, []);
 
   return (

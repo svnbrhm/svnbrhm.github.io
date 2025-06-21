@@ -7,6 +7,17 @@ const AIRTABLE_PERSONAL_ACCESS_TOKEN = process.env.AIRTABLE_PERSONAL_ACCESS_TOKE
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 const AIRTABLE_API_URL = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}`;
 
+// Airtable Table IDs - verified against actual base structure
+const TABLE_IDS = {
+  CREWS: 'tbl76VCXwPoucGZxf',
+  TEAM_MEMBERS: 'tbl3bxAbqpwiY3PQm',
+  RUN_SCHEDULES: 'tblWVRZImWj8Wx5L1',
+  CREW_MEDIA: 'tblZsfIBlCssAzwyZ',
+  RUNNING_EVENTS: 'tblGpZHOcRt6RFfUK',
+  RUNNING_ROUTES: 'tbl605OnaGj8t0gCd',
+  BLOG: 'tblCjQYcLlC3cNB1E'
+} as const;
+
 if (!AIRTABLE_PERSONAL_ACCESS_TOKEN || !AIRTABLE_BASE_ID) {
   throw new Error('Missing Airtable configuration. Please set AIRTABLE_PERSONAL_ACCESS_TOKEN and AIRTABLE_BASE_ID environment variables.');
 }
@@ -435,7 +446,7 @@ export const airtableService = {
 
 
       const crewResponse = await makeAirtableRequest<AirtableCrewFields>(
-        `/tbl76VCXwPoucGZxf?filterByFormula={CrewName}='${crewName}'`
+        `/${TABLE_IDS.CREWS}?filterByFormula={CrewName}='${crewName}'`
       );
       
       if (crewResponse.records.length === 0) {
@@ -447,7 +458,7 @@ export const airtableService = {
       
       // Now get team members linked to this crew
       const response = await makeAirtableRequest<AirtableTeamMemberFields>(
-        `/tbl3bxAbqpwiY3PQm?filterByFormula=FIND('${crewId}',ARRAYJOIN({LinkToCrew}))`
+        `/${TABLE_IDS.TEAM_MEMBERS}?filterByFormula=FIND('${crewId}',ARRAYJOIN({LinkToCrew}))`
       );
       console.log(`[getTeamMembers] Found ${response.records.length} team members for crew '${crewName}'`);
       return response.records.map(transformTeamMemberRecord);
@@ -467,7 +478,7 @@ export const airtableService = {
     try {
       // First get the crew record to find its ID
       const crewResponse = await makeAirtableRequest<AirtableCrewFields>(
-        `/tbl76VCXwPoucGZxf?filterByFormula={CrewName}='${crewName}'`
+        `/${TABLE_IDS.CREWS}?filterByFormula={CrewName}='${crewName}'`
       );
       
       if (crewResponse.records.length === 0) {
@@ -479,7 +490,7 @@ export const airtableService = {
       
       // Now get run schedules linked to this crew
       const response = await makeAirtableRequest<AirtableRunScheduleFields>(
-        `/tblWVRZImWj8Wx5L1?filterByFormula=FIND('${crewId}',ARRAYJOIN({LinkToCrew}))`
+        `/${TABLE_IDS.RUN_SCHEDULES}?filterByFormula=FIND('${crewId}',ARRAYJOIN({LinkToCrew}))`
       );
       console.log(`[getRunSchedules] Found ${response.records.length} schedules for crew '${crewName}'`);
       return response.records.map(transformRunScheduleRecord);
@@ -500,7 +511,7 @@ export const airtableService = {
       // First get the crew record to find its ID
       // CONSISTENCY FIX: Use table ID instead of table name for reliability
       const crewResponse = await makeAirtableRequest<AirtableCrewFields>(
-        `/tbl76VCXwPoucGZxf?filterByFormula={CrewName}='${crewName}'`
+        `/${TABLE_IDS.CREWS}?filterByFormula={CrewName}='${crewName}'`
       );
       
       if (crewResponse.records.length === 0) {
@@ -512,7 +523,7 @@ export const airtableService = {
       
       // Now get crew media linked to this crew
       const response = await makeAirtableRequest<AirtableCrewMediaFields>(
-        `/tblZsfIBlCssAzwyZ?filterByFormula=FIND('${crewId}',ARRAYJOIN({LinkToCrew}))`
+        `/${TABLE_IDS.CREW_MEDIA}?filterByFormula=FIND('${crewId}',ARRAYJOIN({LinkToCrew}))`
       );
       
       // Only log when media entries are found (success case)
@@ -536,7 +547,7 @@ export const airtableService = {
   async getCrewMediaById(crewId: string): Promise<CrewMedia[]> {
     try {
       const response = await makeAirtableRequest<AirtableCrewMediaFields>(
-        `/tblZsfIBlCssAzwyZ?filterByFormula=FIND('${crewId}',ARRAYJOIN({LinkToCrew}))`
+        `/${TABLE_IDS.CREW_MEDIA}?filterByFormula=FIND('${crewId}',ARRAYJOIN({LinkToCrew}))`
       );
       
       return response.records.map(transformCrewMediaRecord);
@@ -584,7 +595,7 @@ export const airtableService = {
   async getAllCrews(): Promise<Crew[]> {
     try {
       console.log('=== FETCHING ALL CREWS FROM AIRTABLE WITH PAGINATION (BASIC DATA ONLY) ===');
-      const records = await makeAirtableRequestWithPagination<AirtableCrewFields>('/tbl76VCXwPoucGZxf');
+      const records = await makeAirtableRequestWithPagination<AirtableCrewFields>(`/${TABLE_IDS.CREWS}`);
       const crews = records.map(transformCrewRecord);
       
       console.log(`Total crews fetched: ${crews.length}`);
@@ -601,11 +612,49 @@ export const airtableService = {
     }
   },
 
+  // Get all crews with media data only (for crew cards that need images)
+  async getAllCrewsWithMedia(): Promise<Crew[]> {
+    try {
+      console.log('=== FETCHING ALL CREWS WITH MEDIA DATA ===');
+      console.log('getAllCrewsWithMedia function called!');
+      const records = await makeAirtableRequestWithPagination<AirtableCrewFields>(`/${TABLE_IDS.CREWS}`);
+      const crews = records.map(transformCrewRecord);
+      
+      console.log(`Total crews fetched: ${crews.length}`);
+      console.log('Fetching media data for crew images...');
+      
+      // Fetch media data for each crew (more efficient than full data)
+      for (const crew of crews) {
+        try {
+          const media = await this.getCrewMediaById(crew.id);
+          crew.media = media;
+          
+          // Extract and populate image URLs from media
+          if (crew.media && crew.media.length > 0) {
+            const imageUrls = this.extractImageUrls(crew.media);
+            crew.logoUrl = imageUrls.logoUrl;
+            crew.heroImageUrl = imageUrls.heroImageUrl;
+            crew.PrimaryImageUrl = imageUrls.logoUrl;
+          }
+        } catch (mediaError) {
+          console.warn(`Failed to fetch media for crew ${crew.CrewName}:`, mediaError);
+          // Set default empty arrays if media fetch fails
+          crew.media = [];
+        }
+      }
+      
+      return crews;
+    } catch (error) {
+      console.error('Failed to fetch crews with media:', error);
+      throw new Error('Unable to fetch crews from Airtable');
+    }
+  },
+
   // Get all crews with full related data (use sparingly, only when all data is needed)
   async getAllCrewsWithFullData(): Promise<Crew[]> {
     try {
       console.log('=== FETCHING ALL CREWS WITH FULL RELATED DATA ===');
-      const records = await makeAirtableRequestWithPagination<AirtableCrewFields>('/tbl76VCXwPoucGZxf');
+      const records = await makeAirtableRequestWithPagination<AirtableCrewFields>(`/${TABLE_IDS.CREWS}`);
       const crews = records.map(transformCrewRecord);
       
       console.log(`Total crews fetched: ${crews.length}`);
@@ -664,7 +713,7 @@ export const airtableService = {
   async getCrewById(crewId: string): Promise<Crew | null> {
     try {
       const response = await makeAirtableRequest<AirtableCrewFields>(
-        `/tbl76VCXwPoucGZxf?filterByFormula=RECORD_ID()='${crewId}'`
+        `/${TABLE_IDS.CREWS}?filterByFormula=RECORD_ID()='${crewId}'`
       );
       
       if (response.records.length === 0) {
@@ -713,7 +762,7 @@ export const airtableService = {
   async getCrewsByCity(city: string): Promise<Crew[]> {
     try {
       const response = await makeAirtableRequest<AirtableCrewFields>(
-        `/tbl76VCXwPoucGZxf?filterByFormula={City}='${city}'`
+        `/${TABLE_IDS.CREWS}?filterByFormula={City}='${city}'`
       );
       const crews = response.records.map(transformCrewRecord);
       
@@ -731,7 +780,7 @@ export const airtableService = {
   async getCrewsByCityWithFullData(city: string): Promise<Crew[]> {
     try {
       const response = await makeAirtableRequest<AirtableCrewFields>(
-        `/tbl76VCXwPoucGZxf?filterByFormula={City}='${city}'`
+        `/${TABLE_IDS.CREWS}?filterByFormula={City}='${city}'`
       );
       const crews = response.records.map(transformCrewRecord);
       
@@ -777,7 +826,7 @@ export const airtableService = {
   async searchCrews(searchTerm: string): Promise<Crew[]> {
     try {
       const response = await makeAirtableRequest<AirtableCrewFields>(
-        `/tbl76VCXwPoucGZxf?filterByFormula=SEARCH('${searchTerm}',{CrewName})`
+        `/${TABLE_IDS.CREWS}?filterByFormula=SEARCH('${searchTerm}',{CrewName})`
       );
       const crews = response.records.map(transformCrewRecord);
       
@@ -795,7 +844,7 @@ export const airtableService = {
   async searchCrewsWithFullData(searchTerm: string): Promise<Crew[]> {
     try {
       const response = await makeAirtableRequest<AirtableCrewFields>(
-        `/tbl76VCXwPoucGZxf?filterByFormula=SEARCH('${searchTerm}',{CrewName})`
+        `/${TABLE_IDS.CREWS}?filterByFormula=SEARCH('${searchTerm}',{CrewName})`
       );
       const crews = response.records.map(transformCrewRecord);
       
@@ -840,7 +889,7 @@ export const airtableService = {
   async getCrewBySlug(slug: string): Promise<Crew | null> {
     try {
       const response = await makeAirtableRequest<AirtableCrewFields>(
-        `/tbl76VCXwPoucGZxf?filterByFormula={SEO_Slug}='${slug}'`
+        `/${TABLE_IDS.CREWS}?filterByFormula={SEO_Slug}='${slug}'`
       );
       
       if (response.records.length === 0) {
@@ -890,7 +939,7 @@ export const airtableService = {
       // Fetch all published routes
       // CONSISTENCY FIX: Use table ID instead of table name for reliability
       const response = await makeAirtableRequest<any>(
-        `/tbl605OnaGj8t0gCd?filterByFormula=Status='Published'`
+        `/${TABLE_IDS.RUNNING_ROUTES}?filterByFormula=Status='Published'`
       );
       
       if (response.records.length === 0) {
@@ -913,7 +962,7 @@ export const airtableService = {
   // Test connection
   async testConnection(): Promise<boolean> {
     try {
-      await makeAirtableRequest('/tbl76VCXwPoucGZxf', { maxRecords: 1 });
+      await makeAirtableRequest(`/${TABLE_IDS.CREWS}`, { maxRecords: 1 });
       return true;
     } catch (error) {
       console.error('Airtable connection test failed:', error);
