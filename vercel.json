@@ -5,16 +5,6 @@
   "framework": "nextjs",
   "installCommand": "npm install",
   "devCommand": "npm run dev",
-  "env": {
-    "AIRTABLE_BASE_ID": "@airtable_base_id",
-    "AIRTABLE_PERSONAL_ACCESS_TOKEN": "@airtable_personal_access_token"
-  },
-  "build": {
-    "env": {
-      "AIRTABLE_BASE_ID": "@airtable_base_id",
-      "AIRTABLE_PERSONAL_ACCESS_TOKEN": "@airtable_personal_access_token"
-    }
-  },
   "functions": {
     "pages/api/**/*.ts": {
       "runtime": "nodejs18.x"
