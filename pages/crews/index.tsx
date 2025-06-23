@@ -117,10 +117,9 @@ const CrewsPage: NextPage<CrewsPageProps> = ({ featuredCrews, allCrews, totalCou
         )}
         
         {/* All Crews Section */}
-        <section className="all-crews">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-6">All Crews ({totalCount})</h2>
-            <CrewList crews={allCrews} initialSearchQuery={searchQuery} />
+        <section className="crew-list-section">
+          <div className="container">
+            <CrewList allCrews={allCrews} />
           </div>
         </section>
       </main>
@@ -151,7 +150,7 @@ export const getStaticProps: GetStaticProps = async () => {
         totalCount: allCrews.length,
       },
       // Enable ISR - regenerate page every 24 hours
-      revalidate: 86400, // 24 hours in seconds
+      revalidate: 604800, // 7 days (weekly) - images change less frequently in seconds
     };
   } catch (error) {
     console.error('Error in getStaticProps for crews page:', error);
@@ -180,7 +179,7 @@ export const getStaticProps: GetStaticProps = async () => {
         totalCount: mockCrews.length,
       },
       // Still enable ISR even for fallback
-      revalidate: 3600, // 1 hour for fallback
+      revalidate: 86400, // 24 hours in case of fallback (more frequent for error recovery)
     };
   }
 };

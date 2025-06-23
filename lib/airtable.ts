@@ -1,5 +1,5 @@
 import { Crew, TeamMember, CrewMedia, RunSchedule, RunningRoute } from '../types/crew';
-import { getDefaultCrewLogo, getDefaultCrewPicture } from './imageUtils';
+import { getDefaultCrewLogo, getDefaultCrewPicture, getOptimizedCrewImage } from './imageUtils';
 
 // Global statistics interface
 export interface GlobalStatistics {
@@ -691,11 +691,33 @@ export const airtableService = {
         
         const crewsWithImages = await Promise.all(
           crewsToLoadImages.map(async (crew) => {
-            const images = await this.getCrewImages(crew.id);
+            // Try local images first, then fallback to Airtable if needed
+            let airtableImages: any[] = [];
+            
+            // Get local images first (fast)
+            const localLogo = getOptimizedCrewImage(crew.CrewName, 'logo');
+            const localPhoto = getOptimizedCrewImage(crew.CrewName, 'photo');
+            
+            // Only fetch from Airtable if local images are defaults (slower fallback)
+            const needsAirtableLogo = localLogo === getDefaultCrewLogo();
+            const needsAirtablePhoto = localPhoto === getDefaultCrewPicture();
+            
+            if (needsAirtableLogo || needsAirtablePhoto) {
+              try {
+                airtableImages = await this.getCrewImages(crew.id);
+              } catch (error) {
+                console.warn(`Failed to fetch Airtable images for ${crew.CrewName}:`, error);
+              }
+            }
+            
             const imageMap = {
-              logo: images.find(img => img.type === 'Logo')?.url || getDefaultCrewLogo(),
-              crewPicture: images.find(img => img.type === 'Crew Picture')?.url || getDefaultCrewPicture(),
-              featured: images.find(img => img.featured)?.url
+              logo: needsAirtableLogo 
+                ? (airtableImages.find(img => img.type === 'Logo')?.url || getDefaultCrewLogo())
+                : localLogo,
+              crewPicture: needsAirtablePhoto 
+                ? (airtableImages.find(img => img.type === 'Crew Picture')?.url || getDefaultCrewPicture())
+                : localPhoto,
+              featured: airtableImages.find(img => img.featured)?.url
             };
 
             return {
