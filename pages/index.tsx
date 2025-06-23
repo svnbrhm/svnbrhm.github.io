@@ -2,6 +2,7 @@ import { NextPage, GetStaticProps } from 'next';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import { useEffect } from 'react';
+import { NextPage, GetStaticProps } from 'next';
 import Hero from '../components/Hero';
 import Statistics from '../components/Statistics';
 import CrewListHomepage from '../components/Crew/CrewListHomepage';
