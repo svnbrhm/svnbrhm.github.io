@@ -3,13 +3,22 @@
  * Prioritizes local images over Airtable API calls for better performance.
  */
 
-import fs from 'fs';
-import path from 'path';
-
 // Cache for local image availability to avoid repeated file system checks
 const localImageCache = new Map<string, boolean>();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const cacheTimestamps = new Map<string, number>();
+
+// Check if we're running on server side
+const isServer = typeof window === 'undefined';
+
+// Dynamic imports for server-side only
+let fs: any = null;
+let path: any = null;
+
+if (isServer) {
+  fs = require('fs');
+  path = require('path');
+}
 
 // Function to get default logo if crew logo doesn't exist
 export function getDefaultCrewLogo(): string {
@@ -21,8 +30,13 @@ export function getDefaultCrewPicture(): string {
   return '/images/crew/photos/default-crew-picture.svg';
 }
 
-// Check if local image exists with caching
+// Check if local image exists with caching (server-side only)
 function checkLocalImageExists(imagePath: string): boolean {
+  // On client side, assume images exist (they'll be checked by browser)
+  if (!isServer || !fs || !path) {
+    return true; // Optimistically assume image exists on client side
+  }
+  
   const now = Date.now();
   const cacheKey = imagePath;
   
@@ -34,7 +48,7 @@ function checkLocalImageExists(imagePath: string): boolean {
     }
   }
   
-  // Check file system
+  // Check file system (server-side only)
   try {
     const fullPath = path.join(process.cwd(), 'public', imagePath);
     const exists = fs.existsSync(fullPath);

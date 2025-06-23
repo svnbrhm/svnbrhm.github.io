@@ -119,7 +119,7 @@ const CrewsPage: NextPage<CrewsPageProps> = ({ featuredCrews, allCrews, totalCou
         {/* All Crews Section */}
         <section className="crew-list-section">
           <div className="container">
-            <CrewList allCrews={allCrews} />
+            <CrewList crews={allCrews} />
           </div>
         </section>
       </main>
