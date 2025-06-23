@@ -13,7 +13,7 @@ import CrewCard from '../../components/Crew/CrewCard';
 
 // Create a Hero component specifically for the crews page
 const CrewsHero: React.FC<{ onSearch?: (query: string) => void }> = ({ onSearch }) => {
-  const [heroBackground, setHeroBackground] = useState('/images/hero-bg.jpg');
+  const [heroBackground, setHeroBackground] = useState('/images/hero-bg.svg');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {

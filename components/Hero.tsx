@@ -11,7 +11,7 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ onSearch, title = "EXPLORE THE\nGLOBAL RUNNING\nCREW DATABASE", subtitle = "Connect with running communities worldwide and discover your next adventure", backgroundImage }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [heroBackground, setHeroBackground] = useState('/images/hero-bg.jpg');
+  const [heroBackground, setHeroBackground] = useState('/images/hero-bg.svg');
   const router = useRouter();
 
   useEffect(() => {

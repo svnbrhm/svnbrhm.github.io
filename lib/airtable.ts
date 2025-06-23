@@ -44,8 +44,11 @@ const TABLE_IDS = {
   BLOG: 'tblCjQYcLlC3cNB1E'
 } as const;
 
-if (!AIRTABLE_PERSONAL_ACCESS_TOKEN || !AIRTABLE_BASE_ID) {
-  throw new Error('Missing Airtable configuration. Please set AIRTABLE_PERSONAL_ACCESS_TOKEN and AIRTABLE_BASE_ID environment variables.');
+// Check for Airtable configuration
+const isAirtableConfigured = AIRTABLE_PERSONAL_ACCESS_TOKEN && AIRTABLE_BASE_ID;
+
+if (!isAirtableConfigured) {
+  console.warn('Airtable configuration missing. Using mock data for development.');
 }
 
 const headers = {
@@ -461,6 +464,10 @@ function transformRouteRecord(record: AirtableRecord<AirtableRouteFields>): Runn
 export const airtableService = {
   // Get team members for a crew
   async getTeamMembers(crewName: string): Promise<TeamMember[]> {
+    if (!isAirtableConfigured) {
+      console.log('Airtable not configured, returning empty team members');
+      return [];
+    }
     try {
       // First get the crew record to find its ID
 
@@ -495,6 +502,10 @@ export const airtableService = {
 
   // Get run schedules for a crew
   async getRunSchedules(crewName: string): Promise<RunSchedule[]> {
+    if (!isAirtableConfigured) {
+      console.log('Airtable not configured, returning empty run schedules');
+      return [];
+    }
     try {
       // First get the crew record to find its ID
       const crewResponse = await makeAirtableRequest<AirtableCrewFields>(
@@ -709,6 +720,47 @@ export const airtableService = {
   // Get all crews with basic data only (PERFORMANCE FIX: Avoid N+1 queries)
   // Use this for overview pages where detailed data isn't needed
   async getAllCrews(): Promise<Crew[]> {
+    if (!isAirtableConfigured) {
+      console.log('Airtable not configured, returning mock crew data');
+      return [
+        {
+          id: 'mock-1',
+          CrewName: 'Demo Running Crew',
+          City: 'Demo City',
+          Country: 'Demo Country',
+          Continent: 'Demo Continent',
+          FoundingDate: '2024-01-01',
+          CrewStoryLongFinal: 'This is a demo crew for development purposes.',
+          CrewStoryExcerpt: 'Demo crew for development',
+          ContactEmailCrew: 'demo@example.com',
+          FacebookFanpageURL: '',
+          FacebookGroupURL: '',
+          InstagramURL: '',
+          XURL: '',
+          StravaClubURL: '',
+          HomepageURL: '',
+          HeadquarterName: 'Demo HQ',
+          HeadquarterAddress: '123 Demo St',
+          HeadquarterGoogleMapsLink: '',
+          HeadquarterLatitude: 0,
+          HeadquarterLongitude: 0,
+          ApproxMemberCount: 50,
+          MembershipType: 'Open',
+          MembershipFeeInfo: 'Free',
+          LocalEventsText: 'Weekly runs',
+          OwnEventText: 'Annual marathon',
+          SEODescription: 'Demo running crew',
+          SEO_Slug: 'demo-running-crew',
+          Featured: true,
+          PrimaryImageUrl: '/images/default-crew-hero.jpg',
+          logoUrl: '/images/default-crew-hero.jpg',
+          heroImageUrl: '/images/default-crew-hero.jpg',
+          teamMembers: [],
+          media: [],
+          schedules: []
+        }
+      ];
+    }
     try {
       console.log('=== FETCHING ALL CREWS FROM AIRTABLE WITH PAGINATION (BASIC DATA ONLY) ===');
       const records = await makeAirtableRequestWithPagination<AirtableCrewFields>(`/${TABLE_IDS.CREWS}`);
@@ -730,6 +782,10 @@ export const airtableService = {
 
   // Get all crews with media data only (for crew cards that need images)
   async getAllCrewsWithMedia(): Promise<Crew[]> {
+    if (!isAirtableConfigured) {
+      console.log('Airtable not configured, returning mock crew data with media');
+      return await this.getAllCrews(); // Reuse the mock data
+    }
     try {
       console.log('=== FETCHING ALL CREWS WITH MEDIA DATA ===');
       console.log('getAllCrewsWithMedia function called!');
@@ -1087,6 +1143,17 @@ export const airtableService = {
 
   // Get statistics for Global Impact section
   async getGlobalStatistics(): Promise<GlobalStatistics> {
+    if (!isAirtableConfigured) {
+      console.log('Airtable not configured, returning mock global statistics');
+      return {
+        activeCrews: 1,
+        totalRunners: 50,
+        cities: 1,
+        countries: 1,
+        routes: 0,
+        events: 0
+      };
+    }
     try {
       // Fetch all crews to calculate statistics
       const crewsResponse = await makeAirtableRequestWithPagination<AirtableCrewFields>(`/${TABLE_IDS.CREWS}`);
