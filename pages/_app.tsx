@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 import Head from 'next/head';
 import type { AppProps } from 'next/app';
+import { Analytics } from '@vercel/analytics/react';
 
 import Header from '../components/Layout/Header';
 import Footer from '../components/Layout/Footer';
@@ -17,6 +18,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Header />           {/* Global header for all pages */}
       <Component {...pageProps} />  {/* Page content */}
       <Footer />           {/* Global footer for all pages */}
+      <Analytics />
     </>
   );
 }

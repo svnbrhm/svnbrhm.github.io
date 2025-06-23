@@ -1,6 +1,16 @@
 import { Crew, TeamMember, CrewMedia, RunSchedule, RunningRoute } from '../types/crew';
 import { getDefaultCrewLogo, getDefaultCrewPicture } from './imageUtils';
 
+// Global statistics interface
+export interface GlobalStatistics {
+  activeCrews: number;
+  totalRunners: number;
+  cities: number;
+  countries: number;
+  routes: number;
+  events: number;
+}
+
 // Airtable Personal Access Token (replaces deprecated API keys as of Feb 1, 2024)
 // SECURITY FIX: Removed NEXT_PUBLIC_ prefix to keep tokens server-side only
 const AIRTABLE_PERSONAL_ACCESS_TOKEN = process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN;
@@ -370,13 +380,7 @@ function transformCrewMediaRecord(record: AirtableRecord<AirtableCrewMediaFields
     
     const fields = record.fields;
     
-    // Log the record structure for debugging
-    console.log('Transforming crew media record:', {
-      id: record.id,
-      fieldsKeys: Object.keys(fields),
-      mediaTitle: fields.MediaTitle,
-      mediaType: fields.MediaType
-    });
+
     
     // Extract FileURL from MediaFile attachments if available
     let fileURL = fields.FileURL || '';
@@ -544,13 +548,35 @@ export const airtableService = {
   },
 
   // Get crew media by crew ID (more efficient when we already have the crew ID)
-  async getCrewMediaById(crewId: string): Promise<CrewMedia[]> {
+  async getCrewMediaById(crewId: string, crewName?: string): Promise<CrewMedia[]> {
     try {
+      // First try to find media by LinkToCrew field
       const response = await makeAirtableRequest<AirtableCrewMediaFields>(
         `/${TABLE_IDS.CREW_MEDIA}?filterByFormula=FIND('${crewId}',ARRAYJOIN({LinkToCrew}))`
       );
       
-      return response.records.map(transformCrewMediaRecord);
+      let allRecords = response.records;
+      
+      // If we have a crew name and didn't find enough records, also search by crew name
+      if (crewName && response.records.length < 2) {
+        try {
+          const escapedCrewName = crewName.replace(/'/g, "\\'");
+          const filterFormula = `{CREW NAME}='${escapedCrewName}'`;
+          
+          const nameResponse = await makeAirtableRequest<AirtableCrewMediaFields>(
+            `/${TABLE_IDS.CREW_MEDIA}?filterByFormula=${encodeURIComponent(filterFormula)}`
+          );
+          
+          // Merge records, avoiding duplicates
+          const existingIds = new Set(allRecords.map(r => r.id));
+          const newRecords = nameResponse.records.filter(r => !existingIds.has(r.id));
+          allRecords = [...allRecords, ...newRecords];
+        } catch (nameError) {
+          console.warn(`[getCrewMediaById] Failed to search by crew name '${crewName}':`, nameError);
+        }
+      }
+      
+      return allRecords.map(transformCrewMediaRecord);
     } catch (error) {
       // Handle case where CrewMedia table doesn't exist (422 error)
       if (error instanceof Error && error.message.includes('422')) {
@@ -586,6 +612,9 @@ export const airtableService = {
     if (heroMedia && heroMedia.FileURL) {
       heroImageUrl = heroMedia.FileURL;
     }
+
+    // Debug logging
+    console.log(`[extractImageUrls] Logo URL: ${logoUrl}, Hero URL: ${heroImageUrl}`);
 
     return { logoUrl, heroImageUrl };
   },
@@ -626,7 +655,7 @@ export const airtableService = {
       // Fetch media data for each crew (more efficient than full data)
       for (const crew of crews) {
         try {
-          const media = await this.getCrewMediaById(crew.id);
+          const media = await this.getCrewMediaById(crew.id, crew.CrewName);
           crew.media = media;
           
           // Extract and populate image URLs from media
@@ -667,7 +696,7 @@ export const airtableService = {
           const [teamMembersResult, schedulesResult, mediaResult] = await Promise.allSettled([
             this.getTeamMembers(crew.CrewName),
             this.getRunSchedules(crew.CrewName),
-            this.getCrewMediaById(crew.id)
+            this.getCrewMediaById(crew.id, crew.CrewName)
           ]);
           
           crew.teamMembers = teamMembersResult.status === 'fulfilled' ? teamMembersResult.value : [];
@@ -727,7 +756,7 @@ export const airtableService = {
         const [teamMembersResult, schedulesResult, mediaResult] = await Promise.allSettled([
           this.getTeamMembers(crew.CrewName),
           this.getRunSchedules(crew.CrewName),
-          this.getCrewMediaById(crew.id)
+          this.getCrewMediaById(crew.id, crew.CrewName)
         ]);
         
         crew.teamMembers = teamMembersResult.status === 'fulfilled' ? teamMembersResult.value : [];
@@ -790,7 +819,7 @@ export const airtableService = {
           const [teamMembersResult, schedulesResult, mediaResult] = await Promise.allSettled([
             this.getTeamMembers(crew.CrewName),
             this.getRunSchedules(crew.CrewName),
-            this.getCrewMediaById(crew.id)
+            this.getCrewMediaById(crew.id, crew.CrewName)
           ]);
           
           crew.teamMembers = teamMembersResult.status === 'fulfilled' ? teamMembersResult.value : [];
@@ -854,7 +883,7 @@ export const airtableService = {
           const [teamMembersResult, schedulesResult, mediaResult] = await Promise.allSettled([
             this.getTeamMembers(crew.CrewName),
             this.getRunSchedules(crew.CrewName),
-            this.getCrewMediaById(crew.id)
+            this.getCrewMediaById(crew.id, crew.CrewName)
           ]);
           
           crew.teamMembers = teamMembersResult.status === 'fulfilled' ? teamMembersResult.value : [];
@@ -903,7 +932,7 @@ export const airtableService = {
         const [teamMembersResult, schedulesResult, mediaResult] = await Promise.allSettled([
           this.getTeamMembers(crew.CrewName),
           this.getRunSchedules(crew.CrewName),
-          this.getCrewMediaById(crew.id)
+          this.getCrewMediaById(crew.id, crew.CrewName)
         ]);
         
         crew.teamMembers = teamMembersResult.status === 'fulfilled' ? teamMembersResult.value : [];
@@ -956,6 +985,67 @@ export const airtableService = {
     } catch (error) {
       console.error('Failed to fetch random routes:', error);
       return [];
+    }
+  },
+
+  // Get statistics for Global Impact section
+  async getGlobalStatistics(): Promise<GlobalStatistics> {
+    try {
+      // Fetch all crews to calculate statistics
+      const crewsResponse = await makeAirtableRequestWithPagination<AirtableCrewFields>(`/${TABLE_IDS.CREWS}`);
+      const crews = crewsResponse.map(transformCrewRecord);
+      
+      // Calculate active crews
+      const activeCrews = crews.length;
+      
+      // Calculate total runners (sum of ApproxMemberCount)
+      const totalRunners = crews.reduce((sum, crew) => sum + (crew.ApproxMemberCount || 0), 0);
+      
+      // Calculate unique cities and countries
+      const uniqueCities = new Set(crews.map(crew => crew.City).filter(city => city));
+      const uniqueCountries = new Set(crews.map(crew => crew.Country).filter(country => country));
+      
+      // Get routes count (Routes and Events are 0 as mentioned by user, but we'll try to fetch them)
+      let routesCount = 0;
+      let eventsCount = 0;
+      
+      try {
+        const routesResponse = await makeAirtableRequest<any>(`/${TABLE_IDS.RUNNING_ROUTES}`, { maxRecords: 1 });
+        // If we can access the table, get the full count
+        const allRoutesResponse = await makeAirtableRequestWithPagination<any>(`/${TABLE_IDS.RUNNING_ROUTES}`);
+        routesCount = allRoutesResponse.length;
+      } catch (error) {
+        console.warn('Could not fetch routes count:', error);
+      }
+      
+      try {
+        const eventsResponse = await makeAirtableRequest<any>(`/${TABLE_IDS.RUNNING_EVENTS}`, { maxRecords: 1 });
+        // If we can access the table, get the full count
+        const allEventsResponse = await makeAirtableRequestWithPagination<any>(`/${TABLE_IDS.RUNNING_EVENTS}`);
+        eventsCount = allEventsResponse.length;
+      } catch (error) {
+        console.warn('Could not fetch events count:', error);
+      }
+      
+      return {
+        activeCrews,
+        totalRunners,
+        cities: uniqueCities.size,
+        countries: uniqueCountries.size,
+        routes: routesCount,
+        events: eventsCount
+      };
+    } catch (error) {
+      console.error('Failed to fetch global statistics:', error);
+      // Return fallback data if API fails
+      return {
+        activeCrews: 0,
+        totalRunners: 0,
+        cities: 0,
+        countries: 0,
+        routes: 0,
+        events: 0
+      };
     }
   },
 

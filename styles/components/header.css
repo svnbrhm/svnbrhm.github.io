@@ -137,12 +137,12 @@
 }
 
 .header.scrolled .global-search .transparent-input {
-  border-color: var(--crew-primary);
-  color: var(--crew-primary);
+  border-color: var(--primary-dark);
+  color: var(--primary-dark);
 }
 
 .header.scrolled .global-search .transparent-input::placeholder {
-  color: var(--crew-primary);
+  color: var(--primary-dark);
 }
 
 /* Mobile Menu Button - Centered */
