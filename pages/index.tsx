@@ -1,6 +1,7 @@
 import { NextPage, GetStaticProps } from 'next';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
+import { useEffect } from 'react';
 import Hero from '../components/Hero';
 import Statistics from '../components/Statistics';
 import CrewListHomepage from '../components/Crew/CrewListHomepage';
@@ -18,6 +19,24 @@ interface HomeProps {
 }
 
 const Home: NextPage<HomeProps> = ({ crews }) => {
+  // Monitor Core Web Vitals
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
+      const observer = new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        entries.forEach((entry) => {
+          if (entry.entryType === 'largest-contentful-paint') {
+            console.log('LCP:', entry.startTime);
+          }
+        });
+      });
+      
+      observer.observe({ entryTypes: ['largest-contentful-paint'] });
+      
+      return () => observer.disconnect();
+    }
+  }, []);
+
   return (
     <main className="homepage">
       <Hero />
