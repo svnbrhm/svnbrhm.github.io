@@ -1,21 +1,29 @@
 import React from 'react';
 import { Crew } from '@/types/crew';
+import { CrewWithImages } from '../../lib/airtable';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getDefaultCrewLogo, getDefaultCrewPicture } from '../../lib/imageUtils';
 
 interface CrewCardProps {
-  crew: Crew;
+  crew: Crew | CrewWithImages;
   featured?: boolean;
+  priority?: boolean;
 }
 
-const CrewCard: React.FC<CrewCardProps> = ({ crew, featured = false }) => {
+const CrewCard: React.FC<CrewCardProps> = ({ crew, featured = false, priority = false }) => {
+  // Check if crew has optimized images
+  const crewWithImages = crew as CrewWithImages;
+  const hasOptimizedImages = crewWithImages.images !== undefined;
+  
   // Debug logging to check crew data
   console.log('CrewCard Debug:', {
     crewName: crew.CrewName,
+    hasOptimizedImages,
     logoUrl: crew.logoUrl,
     heroImageUrl: crew.heroImageUrl,
     PrimaryImageUrl: crew.PrimaryImageUrl,
+    optimizedImages: hasOptimizedImages ? crewWithImages.images : null,
     mediaCount: crew.media?.length || 0
   });
   
@@ -23,11 +31,15 @@ const CrewCard: React.FC<CrewCardProps> = ({ crew, featured = false }) => {
   const foundingMonth = foundingDate ? foundingDate.toLocaleDateString('en-US', { month: 'short' }) : null;
   const foundingYear = foundingDate ? foundingDate.getFullYear() : null;
 
-  // Get crew logo - use logoUrl from Airtable with local fallback
-  const crewLogo = crew.logoUrl || getDefaultCrewLogo();
+  // Get crew logo - prioritize optimized images, then fallback to original logic
+  const crewLogo = hasOptimizedImages 
+    ? (crewWithImages.images?.logo || getDefaultCrewLogo())
+    : (crew.logoUrl || getDefaultCrewLogo());
   
-  // Get crew picture - use heroImageUrl with fallback to PrimaryImageUrl
-  const crewPicture = crew.heroImageUrl || crew.PrimaryImageUrl;
+  // Get crew picture - prioritize optimized images, then fallback to original logic
+  const crewPicture = hasOptimizedImages
+    ? (crewWithImages.images?.crewPicture || crewWithImages.images?.featured || getDefaultCrewPicture())
+    : (crew.heroImageUrl || crew.PrimaryImageUrl || getDefaultCrewPicture());
   
   // Get crew gallery from Airtable media data
   const crewGallery = crew.media ? crew.media
@@ -46,8 +58,9 @@ const CrewCard: React.FC<CrewCardProps> = ({ crew, featured = false }) => {
       {/* Top Section - Crew Image with Logo and Name Overlay */}
       <div className="crew-card-image-new">
         <Image
-          src={crewPicture || getDefaultCrewPicture()}
+          src={crewPicture}
           alt={`${crew.CrewName} crew picture`}
+          priority={priority}
           fill
           style={{ objectFit: 'cover' }}
           onError={(e) => {

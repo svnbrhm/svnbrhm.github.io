@@ -131,8 +131,8 @@ const DebugImages: NextPage<DebugImagesProps> = ({ crews }) => {
 
 export const getStaticProps: GetStaticProps<DebugImagesProps> = async () => {
   try {
-    console.log('=== DEBUG PAGE: Fetching crews with media ===');
-    const crews = await airtableService.getAllCrewsWithMedia();
+    console.log('=== DEBUG PAGE: Fetching crews with optimized images ===');
+    const crews = await airtableService.getCrewsWithImages({ limit: 100, includeImages: true });
     console.log(`=== DEBUG PAGE: Fetched ${crews.length} crews ===`);
     
     // Log first few crews for debugging

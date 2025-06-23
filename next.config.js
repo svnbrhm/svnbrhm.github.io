@@ -1,3 +1,4 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
@@ -20,9 +21,25 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'images.pexels.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'runningcrews.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'airtable.com',
       }
     ],
     formats: ['image/webp', 'image/avif'],
+  },
+
+  // Increase timeout for static generation to handle large datasets
+  staticPageGenerationTimeout: 180,
+
+  // Enable ISR optimizations
+  experimental: {
+    // ISR memory cache configuration removed as it's not a valid option
   },
 
   // Environment variables

@@ -4,9 +4,11 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import CrewList from '../../components/Crew/CrewList';
 import { Crew } from '../../types/crew';
-import airtableService from '../../lib/airtable';
+import airtableService, { CrewWithImages } from '../../lib/airtable';
+import { getDefaultCrewLogo, getDefaultCrewPicture } from '../../lib/imageUtils';
 import { mockCrews } from '../../lib/mockData';
 import { getRandomCrewHeroImage } from '../../lib/randomImageUtils';
+import CrewCard from '../../components/Crew/CrewCard';
 
 
 // Create a Hero component specifically for the crews page
@@ -64,10 +66,12 @@ const CrewsHero: React.FC<{ onSearch?: (query: string) => void }> = ({ onSearch 
 };
 
 interface CrewsPageProps {
-  crews: Crew[];
+  featuredCrews: CrewWithImages[];
+  allCrews: Crew[];
+  totalCount: number;
 }
 
-const CrewsPage: NextPage<CrewsPageProps> = ({ crews }) => {
+const CrewsPage: NextPage<CrewsPageProps> = ({ featuredCrews, allCrews, totalCount }) => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -98,44 +102,85 @@ const CrewsPage: NextPage<CrewsPageProps> = ({ crews }) => {
       {/* Remove duplicate Header and Footer - they're handled in _app.tsx */}
       <CrewsHero onSearch={handleSearch} />
       <main>
-        <CrewList crews={crews} initialSearchQuery={searchQuery} />
+        {/* Featured Crews Section */}
+        {featuredCrews.length > 0 && (
+          <section className="featured-crews mb-12">
+            <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold text-center mb-8">Featured Crews</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {featuredCrews.map(crew => (
+                  <CrewCard key={crew.id} crew={crew} priority />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+        
+        {/* All Crews Section */}
+        <section className="all-crews">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold mb-6">All Crews ({totalCount})</h2>
+            <CrewList crews={allCrews} initialSearchQuery={searchQuery} />
+          </div>
+        </section>
       </main>
     </>
   );
 };
 
-// Static Site Generation - Pre-build all crew data at build time
-export const getStaticProps: GetStaticProps<CrewsPageProps> = async () => {
-  console.log('Starting getStaticProps for crews page...');
-  
+export const getStaticProps: GetStaticProps = async () => {
   try {
-    console.log('Attempting to fetch crews from Airtable...');
-    // Fetch all crews from Airtable with media data for images
-    const crews = await airtableService.getAllCrewsWithMedia();
+    console.log('=== FETCHING CREW DATA FOR STATIC GENERATION WITH ISR ===');
     
-    console.log('Successfully fetched crews:', crews.length, 'crews');
-    
-    return {
-      props: {
-        crews,
-      },
-      revalidate: 3600, // Revalidate every hour
-    };
-  } catch (error) {
-    console.error('Error fetching crews for static generation:', error);
-    console.error('Error details:', {
-      message: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : 'Unknown'
+    // Get featured crews with images (limited to prevent timeout)
+    const featuredCrews = await airtableService.getCrewsWithImages({
+      featured: true,
+      limit: 10,
+      includeImages: true
     });
     
-    // Fallback to mock data if there's an error
-    console.log('Falling back to mock data...');
+    // Get all crews without images for basic listing (much faster)
+    const allCrews = await airtableService.getAllCrews();
+    
+    console.log(`Successfully fetched ${featuredCrews.length} featured crews and ${allCrews.length} total crews`);
+    
     return {
       props: {
-        crews: mockCrews,
+        featuredCrews,
+        allCrews,
+        totalCount: allCrews.length,
       },
-      revalidate: 86400,
+      // Enable ISR - regenerate page every 24 hours
+      revalidate: 86400, // 24 hours in seconds
+    };
+  } catch (error) {
+    console.error('Error in getStaticProps for crews page:', error);
+    
+    // Fallback to mock data to prevent build failure
+    const mockCrews = [
+      {
+        id: 'mock-1',
+        name: 'Sample Running Crew',
+        city: 'Sample City',
+        country: 'Sample Country',
+        description: 'This is a sample crew for fallback purposes.',
+        logoUrl: getDefaultCrewLogo(),
+        heroImageUrl: getDefaultCrewPicture(),
+        instagramUrl: '',
+        homepageUrl: '',
+        featured: false,
+        slug: 'sample-crew'
+      }
+    ];
+    
+    return {
+      props: {
+        featuredCrews: [],
+        allCrews: mockCrews,
+        totalCount: mockCrews.length,
+      },
+      // Still enable ISR even for fallback
+      revalidate: 3600, // 1 hour for fallback
     };
   }
 };

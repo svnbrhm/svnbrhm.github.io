@@ -89,8 +89,9 @@ export const getStaticProps: GetStaticProps<CrewPageProps> = async ({ params }) 
   }
 
   try {
-    // Fetch specific crew data by ID
-    const crew = await airtableService.getCrewById(id);
+    // Fetch specific crew data by ID - skip media during build to prevent timeouts
+    const isStaticGeneration = process.env.NODE_ENV === 'production' && !params?.preview;
+    const crew = await airtableService.getCrewById(id, !isStaticGeneration);
     
     if (!crew) {
       // Try to find in mock data as fallback

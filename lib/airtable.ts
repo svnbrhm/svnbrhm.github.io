@@ -11,6 +11,22 @@ export interface GlobalStatistics {
   events: number;
 }
 
+// Image loading interfaces for smart loading
+interface CrewImage {
+  type: 'Logo' | 'Crew Picture';
+  url: string;
+  altText?: string;
+  featured?: boolean;
+}
+
+export interface CrewWithImages extends Crew {
+  images?: {
+    logo?: string;
+    crewPicture?: string;
+    featured?: string;
+  };
+}
+
 // Airtable Personal Access Token (replaces deprecated API keys as of Feb 1, 2024)
 // SECURITY FIX: Removed NEXT_PUBLIC_ prefix to keep tokens server-side only
 const AIRTABLE_PERSONAL_ACCESS_TOKEN = process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN;
@@ -619,6 +635,77 @@ export const airtableService = {
     return { logoUrl, heroImageUrl };
   },
 
+  // Optimized function to get crew images
+  async getCrewImages(crewId: string): Promise<CrewImage[]> {
+    try {
+      const response = await makeAirtableRequest<AirtableCrewMediaFields>(
+        `/${TABLE_IDS.CREW_MEDIA}?filterByFormula=SEARCH("${crewId}", {LinkToCrew})`
+      );
+
+      return response.records.map(record => ({
+        type: record.fields.MediaType as 'Logo' | 'Crew Picture',
+        url: record.fields.FileURL as string,
+        altText: record.fields.AltText as string,
+        featured: record.fields.Featured as boolean
+      })).filter(img => img.url); // Only return images with valid URLs
+    } catch (error) {
+      console.error(`Error fetching images for crew ${crewId}:`, error);
+      return [];
+    }
+  },
+
+  // Optimized function to get crews with selective image loading
+  async getCrewsWithImages(options: {
+    featured?: boolean;
+    limit?: number;
+    includeImages?: boolean;
+  } = {}): Promise<CrewWithImages[]> {
+    try {
+      const { featured = false, limit = 50, includeImages = false } = options;
+      
+      let filterFormula = `{Status} = 'Published'`;
+      if (featured) {
+        filterFormula += ` AND {Featured} = TRUE()`;
+      }
+
+      const response = await makeAirtableRequest<AirtableCrewFields>(
+        `/${TABLE_IDS.CREWS}?filterByFormula=${encodeURIComponent(filterFormula)}&maxRecords=${limit}&sort[0][field]=Featured&sort[0][direction]=desc`
+      );
+
+      const crews = response.records.map(transformCrewRecord);
+
+      // Only load images for featured crews or first 20 crews to prevent timeout
+      if (includeImages) {
+        const crewsToLoadImages = featured ? crews : crews.slice(0, 20);
+        
+        const crewsWithImages = await Promise.all(
+          crewsToLoadImages.map(async (crew) => {
+            const images = await this.getCrewImages(crew.id);
+            const imageMap = {
+              logo: images.find(img => img.type === 'Logo')?.url || getDefaultCrewLogo(),
+              crewPicture: images.find(img => img.type === 'Crew Picture')?.url || getDefaultCrewPicture(),
+              featured: images.find(img => img.featured)?.url
+            };
+
+            return {
+              ...crew,
+              images: imageMap
+            };
+          })
+        );
+
+        // Return crews with images first, then crews without images
+        const remainingCrews = featured ? [] : crews.slice(20);
+        return [...crewsWithImages, ...remainingCrews];
+      }
+
+      return crews;
+    } catch (error) {
+      console.error('Error fetching crews with images:', error);
+      return [];
+    }
+  },
+
   // Get all crews with basic data only (PERFORMANCE FIX: Avoid N+1 queries)
   // Use this for overview pages where detailed data isn't needed
   async getAllCrews(): Promise<Crew[]> {
@@ -739,7 +826,7 @@ export const airtableService = {
   },
 
   // Get crew by ID with related data
-  async getCrewById(crewId: string): Promise<Crew | null> {
+  async getCrewById(crewId: string, includeMedia: boolean = true): Promise<Crew | null> {
     try {
       const response = await makeAirtableRequest<AirtableCrewFields>(
         `/${TABLE_IDS.CREWS}?filterByFormula=RECORD_ID()='${crewId}'`
@@ -751,25 +838,35 @@ export const airtableService = {
       
       const crew = transformCrewRecord(response.records[0]);
       
-      // Fetch related data
+      // Fetch related data - skip media during build to prevent timeouts
       try {
-        const [teamMembersResult, schedulesResult, mediaResult] = await Promise.allSettled([
+        const promises = [
           this.getTeamMembers(crew.CrewName),
-          this.getRunSchedules(crew.CrewName),
-          this.getCrewMediaById(crew.id, crew.CrewName)
-        ]);
+          this.getRunSchedules(crew.CrewName)
+        ];
         
-        crew.teamMembers = teamMembersResult.status === 'fulfilled' ? teamMembersResult.value : [];
-        crew.schedules = schedulesResult.status === 'fulfilled' ? schedulesResult.value : [];
-        crew.media = mediaResult.status === 'fulfilled' ? mediaResult.value : [];
+        if (includeMedia) {
+          promises.push(this.getCrewMediaById(crew.id, crew.CrewName));
+        }
         
-        // Extract and populate image URLs from media
-        if (crew.media && crew.media.length > 0) {
-          const imageUrls = this.extractImageUrls(crew.media);
-          crew.logoUrl = imageUrls.logoUrl;
-          crew.heroImageUrl = imageUrls.heroImageUrl;
-          // Update PrimaryImageUrl to use the logo from Airtable
-          crew.PrimaryImageUrl = imageUrls.logoUrl;
+        const results = await Promise.allSettled(promises);
+         
+         crew.teamMembers = results[0].status === 'fulfilled' ? (results[0].value as any[]) : [];
+         crew.schedules = results[1].status === 'fulfilled' ? (results[1].value as any[]) : [];
+        
+        if (includeMedia && results[2]) {
+           crew.media = results[2].status === 'fulfilled' ? (results[2].value as any[]) : [];
+          
+          // Extract and populate image URLs from media
+          if (crew.media && crew.media.length > 0) {
+            const imageUrls = this.extractImageUrls(crew.media);
+            crew.logoUrl = imageUrls.logoUrl;
+            crew.heroImageUrl = imageUrls.heroImageUrl;
+            // Update PrimaryImageUrl to use the logo from Airtable
+            crew.PrimaryImageUrl = imageUrls.logoUrl;
+          }
+        } else {
+          crew.media = [];
         }
       } catch (relatedDataError) {
         console.warn(`Failed to fetch related data for crew ${crew.CrewName}:`, relatedDataError);
