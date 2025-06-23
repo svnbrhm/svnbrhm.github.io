@@ -16,8 +16,13 @@ let fs: any = null;
 let path: any = null;
 
 if (isServer) {
-  fs = require('fs');
-  path = require('path');
+  try {
+    // Use eval to prevent webpack from bundling these modules
+    fs = eval('require')('fs');
+    path = eval('require')('path');
+  } catch (error) {
+    console.warn('Failed to load Node.js modules:', error);
+  }
 }
 
 // Function to get default logo if crew logo doesn't exist
