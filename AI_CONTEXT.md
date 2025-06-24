@@ -120,7 +120,7 @@ A comprehensive monitoring system that automatically tracks when the application
 
 ### Airtable Integration
 - **Status:** Configured and operational
-- **Configuration File:** `.env.local` (contains Airtable API credentials)
+- **Configuration File:** `.env` (contains Airtable API credentials)
 - **Main Integration File:** `/lib/airtable.ts`
 - **Key Functions:**
   - `getCrewsWithImages()` - Fetches crews with three-tier image fallback system
@@ -216,6 +216,31 @@ A comprehensive monitoring system that automatically tracks when the application
 
 ### Recently Resolved Issues
 
+#### Status Field Standardization (December 2024)
+- **Problem:** Inconsistency between Airtable data (lowercase status values) and application code (capitalized status values)
+- **Root Cause:** Airtable contains status values as 'publish', 'draft', 'pending' but TypeScript definitions and filters used 'Published', 'Draft', 'Pending'
+- **Analysis:** Affected all Status type definitions, filter logic, default values, and mock data across the codebase
+- **Solution:** Standardized all Status-related code to use lowercase values matching Airtable data
+- **Files Modified:** 
+  - `types/crew.ts` - Updated Status type definitions
+  - `lib/airtable.ts` - Updated filter logic and default values
+  - `lib/mockData.ts` - Updated mock data status values
+  - All components using Status fields
+- **Verification:** Build successful, Airtable data confirmed with lowercase values
+- **Result:** Complete alignment between Airtable data and application code
+- **Status:** ✅ Resolved
+
+#### Statistics Discrepancy Resolution (June 24, 2025)
+- **Problem:** Manual city count (188) differed from automated statistics (170 cities)
+- **Root Cause:** Manual count included all crew statuses, automated count only used published crews
+- **Analysis:** 449 total crews (362 published, 64 draft, 21 pending, 2 undefined)
+- **Solution:** Updated `getGlobalStatistics()` to count cities/countries from all crews while keeping active crews/runners from published crews only
+- **Result:** Cities: 170→188, Countries: 58→60, aligning with manual count
+- **Files Modified:** `/lib/airtable.ts`, mock data fallbacks
+- **Verification:** Created `scripts/testUpdatedStatistics.js` to confirm accuracy
+- **Documentation:** `STATISTICS_DISCREPANCY_RESOLUTION.md`
+- **Status:** ✅ Resolved
+
 #### Featured Running Crews Section Fix (June 24, 2025)
 - **Problem:** Missing React imports causing compilation errors
 - **Root Cause:** Missing `NextPage` and `GetStaticProps` imports in `/pages/index.tsx`
@@ -277,12 +302,14 @@ npm test             # Run tests
 ```
 
 ### Key Files to Check When Debugging
-1. `.env.local` - Airtable configuration
-2. `/lib/airtable.ts` - Data fetching logic
+1. `.env` - Airtable configuration and credentials
+2. `/lib/airtable.ts` - Data fetching logic and statistics calculation
 3. `/pages/index.tsx` - Homepage implementation
 4. `/components/Crew/` - Crew-related components
 5. `BUGREPORT.md` - Current issues tracking
 6. `status.md` - Project status and progress
+7. `STATISTICS_DISCREPANCY_RESOLUTION.md` - Statistics bug resolution documentation
+8. `/scripts/` - Analysis and testing scripts for Airtable data
 
 ## Memory Optimization Guidelines
 

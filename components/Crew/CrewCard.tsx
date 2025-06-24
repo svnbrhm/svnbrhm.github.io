@@ -45,7 +45,7 @@ const CrewCard: React.FC<CrewCardProps> = ({ crew, featured = false, priority = 
   const crewGallery = crew.media ? crew.media
     .filter(media => 
       media.MediaType === 'Crew Picture' && 
-      media.Status === 'Published' && 
+      media.Status === 'publish' && 
       media.FileURL
     )
     .map(media => ({

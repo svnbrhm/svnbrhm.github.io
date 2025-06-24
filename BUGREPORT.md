@@ -55,7 +55,48 @@ This document tracks all bugs encountered during the development and enhancement
 
 ## 🟡 RESOLVED ISSUES
 
-### 1. Featured Running Crews Section Not Displaying
+### 1. Statistics Discrepancy Between Manual and Automated Counts
+**Status:** RESOLVED  
+**Priority:** High  
+**Description:** Manual city count (188) differed from automated statistics calculation (170 cities), causing confusion about the actual global reach of running crews.
+
+**Details:**
+- Manual count in Airtable showed 188 unique cities
+- Automated statistics on website displayed 170 cities
+- Discrepancy of 18 cities needed investigation and resolution
+- Similar issue with country count (60 vs 58)
+
+**Root Cause Analysis:**
+- Manual count included ALL crew statuses (published, draft, pending, undefined)
+- Automated calculation only counted published crews
+- 449 total crews: 362 published, 64 draft, 21 pending, 2 undefined
+- The 18 missing cities came from non-published crews
+
+**Resolution:**
+- Updated `getGlobalStatistics()` function in `/lib/airtable.ts`
+- Cities and countries now calculated from ALL crews (188 cities, 60 countries)
+- Active crews and total runners still use published crews only (362 crews)
+- Updated mock data fallbacks to reflect new approach
+- Created verification script `scripts/testUpdatedStatistics.js`
+
+**Rationale:**
+- Cities/countries represent global reach regardless of crew status
+- Manual count naturally included all crews, making this expected behavior
+- Active crews should remain published-only for operational accuracy
+
+**Files Modified:** 
+- `/lib/airtable.ts` - Statistics calculation logic
+- Mock data fallbacks updated
+- `scripts/testUpdatedStatistics.js` - Verification script
+- `STATISTICS_DISCREPANCY_RESOLUTION.md` - Documentation
+
+**Verification Results:**
+- ✅ Cities: 188 (matches manual count)
+- ✅ Countries: 60 (matches analysis)
+- ✅ Active crews: 362 (published only)
+- ✅ All counts verified with test script
+
+### 2. Featured Running Crews Section Not Displaying
 **Status:** RESOLVED  
 **Priority:** High  
 **Description:** The "Featured Running Crews" section on the homepage was not displaying crew cards due to missing React imports and compilation errors.
@@ -198,13 +239,14 @@ getStaticProps error in /pages/crews/index.tsx
 
 ### 1. Environment Configuration
 **Priority:** Medium  
-**Description:** Need to properly configure Airtable credentials
+**Description:** Airtable credentials properly configured
 
-**Required Actions:**
-- Create `.env` file with proper Airtable credentials
-- Set `AIRTABLE_PERSONAL_ACCESS_TOKEN`
-- Set `AIRTABLE_BASE_ID`
-- Test real data integration
+**Status:** ✅ RESOLVED
+- Airtable credentials stored in `.env` file
+- `AIRTABLE_PERSONAL_ACCESS_TOKEN` configured
+- `AIRTABLE_BASE_ID` configured
+- Real data integration tested and operational
+- Statistics discrepancy resolved with proper data analysis
 
 ### 2. Global Impact Section Implementation
 **Priority:** High  

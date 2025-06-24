@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import airtableService, { GlobalStatistics } from '../lib/airtable';
 
 interface StatItem {
@@ -50,23 +50,24 @@ const Statistics = () => {
         
         console.log('Statistics component: Updated stats:', updatedStats);
         setStats(updatedStats);
+        // Reset counts to start animation from 0
+        setCounts(updatedStats.map(() => 0));
       } catch (error) {
         console.error('Statistics component: Failed to fetch statistics:', error);
         // Keep default stats if fetch fails
       } finally {
         setIsLoading(false);
-        console.log('Statistics component: Loading finished');
+        console.log('Statistics component: Loading finished, isLoading set to false');
       }
     };
 
     fetchStatistics();
   }, []);
 
-  // Animation logic that starts when scrolling into view
+  // Animation effect for numbers
   useEffect(() => {
     const section = sectionRef.current;
     
-    // Function to animate the numbers
     const startAnimation = () => {
       if (hasAnimated || isLoading) return; // Prevent multiple animations or animation while loading
       
@@ -86,7 +87,6 @@ const Statistics = () => {
             start = end;
             clearInterval(timer);
           }
-          // Update the state for the respective number
           setCounts(prevCounts => {
             const newCounts = [...prevCounts];
             newCounts[index] = Math.floor(start);
@@ -96,13 +96,11 @@ const Statistics = () => {
       });
     };
 
-    // IntersectionObserver that checks when the section becomes visible
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
         if (entry.isIntersecting) {
           startAnimation();
-          // Stop observing after animation has started once
           if (section) {
             observer.unobserve(section);
           }
@@ -111,21 +109,20 @@ const Statistics = () => {
       {
         root: null,
         rootMargin: '0px',
-        threshold: 0.1 // Starts when 10% of the section is visible
+        threshold: 0.1
       }
     );
 
-    if (section && !isLoading) {
+    if (section && !isLoading) { // Only observe after data is loaded
       observer.observe(section);
     }
 
-    // Cleanup function
     return () => {
       if (section) {
         observer.unobserve(section);
       }
     };
-  }, [stats, isLoading, hasAnimated]);
+  }, [stats, hasAnimated, isLoading]);
 
   // JSX structure adapted to the HTML template
   return (
