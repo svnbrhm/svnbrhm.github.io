@@ -1,0 +1,32 @@
+[33m155e78a[m Initial commit: Running Crews website with CI/CD setup
+[33m7936f33[m Trigger deployment
+[33m09a2e72[m Force deployment
+[33m3227465[m Force deployment
+[33mfedc3cb[m Force deployment
+[33ma28c32f[m fix-stats
+[33md1bfb54[m Force deployment - Wed Jun 18 10:05:22 CEST 2025
+[33mc92f021[m Refactor crew components for Airtable integration
+[33m4dbc965[m Trigger automatisiertes Deployment via Vercel Webhook
+[33m784a48e[m Refactor crew components for Airtable integration
+[33m53b8141[m Trigger automatisiertes Deployment via Vercel Webhook
+[33m816a67b[m Trigger deployment after EV check
+[33mce540e5[m Refactor crew components for Airtable integration
+[33m04d3cd6[m Test: Vercel integration nach E-Mail-Fix
+[33me72be14[m Refactor: centralize Airtable table IDs
+[33m271ed47[m Fix: Vercel environment variables configured
+[33m03f4b15[m Fix: Resolve all TypeScript build errors for Vercel deployment
+[33m8b2d138[m Test: GitHub-Vercel integration should work now
+[33m2d140b2[m Final test: Vercel GitHub App should be active now
+[33m25814c2[m FINAL: All Vercel settings optimized
+[33m3d9ac56[m SUCCESS: Vercel integration fully configured
+[33mf7ef0a5[m Fix: Remove problematic env references from vercel.json
+[33m9e38021[m Fix: Remove invalid functions runtime configuration from vercel.json
+[33macc6710[m Fix-compilation-issues
+[33m4a4814f[m Fix-build-timeouts-and-performance-issues
+[33m84514c1[m deployment-and-error-handling
+[33mfe801af[m fix-airtable-configuration-errors
+[33m578c463[m Optimize image handling to prioritize local images
+[33m9a8421e[m Fix deployment issues
+[33m07d87ed[m Fix webpack fs module bundling issue with eval require
+[33m458d1b3[m Fix missing React imports in Statistics and CrewListHomepage components
+[33mbca94cb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Fix duplicate NextPage import in index.tsx

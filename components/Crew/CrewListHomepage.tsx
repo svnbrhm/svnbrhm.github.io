@@ -17,8 +17,15 @@ const CrewListHomepage: React.FC<CrewListHomepageProps> = ({ crews }) => {
   const [randomCrews, setRandomCrews] = useState<Crew[]>([]);
 
   useEffect(() => {
+    console.log('CrewListHomepage Debug:', {
+      crewsLength: crews?.length || 0,
+      crews: crews?.slice(0, 3) || [],
+      crewsType: typeof crews
+    });
     // Get 6 random crews on component mount
-    setRandomCrews(getRandomCrews(crews, 6));
+    const randomSelection = getRandomCrews(crews, 6);
+    console.log('Random crews selected:', randomSelection.length);
+    setRandomCrews(randomSelection);
   }, [crews]);
 
   const getFoundingYear = (foundingDate: string | undefined) => {
@@ -38,9 +45,16 @@ const CrewListHomepage: React.FC<CrewListHomepageProps> = ({ crews }) => {
 
         <div className="crew-homepage-container">
           <div className="crew-cards-container">
-            {randomCrews.map((crew) => (
-              <CrewCard key={crew.id} crew={crew} />
-            ))}
+            {randomCrews.length > 0 ? (
+              randomCrews.map((crew) => (
+                <CrewCard key={crew.id} crew={crew} />
+              ))
+            ) : (
+              <div style={{ padding: '2rem', textAlign: 'center' }}>
+                <p>No crews available to display</p>
+                <p>Debug: crews prop length = {crews?.length || 0}</p>
+              </div>
+            )}
           </div>
         </div>
         

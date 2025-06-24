@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import airtableService, { GlobalStatistics } from '../lib/airtable';
 
 interface StatItem {
@@ -34,8 +34,10 @@ const Statistics = () => {
   useEffect(() => {
     const fetchStatistics = async () => {
       try {
+        console.log('Statistics component: Starting to fetch statistics...');
         setIsLoading(true);
         const globalStats = await airtableService.getGlobalStatistics();
+        console.log('Statistics component: Received global stats:', globalStats);
         
         const updatedStats: StatItem[] = [
           { id: 1, label: 'Active Crews', value: globalStats.activeCrews, priority: 'high' },
@@ -46,12 +48,14 @@ const Statistics = () => {
           { id: 6, label: 'Events', value: globalStats.events, priority: 'medium' },
         ];
         
+        console.log('Statistics component: Updated stats:', updatedStats);
         setStats(updatedStats);
       } catch (error) {
-        console.error('Failed to fetch statistics:', error);
+        console.error('Statistics component: Failed to fetch statistics:', error);
         // Keep default stats if fetch fails
       } finally {
         setIsLoading(false);
+        console.log('Statistics component: Loading finished');
       }
     };
 
@@ -137,15 +141,18 @@ const Statistics = () => {
             <div className="text-gray-600">Loading statistics...</div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {stats.map((stat, index) => (
-              <div key={stat.id} className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
-                  {counts[index].toLocaleString()}
+              <div key={stat.id} className="bg-white rounded-lg shadow-lg p-6 text-center transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+                <div className="mb-4">
+                  <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-green-600 mb-2">
+                    {counts[index].toLocaleString()}
+                  </div>
+                  <div className="text-lg md:text-xl text-gray-800 font-semibold uppercase tracking-wide">
+                    {stat.label}
+                  </div>
                 </div>
-                <div className="text-sm md:text-base text-gray-600 uppercase tracking-wide">
-                  {stat.label}
-                </div>
+                <div className="w-12 h-1 bg-green-500 mx-auto rounded-full"></div>
               </div>
             ))}
           </div>

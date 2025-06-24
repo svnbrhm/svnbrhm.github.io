@@ -671,6 +671,26 @@ export const airtableService = {
     limit?: number;
     includeImages?: boolean;
   } = {}): Promise<CrewWithImages[]> {
+    // Return mock data if Airtable is not configured
+    if (!isAirtableConfigured) {
+      console.log('Airtable not configured, returning mock crew data for getCrewsWithImages');
+      const { mockCrews } = await import('./mockData');
+      const { featured = false, limit = 50 } = options;
+      
+      let filteredCrews = mockCrews;
+      if (featured) {
+        filteredCrews = mockCrews.filter(crew => crew.Featured);
+      }
+      
+      return filteredCrews.slice(0, limit).map(crew => ({
+        ...crew,
+        images: {
+          logo: getOptimizedCrewImage(crew.CrewName, 'logo'),
+          crewPicture: getOptimizedCrewImage(crew.CrewName, 'photo')
+        }
+      }));
+    }
+    
     try {
       const { featured = false, limit = 50, includeImages = false } = options;
       
@@ -691,32 +711,45 @@ export const airtableService = {
         
         const crewsWithImages = await Promise.all(
           crewsToLoadImages.map(async (crew) => {
-            // Try local images first, then fallback to Airtable if needed
+            // Three-tier fallback system:
+            // 1. Local images (fastest)
+            // 2. Airtable images (fallback)
+            // 3. Default backup images (final fallback)
+            
             let airtableImages: any[] = [];
             
-            // Get local images first (fast)
+            // First, try to get local images
             const localLogo = getOptimizedCrewImage(crew.CrewName, 'logo');
             const localPhoto = getOptimizedCrewImage(crew.CrewName, 'photo');
             
-            // Only fetch from Airtable if local images are defaults (slower fallback)
+            // Check if we got default images (meaning no local images found)
             const needsAirtableLogo = localLogo === getDefaultCrewLogo();
             const needsAirtablePhoto = localPhoto === getDefaultCrewPicture();
             
+            // If local images are not available, try Airtable as fallback
             if (needsAirtableLogo || needsAirtablePhoto) {
               try {
                 airtableImages = await this.getCrewImages(crew.id);
               } catch (error) {
                 console.warn(`Failed to fetch Airtable images for ${crew.CrewName}:`, error);
+                // Airtable failed, will use default images as final fallback
               }
             }
             
+            // Build final image map with proper fallback hierarchy
+            const airtableLogo = airtableImages.find(img => img.type === 'Logo')?.url;
+            const airtablePhoto = airtableImages.find(img => img.type === 'Crew Picture')?.url;
+            
             const imageMap = {
+              // Logo: Local -> Airtable -> Default backup
               logo: needsAirtableLogo 
-                ? (airtableImages.find(img => img.type === 'Logo')?.url || getDefaultCrewLogo())
+                ? (airtableLogo || getDefaultCrewLogo())
                 : localLogo,
+              // Photo: Local -> Airtable -> Default backup  
               crewPicture: needsAirtablePhoto 
-                ? (airtableImages.find(img => img.type === 'Crew Picture')?.url || getDefaultCrewPicture())
+                ? (airtablePhoto || getDefaultCrewPicture())
                 : localPhoto,
+              // Featured image from Airtable (optional)
               featured: airtableImages.find(img => img.featured)?.url
             };
 

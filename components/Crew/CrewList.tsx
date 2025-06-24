@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import CrewCard from './CrewCard';
 import WorldMap from '../Map/WorldMap';
 import { Crew } from '@/types/crew';
