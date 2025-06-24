@@ -1,5 +1,6 @@
 import { Crew, TeamMember, CrewMedia, RunSchedule, RunningRoute } from '../types/crew';
 import { getDefaultCrewLogo, getDefaultCrewPicture, getOptimizedCrewImage } from './imageUtils';
+import { trackMockDataUsage } from './mockDataTracker';
 
 // Global statistics interface
 export interface GlobalStatistics {
@@ -49,6 +50,8 @@ const isAirtableConfigured = AIRTABLE_PERSONAL_ACCESS_TOKEN && AIRTABLE_BASE_ID;
 
 if (!isAirtableConfigured) {
   console.warn('Airtable configuration missing. Using mock data for development.');
+  // Track that Airtable is not configured
+  trackMockDataUsage('airtable_initialization', 'airtable_not_configured', 'Missing AIRTABLE_PERSONAL_ACCESS_TOKEN or AIRTABLE_BASE_ID');
 }
 
 const headers = {
@@ -676,6 +679,7 @@ export const airtableService = {
       console.log('Airtable not configured, returning mock crew data for getCrewsWithImages');
       const { mockCrews } = await import('./mockData');
       const { featured = false, limit = 50 } = options;
+      trackMockDataUsage('getCrewsWithImages', 'airtable_not_configured', `featured=${featured}, limit=${limit}`);
       
       let filteredCrews = mockCrews;
       if (featured) {
@@ -777,6 +781,7 @@ export const airtableService = {
   async getAllCrews(): Promise<Crew[]> {
     if (!isAirtableConfigured) {
       console.log('Airtable not configured, returning mock crew data');
+      trackMockDataUsage('getAllCrews', 'airtable_not_configured', 'Basic crew data requested');
       return [
         {
           id: 'mock-1',
@@ -1200,6 +1205,7 @@ export const airtableService = {
   async getGlobalStatistics(): Promise<GlobalStatistics> {
     if (!isAirtableConfigured) {
       console.log('Airtable not configured, returning mock global statistics');
+      trackMockDataUsage('getGlobalStatistics', 'airtable_not_configured', 'Global statistics requested');
       return {
         activeCrews: 1,
         totalRunners: 50,

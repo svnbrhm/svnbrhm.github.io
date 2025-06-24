@@ -33,7 +33,8 @@
 - **Performance:** ISR for optimal loading and SEO
 
 ### Backend & Data
-- **CMS:** Airtable (headless) - **NO MOCK DATA USED**
+- **CMS:** Airtable (headless) with automatic mock data fallback
+- **Mock Data Tracking:** Comprehensive system for monitoring Airtable connectivity and fallback usage
 - **Media Storage:** Public folder (to minimize Airtable API calls)
 - **API:** Airtable REST API
 - **Caching:** ISR (Incremental Static Regeneration)
@@ -77,6 +78,43 @@ The project utilizes several MCP servers to enhance development capabilities:
 - Memory MCP maintains project context across development sessions
 - GitHub MCP enables direct repository management
 - Airtable MCP offers advanced database operations
+
+## Mock Data Tracking System
+
+### Overview
+A comprehensive monitoring system that automatically tracks when the application falls back to mock data due to Airtable connectivity issues or configuration problems.
+
+### Key Components
+- **Core Tracker:** `/lib/mockDataTracker.ts` - Central tracking system with React hooks
+- **Integration Points:** Automatic tracking in `airtable.ts`, `CrewList.tsx`, and `index.tsx`
+- **Monitoring Interfaces:** Admin dashboards and API endpoints for real-time visibility
+- **Documentation:** Complete guide in `/docs/MOCK_DATA_TRACKING.md`
+
+### Features
+- ✅ **Automatic Detection:** Zero-configuration tracking of Airtable failures
+- ✅ **Real-time Monitoring:** Live status indicators and usage metrics
+- ✅ **Historical Tracking:** Persistent storage of mock data usage patterns
+- ✅ **Context Logging:** Detailed error information for debugging
+- ✅ **Admin Interfaces:** Multiple access points for monitoring
+- ✅ **API Integration:** External monitoring system compatibility
+
+### Access Points
+- **Admin Panel:** `/admin/revalidation` (includes status indicator)
+- **Detailed Monitor:** `/admin/mock-data-monitor`
+- **API Metrics:** `/api/mock-data-metrics`
+- **React Hook:** `useMockDataMetrics()` for component-level monitoring
+
+### Integration Status
+- **Airtable Service:** Tracks API failures and configuration issues
+- **CrewList Component:** Monitors component-level fallbacks
+- **Homepage:** Tracks static generation fallbacks
+- **Admin Tools:** Integrated into existing admin interfaces
+
+### Benefits
+- **Proactive Monitoring:** Early detection of Airtable configuration problems
+- **Debugging Support:** Detailed context for troubleshooting
+- **Performance Insights:** Understanding of fallback patterns
+- **Zero Maintenance:** Fully automatic operation
 
 ## Key Project Information
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useRevalidation } from '../../lib/revalidation';
+import MockDataMonitor from './MockDataMonitor';
 
 interface RevalidationPanelProps {
   secret?: string;
@@ -176,6 +177,11 @@ const RevalidationPanel: React.FC<RevalidationPanelProps> = ({
             )}
           </div>
         )}
+      </div>
+
+      {/* Mock Data Monitor */}
+      <div className="mt-6">
+        <MockDataMonitor />
       </div>
 
       {/* Usage Instructions */}

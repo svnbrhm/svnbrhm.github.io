@@ -3,6 +3,7 @@ import CrewCard from './CrewCard';
 import WorldMap from '../Map/WorldMap';
 import { Crew } from '@/types/crew';
 import { mockCrews } from '@/lib/mockData';
+import { trackMockDataUsage } from '@/lib/mockDataTracker';
 
 interface CrewListProps {
   crews: Crew[];
@@ -23,7 +24,14 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
   const [sortBy, setSortBy] = useState<'name' | 'country' | 'members'>('name');
   
   // Use provided crews or fallback to mock data
-  const allCrews = crews && crews.length > 0 ? crews : mockCrews;
+  const allCrews = React.useMemo(() => {
+    if (crews && crews.length > 0) {
+      return crews;
+    } else {
+      trackMockDataUsage('CrewList_component', 'airtable_error', `No crews provided, using ${mockCrews.length} mock crews`);
+      return mockCrews;
+    }
+  }, [crews]);
   
 
   

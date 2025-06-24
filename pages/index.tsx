@@ -2,8 +2,6 @@ import { NextPage, GetStaticProps } from 'next';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import { useEffect } from 'react';
-import { NextPage, GetStaticProps } from 'next';
-// Remove duplicate import since it's already imported at the top
 import Hero from '../components/Hero';
 import Statistics from '../components/Statistics';
 import CrewListHomepage from '../components/Crew/CrewListHomepage';
@@ -11,8 +9,9 @@ import BlogList from '../components/Blog/BlogList';
 import EventList from '../components/Event/EventList';
 import RouteList from '../components/Route/RouteList';
 import { Crew } from '../types/crew';
-import airtableService from '../lib/airtable';
+import { airtableService } from '../lib/airtable';
 import { mockCrews } from '../lib/mockData';
+import { trackMockDataUsage } from '../lib/mockDataTracker';
 
 const WorldMap = dynamic(() => import('../components/Map/WorldMap'), { ssr: false });
 
@@ -88,15 +87,22 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     // Fetch crews with optimized image loading to prevent timeouts
     const crews = await airtableService.getCrewsWithImages({ limit: 20, includeImages: true });
     
+    const finalCrews = crews || mockCrews;
+    if (!crews) {
+      trackMockDataUsage('homepage_getStaticProps', 'airtable_error', 'No crews returned from airtableService.getCrewsWithImages');
+    }
+    
     return {
       props: {
-        crews: crews || mockCrews, // Fallback to mock data if Airtable fails
+        crews: finalCrews,
       },
       // Revalidate every 24 hours
       revalidate: 86400,
     };
   } catch (error) {
     console.error('Error fetching crews for homepage:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    trackMockDataUsage('homepage_getStaticProps', 'airtable_error', `Error during getCrewsWithImages: ${errorMessage}`);
     
     // Fallback to mock data if there's an error
     return {
