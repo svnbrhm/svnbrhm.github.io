@@ -93,5 +93,5 @@ export default async function handler(
 
 // Export config for Vercel
 export const config = {
-  maxDuration: 300, // 5 minutes timeout
+  maxDuration: 60, // 1 minute timeout (max for hobby plan)
 };
