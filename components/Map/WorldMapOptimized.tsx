@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Crew } from '../../types/crew';
+import 'leaflet/dist/leaflet.css';
 
 interface WorldMapOptimizedProps {
   crews: Crew[];
@@ -51,7 +52,7 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
         const data: StaticCrewData = await response.json();
         console.log('✅ Static data loaded:', {
           totalCrews: data.crews.length,
-          sampleCrew: data.crews[0]?.name || 'None'
+          sampleCrew: data.crews[0]?.CrewName || 'None'
         });
         
         // Validate data structure
@@ -74,19 +75,17 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
           const processedCrews = fallbackCrews
             .filter(crew => crew.HeadquarterLatitude && crew.HeadquarterLongitude)
             .map(crew => ({
-              id: crew.id,
-              name: crew.CrewName || crew.City || 'Unknown Crew',
-              status: 'active', // Default status for SSG data
+              ...crew,
               coordinates: {
                 lat: crew.HeadquarterLatitude!,
                 lng: crew.HeadquarterLongitude!
               },
-              headquarter: crew.City || 'Unknown'
+              coordinateSource: 'headquarters' as const
             }));
           
           console.log('✅ Using SSG fallback data:', {
             totalCrews: processedCrews.length,
-            sampleCrew: processedCrews[0]?.name || 'None'
+            sampleCrew: processedCrews[0]?.CrewName || 'None'
           });
           
           setStaticCrews(processedCrews);
@@ -123,6 +122,15 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
 
     const initializeMap = async () => {
       try {
+        // Check if map is already initialized
+        if (mapInstanceRef.current) {
+          console.log('🔄 Map already initialized, updating markers only...');
+          const L = await import('leaflet');
+          if (markersLayerRef.current) {
+            updateMarkersForBounds(mapInstanceRef.current, markersLayerRef.current, L);
+          }
+          return;
+        }
         setDebugInfo('Initializing map...');
         console.log('🚀 Starting map initialization...');
         console.log('📦 Starting Leaflet import...');
@@ -145,8 +153,7 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
         console.log('✅ Leaflet imported successfully');
         setDebugInfo('Leaflet loaded, creating map...');
         
-        // Import Leaflet CSS
-        await import('leaflet/dist/leaflet.css');
+
         
         // Fix for default markers
         delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -157,6 +164,7 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
         });
 
         // Initialize map
+        if (!mapRef.current) return;
         const map = L.map(mapRef.current).setView([20, 0], 3);
         mapInstanceRef.current = map;
 

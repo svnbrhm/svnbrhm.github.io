@@ -7,7 +7,29 @@ This document tracks all bugs encountered during the development and enhancement
 
 ## 🟢 RECENTLY RESOLVED ISSUES
 
-### 1. Map Pins Not Displaying on WorldMap Component
+### 1. Map Container Initialization Error (June 25, 2025)
+**Status:** RESOLVED  
+**Priority:** High  
+**Resolved Date:** June 25, 2025 - 15:46  
+**Description:** "Map container is already initialized" error occurring in WorldMapOptimized component when staticCrews data changed.
+
+**Root Cause:**
+- Leaflet map was being re-initialized when staticCrews data updated
+- useEffect hook was running multiple times without proper cleanup check
+- Map instance was not being properly detected before initialization
+
+**Solution Implemented:**
+- Added conditional check in initializeMap function to detect existing map instance
+- Implemented marker update logic instead of full re-initialization
+- Moved async import and marker update logic inside try block
+- Enhanced error handling and debugging
+
+**Files Modified:**
+- `components/Map/WorldMapOptimized.tsx` - Added map instance detection and marker update logic
+
+**Result:** Map now properly handles data updates without re-initialization errors, improving stability and user experience.
+
+### 2. Map Pins Not Displaying on WorldMap Component
 **Status:** RESOLVED  
 **Priority:** High  
 **Resolved Date:** December 19, 2024  

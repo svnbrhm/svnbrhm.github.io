@@ -3,10 +3,17 @@
 # RunningCrews.com - Project Documentation
 
 **Version:** 1.9
-**Date:** June 25, 2025
+**Date:** June 25, 2025 - 15:46
 **Project Owner:** Sven
 
 ## Recent Updates (Version 1.9 - June 25, 2025)
+
+### Critical Bug Fix (15:46)
+- **Map Container Initialization Error**: Resolved "Map container is already initialized" error in WorldMapOptimized component
+- **Root Cause**: Leaflet map re-initialization when staticCrews data changed without proper cleanup
+- **Solution**: Added conditional check to prevent re-initialization, update markers instead
+- **Technical Implementation**: Enhanced initializeMap function with existing map instance detection
+- **Result**: Improved map stability and user experience
 
 ### UI/UX Improvements
 - **Statistics Section Enhancement**: Centered "Global Impact" heading and removed grey gradient background

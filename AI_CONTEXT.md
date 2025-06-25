@@ -20,9 +20,20 @@
 - **Phase 3:** Advanced features (GPX integration, mobile app, analytics)
 
 **Technology Stack:** Next.js, TypeScript, Tailwind CSS, Airtable  
-**Last Updated:** December 19, 2024
+**Last Updated:** June 25, 2025
 
-## Recent Critical Updates (December 19, 2024)
+## Recent Critical Updates (June 25, 2025)
+
+### Map Container Initialization Error Resolution (June 25, 2025 - 15:46)
+- **RESOLVED**: "Map container is already initialized" error in WorldMapOptimized component
+- **Root Cause**: Leaflet map was being re-initialized when staticCrews data changed without proper cleanup
+- **Solution**: Added conditional check to prevent map re-initialization, update markers instead
+- **Implementation**: Enhanced `initializeMap` function with existing map instance detection
+- **Files Modified**: `components/Map/WorldMapOptimized.tsx`
+- **Technical Details**: Moved async import and marker update logic inside try block
+- **Result**: Map now properly handles data updates without re-initialization errors
+
+## Previous Critical Updates (December 19, 2024)
 
 ### WorldMap Component Optimization and Debugging
 - **RESOLVED**: Map pins not displaying on WorldMap component
@@ -46,7 +57,7 @@
 - **Fallback System**: Enhanced fallback mechanisms for missing data
 - **User Experience**: Improved loading states and error messages
 
-## Previous Updates (June 25, 2025)
+## Additional Updates (June 25, 2025)
 
 ### Statistics Discrepancy Resolution
 - **RESOLVED**: Critical statistics discrepancy between manual (188 cities) and automated (170 cities) counts
