@@ -90,10 +90,10 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
           
           setStaticCrews(processedCrews);
           setDataSource('ssg');
-          setDebugInfo(`Using ${processedCrews.length} crews from fallback data`);
+
         } else {
           setError('Failed to load crew data');
-          setDebugInfo('Error: No crew data available');
+
         }
         
         setIsLoading(false);
@@ -131,7 +131,7 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
           }
           return;
         }
-        setDebugInfo('Initializing map...');
+
         console.log('🚀 Starting map initialization...');
         console.log('📦 Starting Leaflet import...');
         
