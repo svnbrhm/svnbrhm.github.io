@@ -311,9 +311,9 @@ const CrewDetail: React.FC<CrewDetailProps> = ({ crew, otherCrewsInCity, related
                 <div className="story-content">
                   {crew.SEODescription && <p className="mission-statement">{crew.SEODescription}</p>}
                   {crew.CrewStoryLongFinal ? (
-                    {/* skipcq: JS-0440 - dangerouslySetInnerHTML is necessary here to render formatted HTML content from formatCrewStory function which applies proper paragraph, heading, and highlight formatting */}
+                    /* skipcq: JS-0440 - dangerouslySetInnerHTML is necessary here to render formatted HTML content from formatCrewStory function which applies proper paragraph, heading, and highlight formatting */
                     <div dangerouslySetInnerHTML={{ 
-                      __html: formatCrewStory(crew.CrewStoryLongFinal) 
+                      __html: formatCrewStory(crew.CrewStoryLongFinal!) 
                     }} />
                   ) : (
                     <>
