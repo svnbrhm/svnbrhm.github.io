@@ -88,11 +88,11 @@ const RevalidationPage: React.FC<RevalidationPageProps> = ({ isAuthorized }) => 
                 <div className="bg-gray-50 p-3 rounded text-xs font-mono">
                   <div className="mb-2">POST /api/revalidate</div>
                   <div className="text-gray-600">
-                    {`{`}<br />
+                    {'{'}<br />
                     &nbsp;&nbsp;"secret": "your-secret",<br />
                     &nbsp;&nbsp;"type": "crews",<br />
                     &nbsp;&nbsp;"paths": ["/crews/rec123"]<br />
-                    {`}`}
+                    {'}'}
                   </div>
                 </div>
               </div>

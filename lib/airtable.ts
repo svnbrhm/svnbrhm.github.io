@@ -731,9 +731,9 @@ export const airtableService = {
     try {
       const { featured = false, limit = 50, includeImages = false } = options;
       
-      let filterFormula = `{Status} = 'Published'`;
+      let filterFormula = "{Status} = 'Published'";
       if (featured) {
-        filterFormula += ` AND {Featured} = TRUE()`;
+        filterFormula += " AND {Featured} = TRUE()";
       }
 
       const response = await makeAirtableRequest<AirtableCrewFields>(

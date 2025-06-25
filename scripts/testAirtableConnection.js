@@ -31,7 +31,7 @@ function testAirtableAPI() {
       let data = '';
       
       console.log(`📡 Response status: ${res.statusCode}`);
-      console.log(`📡 Response headers:`, res.headers);
+      console.log('📡 Response headers:', res.headers);
       
       res.on('data', (chunk) => {
         data += chunk;
@@ -39,7 +39,7 @@ function testAirtableAPI() {
       
       res.on('end', () => {
         console.log(`📡 Response data length: ${data.length}`);
-        console.log(`📡 Response data:`, data);
+        console.log('📡 Response data:', data);
         
         try {
           const jsonData = JSON.parse(data);

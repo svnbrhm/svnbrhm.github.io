@@ -158,7 +158,7 @@ async function analyzeAllCrews() {
     }
     
     console.log('\n📋 COMPARISON WITH MANUAL COUNT:');
-    console.log(`Manual count: 188 cities`);
+    console.log('Manual count: 188 cities');
     console.log(`All crews count: ${allCities.size} cities`);
     console.log(`Published crews count: ${publishedCities.size} cities`);
     console.log(`Difference (Manual vs All): ${188 - allCities.size} cities`);

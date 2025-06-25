@@ -54,8 +54,8 @@ const formatCrewStory = (story: string): string => {
   ];
   
   subheadlines.forEach(headline => {
-    const regex = new RegExp(`^(${headline})$`, 'gm');
-    formattedStory = formattedStory.replace(regex, `<h2>$1</h2>`);
+    const regex = new RegExp('^(' + headline + ')$', 'gm');
+    formattedStory = formattedStory.replace(regex, '<h2>$1</h2>');
   });
   
   // Format city names as headlines (h1) when they appear on their own line

@@ -61,7 +61,7 @@ filesToCheck.forEach(filePath => {
   if (foundNewValues > 0) {
     console.log(`  ✅ Found ${foundNewValues} updated status values`);
   } else {
-    console.log(`  ℹ️  No status values found in this file`);
+    console.log('  ℹ️  No status values found in this file');
   }
 });
 

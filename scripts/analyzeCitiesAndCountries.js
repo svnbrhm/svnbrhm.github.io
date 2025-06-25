@@ -61,7 +61,7 @@ function makeAirtableRequest(url) {
       let data = '';
       
       console.log(`📡 Response status: ${res.statusCode}`);
-      console.log(`📡 Response headers:`, res.headers);
+      console.log('📡 Response headers:', res.headers);
       
       res.on('data', (chunk) => {
         data += chunk;
@@ -246,7 +246,7 @@ async function analyzeCitiesAndCountries() {
     
     // Compare with your manual count
     console.log('\n🔍 COMPARISON WITH MANUAL COUNT:');
-    console.log(`Manual count: 188 cities`);
+    console.log('Manual count: 188 cities');
     console.log(`Automated count: ${uniqueCities.length} cities`);
     console.log(`Difference: ${188 - uniqueCities.length} cities`);
     

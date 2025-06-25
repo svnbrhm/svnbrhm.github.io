@@ -239,7 +239,7 @@ async function processCrewCoordinates(crew, index, total) {
         coordinateSource: 'geocoded'
       };
     } else {
-      console.log(`  ✗ Failed to geocode`);
+      console.log('  ✗ Failed to geocode');
       return {
         ...crew,
         coordinates: null,
@@ -247,7 +247,7 @@ async function processCrewCoordinates(crew, index, total) {
       };
     }
   } else {
-    console.log(`  ✗ Missing city or country data`);
+    console.log('  ✗ Missing city or country data');
     return {
       ...crew,
       coordinates: null,
