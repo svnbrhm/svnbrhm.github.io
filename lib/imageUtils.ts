@@ -17,9 +17,10 @@ let path: any = null;
 
 if (isServer) {
   try {
-    // Use eval to prevent webpack from bundling these modules
-    fs = eval('require')('fs');
-    path = eval('require')('path');
+    // Use dynamic require to prevent webpack from bundling these modules
+    const nodeRequire = typeof __non_webpack_require__ !== 'undefined' ? __non_webpack_require__ : require;
+    fs = nodeRequire('fs');
+    path = nodeRequire('path');
   } catch (error) {
     console.warn('Failed to load Node.js modules:', error);
   }
