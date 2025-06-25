@@ -72,16 +72,16 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
         // Fallback to SSG data
         if (fallbackCrews && fallbackCrews.length > 0) {
           const processedCrews = fallbackCrews
-            .filter(crew => crew.headquarter?.coordinates?.lat && crew.headquarter?.coordinates?.lng)
+            .filter(crew => crew.HeadquarterLatitude && crew.HeadquarterLongitude)
             .map(crew => ({
               id: crew.id,
-              name: crew.name,
-              status: crew.status,
+              name: crew.CrewName || crew.City || 'Unknown Crew',
+              status: 'active', // Default status for SSG data
               coordinates: {
-                lat: crew.headquarter!.coordinates!.lat,
-                lng: crew.headquarter!.coordinates!.lng
+                lat: crew.HeadquarterLatitude!,
+                lng: crew.HeadquarterLongitude!
               },
-              headquarter: crew.headquarter?.city || 'Unknown'
+              headquarter: crew.City || 'Unknown'
             }));
           
           console.log('✅ Using SSG fallback data:', {
@@ -225,7 +225,7 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
     const visibleCrews = staticCrews.filter(crew => {
       if (!crew.coordinates) return false;
       // Temporarily allow crews without names to debug the marker display
-      // if (!crew.name || crew.name.trim() === '') return false;
+      // if (!crew.CrewName || crew.CrewName.trim() === '') return false;
       
       return true; // Show all crews for debugging
       // const { lat, lng } = crew.coordinates;
@@ -238,8 +238,8 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
     console.log(`🗺️ Showing ${limitedCrews.length} crews at zoom level ${zoom}`);
     console.log('📊 Total static crews:', staticCrews.length);
     console.log('📍 Crews with coordinates:', staticCrews.filter(c => c.coordinates).length);
-    console.log('📝 Crews with names:', staticCrews.filter(c => c.name && c.name.trim() !== '').length);
-    console.log('🏙️ Crews with cities:', staticCrews.filter(c => c.city && c.city.trim() !== '').length);
+    console.log('📝 Crews with names:', staticCrews.filter(c => c.CrewName && c.CrewName.trim() !== '').length);
+    console.log('🏙️ Crews with cities:', staticCrews.filter(c => c.City && c.City.trim() !== '').length);
     console.log('🔍 Sample visible crew:', limitedCrews[0]);
     console.log('🎯 Adding markers to map...');
     
@@ -258,7 +258,7 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
       const { lat, lng } = crew.coordinates;
       
       // Create custom icon based on crew status
-      const iconColor = getCrewStatusColor(crew.status);
+      const iconColor = getCrewStatusColor('active'); // Default to active status
       const customIcon = L.divIcon({
         className: 'custom-crew-marker',
         html: `<div style="background-color: ${iconColor}; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.5); z-index: 1000;"></div>`,
@@ -270,15 +270,15 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
       const marker = L.marker([lat, lng], { icon: customIcon });
       
       // Create popup content with fallback for empty names
-      const displayName = crew.name && crew.name.trim() !== '' ? crew.name : `${crew.city}, ${crew.country}`;
+      const displayName = crew.CrewName && crew.CrewName.trim() !== '' ? crew.CrewName : `${crew.City}, ${crew.Country}`;
       const popupContent = `
         <div class="crew-popup">
           <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: bold;">${displayName}</h3>
-          <p style="margin: 0 0 4px 0; color: #666; font-size: 14px;">${crew.city}, ${crew.country}</p>
-          <p style="margin: 0 0 8px 0; font-size: 12px; color: #888;">Status: ${crew.status}</p>
+          <p style="margin: 0 0 4px 0; color: #666; font-size: 14px;">${crew.City}, ${crew.Country}</p>
+          <p style="margin: 0 0 8px 0; font-size: 12px; color: #888;">Status: Active</p>
           <div style="display: flex; gap: 8px; margin-top: 8px;">
             <a href="/crews/${crew.id}" style="background: #3b82f6; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">View Details</a>
-            ${crew.website ? `<a href="${crew.website}" target="_blank" rel="noopener noreferrer" style="background: #10b981; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">Website</a>` : ''}
+            ${crew.HomepageURL ? `<a href="${crew.HomepageURL}" target="_blank" rel="noopener noreferrer" style="background: #10b981; color: white; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 12px;">Website</a>` : ''}
           </div>
           <div style="margin-top: 8px; font-size: 10px; color: #aaa;">
             Coordinates: ${crew.coordinateSource === 'headquarters' ? 'HQ' : 'Geocoded'}
