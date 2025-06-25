@@ -20,7 +20,43 @@
 - **Phase 3:** Advanced features (GPX integration, mobile app, analytics)
 
 **Technology Stack:** Next.js, TypeScript, Tailwind CSS, Airtable  
-**Last Updated:** June 24, 2025
+**Last Updated:** June 25, 2025
+
+## Recent Critical Updates (June 25, 2025)
+
+### Statistics Discrepancy Resolution
+- **RESOLVED**: Critical statistics discrepancy between manual (188 cities) and automated (170 cities) counts
+- **Root Cause**: Manual count included ALL crew statuses, automated count only published crews
+- **Solution**: Updated `getGlobalStatistics()` to count cities/countries from ALL crews (188 cities, 60 countries)
+- **Impact**: Active crews and runners still use published crews only for operational accuracy
+- **Verification**: All counts validated with test scripts
+
+### Environment Variable Standardization
+- **RESOLVED**: Inconsistent environment variable naming across project files
+- **Standardized**: All files now use `AIRTABLE_PERSONAL_ACCESS_TOKEN` consistently
+- **Updated Files**: `README.md`, `analyzeCitiesAndCountries.js`, and documentation
+- **Legacy References**: Maintained in migration docs and test files for compatibility
+
+### Security and Performance Improvements
+- **Environment Security**: Removed `NEXT_PUBLIC_` prefix from sensitive Airtable tokens
+- **Performance**: Optimized Airtable API calls, reduced N+1 query problems
+- **Image Loading**: Transitioned to two-tier fallback system (local → default)
+
+### Statistics Section UI Improvements (June 25, 2025 - 09:56)
+- **UI Enhancement**: Centered "Global Impact" heading and removed grey gradient background
+- **CSS Modernization**: Replaced Tailwind utility classes with semantic CSS classes
+- **Files Updated**: `styles/components/statistics.css`, `components/Statistics.tsx`
+- **Improvements**: Better maintainability, cleaner visual design, preserved animations
+- **Result**: Clean, professional statistics section with transparent background
+
+### WorldMap Component CSS Modularization (June 25, 2025 - 11:02)
+- **CSS Architecture**: Extracted map-related styles from `globals.css` into dedicated `styles/components/map.css`
+- **Modular Organization**: Created component-specific CSS file following established pattern
+- **Files Updated**: `styles/globals.css`, `styles/components/map.css`
+- **Styles Moved**: `#map`, `.map-section`, `.map-view-container` and responsive variants
+- **Import Added**: `@import './components/map.css'` to maintain centralized CSS management
+- **Benefits**: Improved maintainability, consistent architecture, cleaner global CSS structure
+- **Visual Enhancements**: Added shadow effect to map matching crew cards styling
 
 ## Technology Stack
 
@@ -97,6 +133,8 @@ A comprehensive monitoring system that automatically tracks when the application
 - ✅ **Context Logging:** Detailed error information for debugging
 - ✅ **Admin Interfaces:** Multiple access points for monitoring
 - ✅ **API Integration:** External monitoring system compatibility
+- ✅ **Statistics Accuracy:** Verified counts with comprehensive test scripts
+- ✅ **Environment Consistency:** Standardized variable naming across all files
 
 ### Access Points
 - **Admin Panel:** `/admin/revalidation` (includes status indicator)
@@ -123,9 +161,9 @@ A comprehensive monitoring system that automatically tracks when the application
 - **Configuration File:** `.env` (contains Airtable API credentials)
 - **Main Integration File:** `/lib/airtable.ts`
 - **Key Functions:**
-  - `getCrewsWithImages()` - Fetches crews with three-tier image fallback system
+  - `getCrewsWithImages()` - Fetches crews with local image optimization
   - `getFeaturedCrews()` - Retrieves featured crews for homepage
-  - Image optimization with local/Airtable/default fallbacks
+  - Image optimization with local/default fallbacks (Airtable image fetching removed)
 
 #### Access Details
 - **Base ID:** [Stored in .env file]
@@ -199,10 +237,11 @@ A comprehensive monitoring system that automatically tracks when the application
 - **Visual Consistency:** Uniform structure across all card types
 
 ### Image System
-- **Local Images:** `/public/images/crew/`
-- **Fallback System:** Local → Airtable → Default backup
+- **Local Images:** `/public/images/crew/logos` (300+ logo files), `/public/images/crew/photos` (300+ photo files)
+- **Fallback System:** Local → Default backup (Airtable fetching removed for performance)
 - **Default Images:** `default-crew-hero.jpg`, `default-crew-hero.svg`
-- **Optimization:** Handled by `imageUtils.ts` and `randomImageUtils.ts`
+- **Optimization:** Handled by `imageUtils.ts` with caching and filename normalization
+- **Performance:** Local-first approach eliminates unnecessary API calls
 
 ## Current Project Status
 
@@ -252,6 +291,26 @@ A comprehensive monitoring system that automatically tracks when the application
 - **Problem:** Duplicate import statement for Hero component
 - **Solution:** Removed duplicate import line
 - **Files Modified:** `/pages/index.tsx`
+- **Status:** ✅ Resolved
+
+#### Airtable Image Loading Optimization (January 2025)
+- **Problem:** System was making unnecessary Airtable API calls for crew images despite having extensive local image collections (300+ logos and photos)
+- **Root Cause:** Three-tier fallback system (local → Airtable → default) was still attempting Airtable fetches when local images weren't found, causing development server crashes due to CREW_MEDIA table targeting issues
+- **Analysis:** Local image directories `/public/images/crew/logos` and `/public/images/crew/photos` contained comprehensive coverage with proper filename normalization
+- **Solution:** 
+  - Simplified image loading to two-tier system (local → default)
+  - Removed all Airtable image fetching logic from `getCrewsWithImages()`
+  - Deprecated `getCrewImages()` method that was causing table targeting issues
+  - Maintained local image caching and optimization via `imageUtils.ts`
+- **Files Modified:** 
+  - `/lib/airtable.ts` - Removed Airtable image fetching, simplified fallback logic
+  - `/lib/imageUtils.ts` - Preserved local image optimization and caching
+- **Result:** 
+  - Eliminated unnecessary Airtable API calls for images
+  - Resolved development server crashes
+  - Maintained fast, reliable image loading from local collections
+  - Server logs now show "Loading images for [CrewName] from local collection"
+- **Verification:** Development server runs without crashes, images load exclusively from local files
 - **Status:** ✅ Resolved
 
 ## Current Open Issues

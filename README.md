@@ -44,7 +44,7 @@ cp .env.example .env.local
 
 Edit `.env.local` with your Airtable credentials:
 ```
-AIRTABLE_API_KEY=your_actual_api_key
+AIRTABLE_PERSONAL_ACCESS_TOKEN=your_actual_personal_access_token
 AIRTABLE_BASE_ID=your_actual_base_id
 ```
 
@@ -99,7 +99,7 @@ npm run dev
 
 Required environment variables:
 
-- `AIRTABLE_API_KEY` - Your Airtable API key
+- `AIRTABLE_PERSONAL_ACCESS_TOKEN` - Your Airtable personal access token
 - `AIRTABLE_BASE_ID` - Your Airtable base ID
 - `NEXT_PUBLIC_SITE_URL` - Your site URL (for SEO)
 

@@ -27,7 +27,7 @@ export const mockCrews: Crew[] = [
         PaceDescription: "Conversational pace",
         RunningType: "Street Run",
         RunSchedulesStatus: "Active",
-        Status: "publish"
+        Status: "Published"
       },
       {
         RunName: "Saturday Long Run",
@@ -37,7 +37,7 @@ export const mockCrews: Crew[] = [
         PaceDescription: "Mixed pace groups",
         RunningType: "Street Run",
         RunSchedulesStatus: "Active",
-        Status: "publish"
+        Status: "Published"
       }
     ],
     teamMembers: [
@@ -45,7 +45,7 @@ export const mockCrews: Crew[] = [
         MemberName: "Anna Schmidt",
         Role: ["Founder", "Captain"],
         MemberStatus: "Active",
-        Status: "publish"
+        Status: "Published"
       }
     ]
   },
@@ -76,7 +76,7 @@ export const mockCrews: Crew[] = [
         PaceDescription: "Moderate pace",
         RunningType: "Street Run",
         RunSchedulesStatus: "Active",
-        Status: "publish"
+        Status: "Published"
       }
     ]
   },
@@ -105,7 +105,7 @@ export const mockCrews: Crew[] = [
         PaceDescription: "Easy pace",
         RunningType: "Street Run",
         RunSchedulesStatus: "Active",
-        Status: "publish"
+        Status: "Published"
       }
     ]
   },
@@ -136,7 +136,7 @@ export const mockCrews: Crew[] = [
         PaceDescription: "Conversational",
         RunningType: "Street Run",
         RunSchedulesStatus: "Active",
-        Status: "publish"
+        Status: "Published"
       }
     ]
   },
@@ -165,7 +165,7 @@ export const mockCrews: Crew[] = [
         PaceDescription: "Varied pace",
         RunningType: "Trailrun",
         RunSchedulesStatus: "Active",
-        Status: "publish"
+        Status: "Published"
       }
     ]
   },
@@ -194,7 +194,7 @@ export const mockCrews: Crew[] = [
         PaceDescription: "Challenging",
         RunningType: "Trailrun",
         RunSchedulesStatus: "Active",
-        Status: "publish"
+        Status: "Published"
       }
     ]
   }

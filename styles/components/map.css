@@ -1,0 +1,71 @@
+/* Map Component Styles */
+
+/* Map Styles - Updated for 4:3 aspect ratio and consistent sizing */
+#map {
+  width: 100%;
+  aspect-ratio: 4/3; /* 4:3 aspect ratio for better visual presentation */
+  min-height: 400px;
+  max-height: 600px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-light);
+  z-index: 1;
+}
+
+.map-section {
+  margin: 0 2rem 3rem;
+  max-width: 1200px; /* Consistent max width */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Map view container for crews page */
+.map-view-container {
+  background: white;
+  box-shadow: var(--shadow-light);
+  border-radius: 15px;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    #map {
+        min-height: 350px;
+        max-height: 500px;
+    }
+    
+    .map-section {
+        margin: 0 1rem 3rem 1rem;
+    }
+    
+    .map-view-container {
+        margin: 0 1rem 3rem 1rem;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    #map {
+        min-height: 300px;
+        max-height: 400px;
+    }
+    
+    .map-section {
+        margin: 0 0.5rem 2rem 0.5rem;
+    }
+    
+    .map-view-container {
+        margin: 0 0.5rem 2rem 0.5rem;
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #map {
+        min-height: 250px;
+        max-height: 350px;
+    }
+}

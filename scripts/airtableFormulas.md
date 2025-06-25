@@ -24,12 +24,12 @@ COUNTA(UNIQUE(Crews.Country))
 
 ### 3. Count Unique Cities (Published Only)
 ```
-COUNTA(UNIQUE(FILTER(Crews.City, Crews.Status = "publish")))
+COUNTA(UNIQUE(FILTER(Crews.City, Crews.Status = "Published")))
 ```
 
 ### 4. Count Unique Countries (Published Only)
 ```
-COUNTA(UNIQUE(FILTER(Crews.Country, Crews.Status = "publish")))
+COUNTA(UNIQUE(FILTER(Crews.Country, Crews.Status = "Published")))
 ```
 
 ### 5. List All Unique Cities (for verification)

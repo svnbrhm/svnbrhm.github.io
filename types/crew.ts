@@ -69,7 +69,7 @@ export interface TeamMember {
   ProfileImage?: string[];
   Bio?: string;
   MemberStatus: 'Active' | 'Inactive' | 'Former';
-  Status: 'draft' | 'publish' | 'archived' | 'featured' | 'pending';
+  Status: 'Draft' | 'Published' | 'Archived' | 'Featured' | 'Pending Review';
 }
 
 // Airtable attachment object interface (for type consistency)
@@ -99,7 +99,7 @@ export interface CrewMedia {
   Featured: boolean;
   UploadDate?: string;
   LastUpdated?: string;
-  Status: 'draft' | 'publish' | 'archived' | 'featured' | 'pending';
+  Status: 'Draft' | 'Published' | 'Archived' | 'Featured' | 'Pending Review';
 }
 
 export interface RunSchedule {
@@ -117,7 +117,7 @@ export interface RunSchedule {
   SeasonalPeriod?: string;
   LastUpdated?: string;
   MeetingPointGoogleMapsLink?: string;
-  Status: 'draft' | 'publish' | 'archived' | 'featured' | 'pending';
+  Status: 'Draft' | 'Published' | 'Archived' | 'Featured' | 'Pending Review';
 }
 
 export interface RunningEvent {
@@ -135,7 +135,7 @@ export interface RunningEvent {
   EventURL?: string;
   RegistrationURL?: string;
   EventImage?: string[];
-  Status: 'draft' | 'publish' | 'archived' | 'featured' | 'pending';
+  Status: 'Draft' | 'Published' | 'Archived' | 'Featured' | 'Pending Review';
 }
 
 export interface RunningRoute {
@@ -154,7 +154,7 @@ export interface RunningRoute {
   EndLatitude?: number;
   EndLongitude?: number;
   Featured: boolean;
-  Status: 'draft' | 'publish' | 'archived' | 'featured' | 'pending';
+  Status: 'Draft' | 'Published' | 'Archived' | 'Featured' | 'Pending Review';
 }
 
 export interface CrewFilters {

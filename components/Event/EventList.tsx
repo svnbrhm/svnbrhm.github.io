@@ -1,61 +1,46 @@
 import React from 'react';
 import EventCard from './EventCard';
 
-const events = [
-  { 
-    id: "1", 
-    title: "Brooklyn Bridge Sunrise Run", 
-    date: "2024-12-15", 
-    location: "Brooklyn, New York", 
-    snippet: "Frühmorgendlicher Lauf über die ikonische Brooklyn Bridge mit atemberaubendem Sonnenaufgang.",
-    image: "https://images.pexels.com/photos/3766204/pexels-photo-3766204.jpeg",
-    subheadline: "Sonnenaufgang über NYC"
-  },
-  { 
-    id: "2", 
-    title: "Berlin Winter Solstice Marathon", 
-    date: "2024-12-22", 
-    location: "Berlin, Germany", 
-    snippet: "Feiere die Wintersonnenwende bei diesem besonderen Marathon durch historische Viertel.",
-    image: "https://images.pexels.com/photos/3764154/pexels-photo-3764154.jpeg",
-    subheadline: "Wintersonnenwende-Special"
-  },
-  { 
-    id: "3", 
-    title: "New Year Tokyo Night Run", 
-    date: "2025-01-01", 
-    location: "Tokyo, Japan", 
-    snippet: "Starte das neue Jahr richtig mit einem spektakulären Mitternachtslauf durch Shibuya.",
-    image: "https://images.pexels.com/photos/204546/pexels-photo-204546.jpeg",
-    subheadline: "Neujahrs-Spektakel"
-  },
-  { 
-    id: "4", 
-    title: "Thames Path Challenge", 
-    date: "2025-01-08", 
-    location: "London, United Kingdom", 
-    snippet: "Bewältige den Thames Path bei dieser malerischen Flussufer-Laufherausforderung.",
-    image: "https://images.pexels.com/photos/5038818/pexels-photo-5038818.jpeg",
-    subheadline: "Riverside Challenge"
-  },
-];
+interface EventListProps {
+  events?: any[];
+}
 
-const EventList = () => {
+const EventList: React.FC<EventListProps> = ({ events = [] }) => {
+  if (events.length === 0) {
+    return (
+      <section className="section" id="events">
+        <div className="cards-container">
+          <div className="empty-state">
+            <h3>No events available</h3>
+            <p>Check back soon for exciting running events from crews worldwide!</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="section" id="events">
-      <h2 className="section-title">Upcoming Runs & Events</h2>
-      <div className="card-grid">
+      <div className="cards-container">
         {events.map((event) => (
-          <EventCard key={event.id} event={event} />
+          <EventCard key={event.id} event={{
+            id: event.id,
+            title: event.eventName,
+            date: event.eventStartDate,
+            location: `${event.city || ''}${event.city && event.country ? ', ' : ''}${event.country || ''}`.trim(),
+            snippet: event.briefDescription,
+            image: event.eventImage,
+            subheadline: event.eventType?.join(', ') || 'Running Event'
+          }} />
         ))}
       </div>
-      <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+      <div className="section-footer">
         <a 
           href="/events" 
-          className="cta-button" 
-          style={{ backgroundColor: 'var(--event-orange)' }}
+          className="view-all-button"
+          style={{ backgroundColor: 'var(--events-blue)' }}
         >
-          Alle Events entdecken
+          View All Events
         </a>
       </div>
     </section>

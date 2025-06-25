@@ -56,7 +56,7 @@ This document tracks all bugs encountered during the development and enhancement
 ## 🟡 RESOLVED ISSUES
 
 ### 1. Statistics Discrepancy Between Manual and Automated Counts
-**Status:** RESOLVED  
+**Status:** RESOLVED (June 25, 2025)  
 **Priority:** High  
 **Description:** Manual city count (188) differed from automated statistics calculation (170 cities), causing confusion about the actual global reach of running crews.
 
@@ -96,7 +96,74 @@ This document tracks all bugs encountered during the development and enhancement
 - ✅ Active crews: 362 (published only)
 - ✅ All counts verified with test script
 
-### 2. Featured Running Crews Section Not Displaying
+### 2. Environment Variable Naming Inconsistency
+**Status:** RESOLVED (June 25, 2025)  
+**Priority:** Medium  
+**Description:** Inconsistent usage of `AIRTABLE_API_KEY` vs `AIRTABLE_PERSONAL_ACCESS_TOKEN` across project files.
+
+**Details:**
+- Some files referenced deprecated `AIRTABLE_API_KEY`
+- Project standard is `AIRTABLE_PERSONAL_ACCESS_TOKEN`
+- Inconsistency could cause configuration confusion
+
+**Resolution:**
+- Updated `README.md` to use `AIRTABLE_PERSONAL_ACCESS_TOKEN` consistently
+- Updated `analyzeCitiesAndCountries.js` to remove `AIRTABLE_API_KEY` fallback
+- Standardized all documentation and examples
+- Maintained legacy references only in migration docs for compatibility
+
+**Files Modified:**
+- `README.md` - Updated environment variable examples
+- `analyzeCitiesAndCountries.js` - Removed deprecated fallback
+- Various documentation files for consistency
+
+**Impact:**
+- Consistent environment variable naming across entire project
+- Reduced configuration confusion for developers
+- Maintained backward compatibility in migration documentation
+
+### 2. Airtable Image Loading Performance Issues
+**Status:** RESOLVED  
+**Priority:** High  
+**Description:** Unnecessary Airtable API calls for image loading despite having comprehensive local image collections, causing performance overhead and potential server crashes.
+
+**Details:**
+- Application was using three-tier image fallback system (local → Airtable → default)
+- Despite having 300+ local logos in `/public/images/crew/logos` and 300+ photos in `/public/images/crew/photos`
+- Airtable API calls were being made unnecessarily for images that existed locally
+- `getCrewImages()` method in `/lib/airtable.ts` was causing CREW_MEDIA table targeting issues
+- Server crashes occurred due to problematic Airtable image fetching logic
+
+**Root Cause Analysis:**
+- Three-tier fallback system was over-engineered for the available local image resources
+- CREW_MEDIA table targeting in `getCrewImages()` method (line 697) caused API errors
+- Unnecessary API overhead when local images were sufficient
+
+**Resolution:**
+- Simplified to two-tier image fallback system (local → default)
+- Completely removed Airtable image fetching logic from `/lib/airtable.ts`
+- Deprecated and commented out problematic `getCrewImages()` method
+- Updated `imageUtils.ts` to use local-first approach
+- Verified server stability with new local-only image loading
+
+**Performance Impact:**
+- Eliminated unnecessary API calls and overhead
+- Improved server stability and startup time
+- Maintained full image functionality with local resources
+- Reduced complexity in image loading logic
+
+**Files Modified:**
+- `/lib/airtable.ts` - Removed image fetching logic
+- `/lib/imageUtils.ts` - Updated for local-first approach
+- `AI_CONTEXT.md` - Updated documentation
+
+**Verification Results:**
+- ✅ Server runs without crashes
+- ✅ Images load exclusively from local collections
+- ✅ Console logs confirm local image loading (Viens M'Attraper, Pace Pack Runners, etc.)
+- ✅ Performance improved with eliminated API overhead
+
+### 3. Featured Running Crews Section Not Displaying
 **Status:** RESOLVED  
 **Priority:** High  
 **Description:** The "Featured Running Crews" section on the homepage was not displaying crew cards due to missing React imports and compilation errors.
@@ -286,7 +353,7 @@ getStaticProps error in /pages/crews/index.tsx
 
 ---
 
-**Last Updated:** June 24, 2025  
+**Last Updated:** June 25, 2025  
 **Environment:** Development  
 **Next.js Version:** 14.2.29  
 **Node.js Version:** Latest LTS  

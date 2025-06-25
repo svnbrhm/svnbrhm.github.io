@@ -2,6 +2,12 @@
 
 This guide explains how to configure Airtable to fetch real statistics instead of mock data.
 
+**Last Updated:** June 25, 2025
+
+## Important: Environment Variable Standardization
+
+As of June 25, 2025, all project files use `AIRTABLE_PERSONAL_ACCESS_TOKEN` consistently. The deprecated `AIRTABLE_API_KEY` references have been removed from all configuration files and documentation.
+
 ## Prerequisites
 
 1. An Airtable account with access to your running crews database
@@ -48,9 +54,12 @@ Your Airtable base should contain these tables:
 2. Replace the placeholder values:
 
 ```env
-# Airtable Configuration
+# Airtable Configuration (Standardized as of June 25, 2025)
 AIRTABLE_PERSONAL_ACCESS_TOKEN=your_actual_token_here
 AIRTABLE_BASE_ID=your_actual_base_id_here
+
+# Note: AIRTABLE_API_KEY is deprecated and no longer used
+# All project files now use AIRTABLE_PERSONAL_ACCESS_TOKEN consistently
 ```
 
 ### Step 4: Update Table IDs (if needed)
@@ -69,7 +78,7 @@ const TABLE_IDS = {
 
 The system fetches:
 
-- **Published Crews**: Count of crews with Status = "publish"
+- **Published Crews**: Count of crews with Status = "Published"
 - **Total Runners**: Total count from Runners table
 - **Unique Cities**: Distinct cities from Crews table
 - **Unique Countries**: Distinct countries from Crews table
@@ -98,7 +107,15 @@ The system fetches:
    - Ensure base ID is correct
 
 3. **Zero statistics**
-   - Check that your Crews table has records with Status = "publish"
+   - Verify your crews have the correct Status field values
+   - Check that city and country fields are populated
+   - Ensure your base structure matches the expected schema
+
+4. **Environment variable confusion**
+   - Use `AIRTABLE_PERSONAL_ACCESS_TOKEN` (not `AIRTABLE_API_KEY`)
+   - All project files have been standardized to use this naming
+   - Legacy references exist only in migration documentation
+   - Check that your Crews table has records with Status = "Published"
    - Verify field names match the expected structure
 
 ### Debug Mode

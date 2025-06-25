@@ -1,57 +1,45 @@
 import React from 'react';
 import BlogCard from './BlogCard';
 
-const blogs = [
-  { 
-    id: "1", 
-    title: "Von der Couch zum 5K", 
-    date: "2024-12-05", 
-    snippet: "Wie der Beitritt zu einer lokalen Laufgruppe meine Fitness-Reise verändert hat...", 
-    image: "https://images.pexels.com/photos/3764558/pexels-photo-3764558.jpeg",
-    subheadline: "Meine Reise mit den Berlin Runners"
-  },
-  { 
-    id: "2", 
-    title: "Marathon-Trainingstipps", 
-    date: "2024-11-28", 
-    snippet: "Erfahrene Läufer der Brooklyn Street Runners teilen ihre besten Tipps...", 
-    image: "https://images.pexels.com/photos/3764154/pexels-photo-3764154.jpeg",
-    subheadline: "Von NYC-Veteranen"
-  },
-  { 
-    id: "3", 
-    title: "Die Magie des Nachtlaufs", 
-    date: "2024-11-20", 
-    snippet: "Entdecke, warum Tokios neonbeleuchtete Straßen die perfekte Kulisse bieten...", 
-    image: "https://images.pexels.com/photos/204546/pexels-photo-204546.jpeg",
-    subheadline: "Nachtlauf in Tokyo"
-  },
-  { 
-    id: "4", 
-    title: "Laufgruppen weltweit", 
-    date: "2024-11-15", 
-    snippet: "Ein Blick auf die vielfältigen Laufgemeinschaften rund um den Globus...", 
-    image: "https://images.pexels.com/photos/5038818/pexels-photo-5038818.jpeg",
-    subheadline: "Globale Community"
-  },
-];
+interface BlogListProps {
+  blogs?: any[];
+}
 
-const BlogList = () => {
+const BlogList: React.FC<BlogListProps> = ({ blogs = [] }) => {
+  if (blogs.length === 0) {
+    return (
+      <section className="section" id="blog">
+        <div className="cards-container">
+          <div className="empty-state">
+            <h3>No blog posts available</h3>
+            <p>Check back soon for inspiring stories and insights from the running community!</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="section" id="blog">
-      <h2 className="section-title">Community Stories</h2>
-      <div className="card-grid">
+      <div className="cards-container">
         {blogs.map((blog) => (
-          <BlogCard key={blog.id} post={blog} />
+          <BlogCard key={blog.id} post={{
+            id: blog.id,
+            title: blog.title,
+            snippet: blog.excerpt,
+            date: blog.publishDate,
+            image: blog.featuredImage,
+            subheadline: blog.category
+          }} />
         ))}
       </div>
-      <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+      <div className="section-footer">
         <a 
           href="/blog" 
-          className="cta-button" 
-          style={{ backgroundColor: 'var(--blog-orange)' }}
+          className="view-all-button"
+          style={{ backgroundColor: 'var(--blog-purple)' }}
         >
-          Alle Stories lesen
+          View All Posts
         </a>
       </div>
     </section>

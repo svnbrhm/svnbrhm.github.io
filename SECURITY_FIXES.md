@@ -2,6 +2,12 @@
 
 This document outlines the critical security and performance fixes that have been applied to the Airtable integration.
 
+## Summary
+
+This document tracks security improvements and fixes implemented in the RunningCrews.com project to enhance data protection, performance, and configuration management.
+
+**Last Updated:** June 25, 2025
+
 ## 🔒 Security Fixes
 
 ### 1. Environment Variable Security
@@ -55,7 +61,44 @@ AIRTABLE_BASE_ID=your_base_id
 **Fix**: Standardized to use table IDs for consistency:
 - `getCrewMedia()` now uses table ID instead of table name
 
-## 📋 Migration Checklist
+## 4. Environment Variable Standardization (June 25, 2025)
+
+### Issue
+- Inconsistent usage of `AIRTABLE_API_KEY` vs `AIRTABLE_PERSONAL_ACCESS_TOKEN` across project files
+- Configuration confusion for developers
+- Potential setup errors due to mixed naming conventions
+
+### Resolution
+- **Files Updated**: `README.md`, `analyzeCitiesAndCountries.js`, documentation files
+- **Standardization**: All files now use `AIRTABLE_PERSONAL_ACCESS_TOKEN` consistently
+- **Legacy Support**: Maintained references only in migration documentation
+- **Documentation**: Updated all setup guides and examples
+
+### Impact
+- ✅ Consistent configuration across entire project
+- ✅ Reduced developer confusion
+- ✅ Streamlined setup process
+- ✅ Better maintainability
+
+## 5. Migration Checklist
+
+### For Developers
+- [ ] Update `.env.local` with Personal Access Token
+- [ ] Remove any hardcoded API keys
+- [ ] Test all Airtable integrations
+- [ ] Verify statistics display correctly
+- [ ] Update deployment environment variables
+- [ ] Use `AIRTABLE_PERSONAL_ACCESS_TOKEN` (not `AIRTABLE_API_KEY`)
+
+### For Production
+- [ ] Generate new Personal Access Token in Airtable
+- [ ] Update production environment variables
+- [ ] Test API connectivity
+- [ ] Monitor for any authentication errors
+- [ ] Verify all features work as expected
+- [ ] Ensure consistent environment variable naming
+
+## 📋 Original Migration Checklist
 
 - [ ] Update `.env` file with new variable names (remove `NEXT_PUBLIC_` prefix)
 - [ ] Verify application still works with server-side-only tokens

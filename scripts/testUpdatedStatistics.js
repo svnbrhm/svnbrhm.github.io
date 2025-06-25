@@ -59,7 +59,7 @@ async function testUpdatedStatistics() {
     });
     
     // Filter published crews
-    const publishedCrews = allCrews.filter(crew => crew.fields.Status === 'publish');
+    const publishedCrews = allCrews.filter(crew => crew.fields.Status === 'Published');
     console.log(`\nPublished crews: ${publishedCrews.length}`);
     
     // Calculate statistics for ALL crews (new approach)

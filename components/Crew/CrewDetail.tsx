@@ -225,7 +225,7 @@ const CrewDetail: React.FC<CrewDetailProps> = ({ crew, otherCrewsInCity, related
   const mediaGallery = crew.media ? crew.media
     .filter(media => 
       (media.MediaType === 'Crew Picture' || media.MediaType === 'Running Picture') && 
-      media.Status === 'publish' && 
+      media.Status === 'Published' && 
       media.FileURL
     )
     .map(media => ({

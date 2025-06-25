@@ -1,6 +1,5 @@
 import { Crew, TeamMember, CrewMedia, RunSchedule, RunningRoute } from '../types/crew';
 import { getDefaultCrewLogo, getDefaultCrewPicture, getOptimizedCrewImage } from './imageUtils';
-import { trackMockDataUsage } from './mockDataTracker';
 
 // Global statistics interface
 export interface GlobalStatistics {
@@ -57,9 +56,7 @@ console.log('- isAirtableConfigured:', isAirtableConfigured);
 console.log('- AIRTABLE_API_URL:', AIRTABLE_API_URL);
 
 if (!isAirtableConfigured) {
-  console.warn('Airtable configuration missing. Using mock data for development.');
-  // Track that Airtable is not configured
-  trackMockDataUsage('airtable_initialization', 'airtable_not_configured', 'Missing AIRTABLE_PERSONAL_ACCESS_TOKEN or AIRTABLE_BASE_ID');
+  console.warn('Airtable configuration missing. Please set AIRTABLE_PERSONAL_ACCESS_TOKEN and AIRTABLE_BASE_ID environment variables.');
 }
 
 const headers = {
@@ -108,7 +105,7 @@ interface AirtableCrewFields {
   SEODescription?: string;
   SEO_Slug?: string;
   LocalLogoFilename?: string;
-  Status?: 'draft' | 'publish' | 'archived' | 'featured' | 'pending';
+  Status?: 'Draft' | 'Published' | 'Archived' | 'Featured' | 'Pending Review';
 }
 
 // Airtable field mappings for TeamMembers table
@@ -124,7 +121,7 @@ interface AirtableTeamMemberFields {
   LastUpdated?: string;
   AdminNotes?: string;
   LinkToCrew?: string[];
-  Status?: 'draft' | 'publish' | 'archived' | 'featured' | 'pending';
+  Status?: 'Draft' | 'Published' | 'Archived' | 'Featured' | 'Pending Review';
 }
 
 // Airtable field mappings for RunSchedules table
@@ -144,7 +141,7 @@ interface AirtableRunScheduleFields {
   LastUpdated?: string;
   MeetingPointGoogleMapsLink?: string;
   LinkToCrew?: string[];
-  Status?: 'draft' | 'publish' | 'archived' | 'featured' | 'pending';
+  Status?: 'Draft' | 'Published' | 'Archived' | 'Featured' | 'Pending Review';
 }
 
 // Airtable attachment object interface
@@ -176,7 +173,7 @@ interface AirtableCrewMediaFields {
   UploadDate?: string;
   LastUpdated?: string;
   LinkToCrew?: string[];
-  Status?: 'draft' | 'publish' | 'archived' | 'featured' | 'pending';
+  Status?: 'Draft' | 'Published' | 'Archived' | 'Featured' | 'Pending Review';
 }
 
 // Airtable field mappings for Routes table
@@ -195,7 +192,38 @@ interface AirtableRouteFields {
   EndLatitude?: number;
   EndLongitude?: number;
   Featured: boolean;
-  Status: 'draft' | 'publish' | 'archived' | 'featured' | 'pending';
+  Status: 'Draft' | 'Published' | 'Archived' | 'Featured' | 'Pending Review';
+}
+
+// Airtable field mappings for Events table
+interface AirtableEventFields {
+  EventName: string;
+  City: string;
+  Country: string;
+  EventStartDate?: string;
+  EventEndDate?: string;
+  Location?: string;
+  Latitude?: number;
+  Longitude?: number;
+  EventType?: string[];
+  BriefDescription?: string;
+  EventURL?: string;
+  RegistrationURL?: string;
+  EventImage?: string[];
+  Status: 'Draft' | 'Published' | 'Archived' | 'Featured' | 'Pending Review';
+}
+
+// Airtable field mappings for Blog table
+interface AirtableBlogFields {
+  Title: string;
+  Content?: string;
+  Excerpt?: string;
+  PublishDate?: string;
+  Author?: string;
+  FeaturedImage?: string[];
+  Tags?: string[];
+  SEO_Slug?: string;
+  Status: 'Draft' | 'Published' | 'Archived' | 'Featured' | 'Pending Review';
 }
 
 // Helper function to make API requests with pagination support
@@ -363,7 +391,7 @@ function transformTeamMemberRecord(record: AirtableRecord<AirtableTeamMemberFiel
       CrewMemberEmail: fields.CrewMemberEmail || '',
       Bio: fields.Bio || '',
       MemberStatus: fields.MemberStatus || 'Active',
-      Status: fields.Status || 'publish',
+      Status: fields.Status || 'Published',
     };
   } catch (error) {
     console.error('Error transforming team member record:', error, 'Record:', record);
@@ -401,7 +429,7 @@ function transformRunScheduleRecord(record: AirtableRecord<AirtableRunScheduleFi
       AdditionalInfo: fields.AdditionalInfo,
       RunSchedulesStatus: fields.RunSchedulesStatus,
       SeasonalPeriod: fields.SeasonalPeriod,
-      Status: fields.Status || 'publish',
+      Status: fields.Status || 'Published',
     };
   } catch (error) {
     console.error('Error transforming run schedule record:', error, 'Record:', record);
@@ -438,7 +466,7 @@ function transformCrewMediaRecord(record: AirtableRecord<AirtableCrewMediaFields
       Caption: fields.Caption,
       Tags: fields.Tags,
       Featured: fields.Featured || false,
-      Status: fields.Status || 'publish',
+      Status: fields.Status || 'Published',
     };
   } catch (error) {
     console.error('Error transforming crew media record:', error, 'Record:', record);
@@ -471,7 +499,7 @@ function transformRouteRecord(record: AirtableRecord<AirtableRouteFields>): Runn
       EndLatitude: fields.EndLatitude,
       EndLongitude: fields.EndLongitude,
       Featured: fields.Featured || false,
-      Status: fields.Status || 'publish',
+      Status: fields.Status || 'Published',
     };
   } catch (error) {
     console.error('Error transforming route record:', error, 'Record:', record);
@@ -642,7 +670,7 @@ export const airtableService = {
     // Find logo
     const logoMedia = media.find(m => 
       m.MediaType === 'Logo' && 
-      m.Status === 'publish' && 
+      m.Status === 'Published' && 
       m.FileURL
     );
     if (logoMedia && logoMedia.FileURL) {
@@ -652,7 +680,7 @@ export const airtableService = {
     // Find hero image (crew picture)
     const heroMedia = media.find(m => 
       m.MediaType === 'Crew Picture' && 
-      m.Status === 'publish' && 
+      m.Status === 'Published' && 
       m.FileURL
     );
     if (heroMedia && heroMedia.FileURL) {
@@ -666,6 +694,9 @@ export const airtableService = {
   },
 
   // Optimized function to get crew images
+  // DEPRECATED: No longer needed since we use local images exclusively
+  // This method was causing table targeting issues with CREW_MEDIA
+  /*
   async getCrewImages(crewId: string): Promise<CrewImage[]> {
     try {
       const response = await makeAirtableRequest<AirtableCrewMediaFields>(
@@ -683,6 +714,7 @@ export const airtableService = {
       return [];
     }
   },
+  */
 
   // Optimized function to get crews with selective image loading
   async getCrewsWithImages(options: {
@@ -690,31 +722,16 @@ export const airtableService = {
     limit?: number;
     includeImages?: boolean;
   } = {}): Promise<CrewWithImages[]> {
-    // Return mock data if Airtable is not configured
+    // Return empty array if Airtable is not configured
     if (!isAirtableConfigured) {
-      console.log('Airtable not configured, returning mock crew data for getCrewsWithImages');
-      const { mockCrews } = await import('./mockData');
-      const { featured = false, limit = 50 } = options;
-      trackMockDataUsage('getCrewsWithImages', 'airtable_not_configured', `featured=${featured}, limit=${limit}`);
-      
-      let filteredCrews = mockCrews;
-      if (featured) {
-        filteredCrews = mockCrews.filter(crew => crew.Featured);
-      }
-      
-      return filteredCrews.slice(0, limit).map(crew => ({
-        ...crew,
-        images: {
-          logo: getOptimizedCrewImage(crew.CrewName, 'logo'),
-          crewPicture: getOptimizedCrewImage(crew.CrewName, 'photo')
-        }
-      }));
+      console.warn('Airtable not configured. Please set AIRTABLE_PERSONAL_ACCESS_TOKEN and AIRTABLE_BASE_ID environment variables.');
+      return [];
     }
     
     try {
       const { featured = false, limit = 50, includeImages = false } = options;
       
-      let filterFormula = `{Status} = 'publish'`;
+      let filterFormula = `{Status} = 'Published'`;
       if (featured) {
         filterFormula += ` AND {Featured} = TRUE()`;
       }
@@ -725,52 +742,30 @@ export const airtableService = {
 
       const crews = response.records.map(transformCrewRecord);
 
-      // Only load images for featured crews or first 20 crews to prevent timeout
+      // Only load images for featured crews or all crews up to the specified limit
       if (includeImages) {
-        const crewsToLoadImages = featured ? crews : crews.slice(0, 20);
+        const crewsToLoadImages = featured ? crews : crews.slice(0, limit);
         
         const crewsWithImages = await Promise.all(
           crewsToLoadImages.map(async (crew) => {
-            // Three-tier fallback system:
-            // 1. Local images (fastest)
-            // 2. Airtable images (fallback)
-            // 3. Default backup images (final fallback)
+            // Simplified two-tier fallback system:
+            // 1. Local images (priority - you have hundreds of these!)
+            // 2. Default backup images (final fallback)
+            // No more Airtable image calls - use your local collection!
             
-            let airtableImages: any[] = [];
+            console.log(`Loading images for ${crew.CrewName} from local collection`);
             
-            // First, try to get local images
+            // Get local images with intelligent fallback
             const localLogo = getOptimizedCrewImage(crew.CrewName, 'logo');
             const localPhoto = getOptimizedCrewImage(crew.CrewName, 'photo');
             
-            // Check if we got default images (meaning no local images found)
-            const needsAirtableLogo = localLogo === getDefaultCrewLogo();
-            const needsAirtablePhoto = localPhoto === getDefaultCrewPicture();
-            
-            // If local images are not available, try Airtable as fallback
-            if (needsAirtableLogo || needsAirtablePhoto) {
-              try {
-                airtableImages = await this.getCrewImages(crew.id);
-              } catch (error) {
-                console.warn(`Failed to fetch Airtable images for ${crew.CrewName}:`, error);
-                // Airtable failed, will use default images as final fallback
-              }
-            }
-            
-            // Build final image map with proper fallback hierarchy
-            const airtableLogo = airtableImages.find(img => img.type === 'Logo')?.url;
-            const airtablePhoto = airtableImages.find(img => img.type === 'Crew Picture')?.url;
-            
             const imageMap = {
-              // Logo: Local -> Airtable -> Default backup
-              logo: needsAirtableLogo 
-                ? (airtableLogo || getDefaultCrewLogo())
-                : localLogo,
-              // Photo: Local -> Airtable -> Default backup  
-              crewPicture: needsAirtablePhoto 
-                ? (airtablePhoto || getDefaultCrewPicture())
-                : localPhoto,
-              // Featured image from Airtable (optional)
-              featured: airtableImages.find(img => img.featured)?.url || null
+              // Logo: Local -> Default backup (no Airtable needed!)
+              logo: localLogo,
+              // Photo: Local -> Default backup (no Airtable needed!)
+              crewPicture: localPhoto,
+              // No featured images from Airtable - keep it simple
+              // Omit featured property instead of setting to undefined to avoid serialization errors
             };
 
             return {
@@ -781,12 +776,12 @@ export const airtableService = {
         );
 
         // Return crews with images first, then crews without images (with default images)
-        const remainingCrews = featured ? [] : crews.slice(20).map(crew => ({
+        const remainingCrews = featured ? [] : crews.slice(limit).map(crew => ({
           ...crew,
           images: {
             logo: getOptimizedCrewImage(crew.CrewName, 'logo'),
             crewPicture: getOptimizedCrewImage(crew.CrewName, 'photo'),
-            featured: null
+            // Omit featured property instead of setting to undefined to avoid serialization errors
           }
         }));
         return [...crewsWithImages, ...remainingCrews];
@@ -803,46 +798,8 @@ export const airtableService = {
   // Use this for overview pages where detailed data isn't needed
   async getAllCrews(): Promise<Crew[]> {
     if (!isAirtableConfigured) {
-      console.log('Airtable not configured, returning mock crew data');
-      trackMockDataUsage('getAllCrews', 'airtable_not_configured', 'Basic crew data requested');
-      return [
-        {
-          id: 'mock-1',
-          CrewName: 'Demo Running Crew',
-          City: 'Demo City',
-          Country: 'Demo Country',
-          Continent: 'Demo Continent',
-          FoundingDate: '2024-01-01',
-          CrewStoryLongFinal: 'This is a demo crew for development purposes.',
-          CrewStoryExcerpt: 'Demo crew for development',
-          ContactEmailCrew: 'demo@example.com',
-          FacebookFanpageURL: '',
-          FacebookGroupURL: '',
-          InstagramURL: '',
-          XURL: '',
-          StravaClubURL: '',
-          HomepageURL: '',
-          HeadquarterName: 'Demo HQ',
-          HeadquarterAddress: '123 Demo St',
-          HeadquarterGoogleMapsLink: '',
-          HeadquarterLatitude: 0,
-          HeadquarterLongitude: 0,
-          ApproxMemberCount: 50,
-          MembershipType: 'Open',
-          MembershipFeeInfo: 'Free',
-          LocalEventsText: 'Weekly runs',
-          OwnEventText: 'Annual marathon',
-          SEODescription: 'Demo running crew',
-          SEO_Slug: 'demo-running-crew',
-          Featured: true,
-          PrimaryImageUrl: '/images/default-crew-hero.jpg',
-          logoUrl: '/images/default-crew-hero.jpg',
-          heroImageUrl: '/images/default-crew-hero.jpg',
-          teamMembers: [],
-          media: [],
-          schedules: []
-        }
-      ];
+      console.warn('Airtable not configured. Please set AIRTABLE_PERSONAL_ACCESS_TOKEN and AIRTABLE_BASE_ID environment variables.');
+      return [];
     }
     try {
       console.log('=== FETCHING ALL CREWS FROM AIRTABLE WITH PAGINATION (BASIC DATA ONLY) ===');
@@ -1204,7 +1161,7 @@ export const airtableService = {
       // Fetch all published routes
       // CONSISTENCY FIX: Use table ID instead of table name for reliability
       const response = await makeAirtableRequest<any>(
-        `/${TABLE_IDS.RUNNING_ROUTES}?filterByFormula=Status='publish'`
+        `/${TABLE_IDS.RUNNING_ROUTES}?filterByFormula=Status='Published'`
       );
       
       if (response.records.length === 0) {
@@ -1227,15 +1184,14 @@ export const airtableService = {
   // Get statistics for Global Impact section
   async getGlobalStatistics(): Promise<GlobalStatistics> {
     if (!isAirtableConfigured) {
-      console.log('Airtable not configured, using enhanced mock data');
-      trackMockDataUsage('getGlobalStatistics', 'airtable_not_configured', 'Global statistics requested');
+      console.warn('Airtable not configured. Please set AIRTABLE_PERSONAL_ACCESS_TOKEN and AIRTABLE_BASE_ID environment variables.');
       return {
-        activeCrews: 362,
-        totalRunners: 41947,
-        cities: 188, // Updated to reflect all crews (including non-published)
-        countries: 60, // Updated to reflect all crews (including non-published)
-        routes: 180,
-        events: 45
+        activeCrews: 0,
+        totalRunners: 0,
+        cities: 0,
+        countries: 0,
+        routes: 0,
+        events: 0
       };
     }
 
@@ -1247,7 +1203,7 @@ export const airtableService = {
       const allCrews = allCrewsResponse || [];
       
       // Filter for published crews only for active crew count and runner totals
-      const publishedCrews = allCrews.filter(crew => crew.fields.Status === 'publish');
+      const publishedCrews = allCrews.filter(crew => crew.fields.Status === 'Published');
       
       // Transform the published crew records for active crew stats
       const transformedPublishedCrews = publishedCrews.map(transformCrewRecord);
@@ -1328,6 +1284,146 @@ export const airtableService = {
     }
   },
 
+  // Get all running routes
+  async getAllRoutes(): Promise<any[]> {
+    if (!isAirtableConfigured) {
+      console.warn('Airtable not configured. Cannot fetch routes.');
+      return [];
+    }
+
+    try {
+      const response = await makeAirtableRequestWithPagination<AirtableRouteFields>(`/${TABLE_IDS.RUNNING_ROUTES}?filterByFormula=Status='Published'`);
+      
+      return response.map(record => ({
+        id: record.id,
+        routeName: record.fields.RouteName,
+        city: record.fields.City,
+        country: record.fields.Country,
+        approximateDistance: record.fields.ApproximateDistance,
+        distanceUnit: record.fields.DistanceUnit || 'km',
+        briefDescription: record.fields.BriefDescription,
+        keyLandmarks: record.fields.KeyLandmarks,
+        startPoint: record.fields.StartPoint,
+        endPoint: record.fields.EndPoint,
+        startLatitude: record.fields.StartLatitude,
+        startLongitude: record.fields.StartLongitude,
+        endLatitude: record.fields.EndLatitude,
+        endLongitude: record.fields.EndLongitude,
+        featured: record.fields.Featured,
+        status: record.fields.Status
+      }));
+    } catch (error) {
+      console.error('Error fetching routes from Airtable:', error);
+      return [];
+    }
+  },
+
+  // Get all running events
+  async getAllEvents(): Promise<any[]> {
+    if (!isAirtableConfigured) {
+      console.warn('Airtable not configured. Cannot fetch events.');
+      return [];
+    }
+
+    try {
+      const response = await makeAirtableRequestWithPagination<AirtableEventFields>(`/${TABLE_IDS.RUNNING_EVENTS}?filterByFormula=Status='Published'`);
+      
+      return response.map(record => ({
+        id: record.id,
+        eventName: record.fields.EventName,
+        city: record.fields.City,
+        country: record.fields.Country,
+        eventStartDate: record.fields.EventStartDate,
+        eventEndDate: record.fields.EventEndDate,
+        location: record.fields.Location,
+        latitude: record.fields.Latitude,
+        longitude: record.fields.Longitude,
+        eventType: record.fields.EventType,
+        briefDescription: record.fields.BriefDescription,
+        eventURL: record.fields.EventURL,
+        registrationURL: record.fields.RegistrationURL,
+        eventImage: record.fields.EventImage?.[0],
+        status: record.fields.Status
+      }));
+    } catch (error) {
+      console.error('Error fetching events from Airtable:', error);
+      return [];
+    }
+  },
+
+  // Get all blog posts
+  async getAllBlogs(): Promise<any[]> {
+    if (!isAirtableConfigured) {
+      console.warn('Airtable not configured. Cannot fetch blog posts.');
+      return [];
+    }
+
+    try {
+      const response = await makeAirtableRequestWithPagination<AirtableBlogFields>(`/${TABLE_IDS.BLOG}?filterByFormula=Status='Published'`);
+      
+      return response.map(record => ({
+        id: record.id,
+        title: record.fields.Title,
+        content: record.fields.Content,
+        excerpt: record.fields.Excerpt,
+        publishDate: record.fields.PublishDate,
+        author: record.fields.Author,
+        featuredImage: record.fields.FeaturedImage?.[0],
+        tags: record.fields.Tags,
+        seoSlug: record.fields.SEO_Slug,
+        status: record.fields.Status,
+        // Format for BlogCard component
+        date: record.fields.PublishDate,
+        snippet: record.fields.Excerpt,
+        image: record.fields.FeaturedImage?.[0],
+        subheadline: record.fields.Author
+      }));
+    } catch (error) {
+      console.error('Error fetching blog posts from Airtable:', error);
+      return [];
+    }
+  },
+
+  // Get crews within geographic bounds for dynamic map loading
+  async getCrewsByBounds(bounds: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+  }): Promise<Crew[]> {
+    try {
+      // Get all crews first (we'll filter client-side for now)
+      // In a production environment, you might want to implement server-side filtering
+      // if Airtable supports geographic queries or use a spatial database
+      const response = await makeAirtableRequest<AirtableCrewFields>(
+        `/${TABLE_IDS.CREWS}`
+      );
+      const allCrews = response.records.map(transformCrewRecord);
+      
+      // Filter crews that fall within the bounds
+      const crewsInBounds = allCrews.filter(crew => {
+        // Check if crew has valid coordinates
+        const lat = crew.HeadquarterLatitude;
+        const lng = crew.HeadquarterLongitude;
+        
+        if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
+          return false;
+        }
+        
+        // Check if coordinates are within bounds
+        const withinLatBounds = lat >= bounds.south && lat <= bounds.north;
+        const withinLngBounds = lng >= bounds.west && lng <= bounds.east;
+        
+        return withinLatBounds && withinLngBounds;
+      });
+      
+      return crewsInBounds;
+    } catch (error) {
+      console.error('Failed to fetch crews by bounds:', error);
+      throw new Error('Unable to fetch crews by geographic bounds from Airtable');
+    }
+  },
+
   // Test connection
   async testConnection(): Promise<boolean> {
     try {
@@ -1337,7 +1433,5 @@ export const airtableService = {
       console.error('Airtable connection test failed:', error);
       return false;
     }
-  },
+  }
 };
-
-export default airtableService;

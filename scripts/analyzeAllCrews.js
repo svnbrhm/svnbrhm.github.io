@@ -122,7 +122,7 @@ async function analyzeAllCrews() {
     const publishedCities = new Set();
     const publishedCountries = new Set();
     
-    const publishedCrews = allCrews.filter(crew => crew.fields.Status === 'publish');
+    const publishedCrews = allCrews.filter(crew => crew.fields.Status === 'Published');
     
     publishedCrews.forEach(crew => {
       const city = crew.fields.City;

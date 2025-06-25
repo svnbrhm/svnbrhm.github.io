@@ -1,41 +1,63 @@
-import React, { useState, useEffect } from 'react';
-import { NextPage } from 'next';
+import React from 'react';
+import { NextPage, GetStaticProps } from 'next';
 import Head from 'next/head';
-import PageHero from '../../components/Hero/PageHero';
+import Header from '../../components/Layout/Header';
+import Footer from '../../components/Layout/Footer';
 import BlogList from '../../components/Blog/BlogList';
-import { getRandomCrewHeroImage } from '../../lib/randomImageUtils';
+import { airtableService } from '../../lib/airtable';
 
-const BlogPage: NextPage = () => {
-  const [heroBackground, setHeroBackground] = useState<string>('');
+interface BlogPageProps {
+  blogs: any[];
+}
 
-  useEffect(() => {
-    // Set random crew photo as background on each page visit
-    const loadRandomImage = async () => {
-      const randomImage = await getRandomCrewHeroImage();
-      setHeroBackground(randomImage);
-    };
-    loadRandomImage();
-  }, []);
-
+const BlogPage: NextPage<BlogPageProps> = ({ blogs }) => {
   return (
     <>
       <Head>
         <title>Blog - Running Crews</title>
-        <meta name="description" content="Latest news, stories, and insights from the global running crew community" />
+        <meta name="description" content="Read stories, tips, and insights from the running community" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <PageHero
-        title="BLOG"
-        subtitle="Latest news, stories, and insights from the global running crew community"
-        backgroundImage={heroBackground}
-        height="large"
-      />
+      <Header />
+      
+      <main>
+        {/* Hero Section */}
+        <section className="page-hero blog">
+          <div className="hero-content">
+            <h1 className="hero-title">RUNNING BLOG</h1>
+            <p className="hero-subtitle">Stories, tips, and insights from the community</p>
+          </div>
+        </section>
 
-      <main className="container mx-auto px-4 py-8">
-        <BlogList />
+        <BlogList blogs={blogs} />
       </main>
+
+      <Footer />
     </>
   );
+};
+
+export const getStaticProps: GetStaticProps = async () => {
+  try {
+    const blogs = await airtableService.getAllBlogs();
+    
+    return {
+      props: {
+        blogs,
+      },
+      revalidate: 3600, // Revalidate every hour
+    };
+  } catch (error) {
+    console.error('Error fetching blogs:', error);
+    return {
+      props: {
+        blogs: [],
+      },
+      revalidate: 3600,
+    };
+  }
 };
 
 export default BlogPage;

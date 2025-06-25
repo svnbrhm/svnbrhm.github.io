@@ -4,9 +4,9 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import CrewList from '../../components/Crew/CrewList';
 import { Crew } from '../../types/crew';
-import airtableService, { CrewWithImages } from '../../lib/airtable';
+import { airtableService, CrewWithImages } from '../../lib/airtable';
 import { getDefaultCrewLogo, getDefaultCrewPicture } from '../../lib/imageUtils';
-import { mockCrews } from '../../lib/mockData';
+// Removed mock data imports - using only real Airtable data
 import { getRandomCrewHeroImage } from '../../lib/randomImageUtils';
 import CrewCard from '../../components/Crew/CrewCard';
 
@@ -155,28 +155,12 @@ export const getStaticProps: GetStaticProps = async () => {
   } catch (error) {
     console.error('Error in getStaticProps for crews page:', error);
     
-    // Fallback to mock data to prevent build failure
-    const mockCrews = [
-      {
-        id: 'mock-1',
-        name: 'Sample Running Crew',
-        city: 'Sample City',
-        country: 'Sample Country',
-        description: 'This is a sample crew for fallback purposes.',
-        logoUrl: getDefaultCrewLogo(),
-        heroImageUrl: getDefaultCrewPicture(),
-        instagramUrl: '',
-        homepageUrl: '',
-        featured: false,
-        slug: 'sample-crew'
-      }
-    ];
-    
+    // Return empty data if Airtable is not configured
     return {
       props: {
         featuredCrews: [],
-        allCrews: mockCrews,
-        totalCount: mockCrews.length,
+        allCrews: [],
+        totalCount: 0,
       },
       // Still enable ISR even for fallback
       revalidate: 86400, // 24 hours in case of fallback (more frequent for error recovery)

@@ -3,8 +3,8 @@ import { GetStaticProps, GetStaticPaths, NextPage } from 'next';
 import Head from 'next/head';
 import CrewDetail from '../../components/Crew/CrewDetail';
 import { Crew, RunningRoute } from '../../types/crew';
-import airtableService from '../../lib/airtable';
-import { mockCrews } from '../../lib/mockData';
+import { airtableService } from '../../lib/airtable';
+// Removed mock data imports - using only real Airtable data
 
 interface CrewPageProps {
   crew: Crew | null;
@@ -54,7 +54,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     const crews = await airtableService.getAllCrews();
     
     // Generate paths for all crew IDs
-    const paths = (crews || mockCrews).map((crew) => ({
+    const paths = (crews || []).map((crew) => ({
       params: { id: crew.id },
     }));
 
@@ -66,10 +66,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
   } catch (error) {
     console.error('Error generating static paths:', error);
     
-    // Fallback to mock data paths
-    const paths = mockCrews.map((crew) => ({
-      params: { id: crew.id },
-    }));
+    // Return empty paths if no crews available
+    const paths: { params: { id: string } }[] = [];
 
     return {
       paths,
@@ -94,22 +92,10 @@ export const getStaticProps: GetStaticProps<CrewPageProps> = async ({ params }) 
     const crew = await airtableService.getCrewById(id, !isStaticGeneration);
     
     if (!crew) {
-      // Try to find in mock data as fallback
-      const mockCrew = mockCrews.find(c => c.id === id);
-      
-      if (!mockCrew) {
-        return {
-          notFound: true,
-        };
-      }
-      
+      // No fallback to mock data - return not found
+      console.warn('Crew not found and no Airtable data available for ID:', id);
       return {
-        props: {
-          crew: mockCrew,
-          relatedRoutes: [], // No routes available in fallback
-        },
-        // Revalidate every 24 hours
-        revalidate: 86400,
+        notFound: true,
       };
     }
 
@@ -121,8 +107,8 @@ export const getStaticProps: GetStaticProps<CrewPageProps> = async ({ params }) 
       otherCrewsInCity = allCrewsInCity.filter(c => c.id !== crew.id);
     } catch (error) {
       console.warn(`Failed to fetch other crews in ${crew.City}:`, error);
-      // Use mock data as fallback
-      otherCrewsInCity = mockCrews.filter(c => c.City === crew.City && c.id !== crew.id);
+      // No fallback data available
+      otherCrewsInCity = [];
     }
 
     // Fetch related running routes
@@ -148,25 +134,10 @@ export const getStaticProps: GetStaticProps<CrewPageProps> = async ({ params }) 
   } catch (error) {
     console.error(`Error fetching crew ${id}:`, error);
     
-    // Try mock data as fallback
-    const mockCrew = mockCrews.find(c => c.id === id);
-    
-    if (!mockCrew) {
-      return {
-        notFound: true,
-      };
-    }
-    
-    // Get other crews in the same city from mock data
-    const otherCrewsInCity = mockCrews.filter(c => c.City === mockCrew.City && c.id !== mockCrew.id);
-    
+    // No fallback to mock data - return not found
+    console.warn('Crew not found and no Airtable data available for ID:', id);
     return {
-      props: {
-        crew: mockCrew,
-        otherCrewsInCity,
-        relatedRoutes: [], // No routes available in fallback
-      },
-      revalidate: 86400,
+      notFound: true,
     };
   }
 };

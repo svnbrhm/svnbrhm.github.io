@@ -2,8 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import CrewCard from './CrewCard';
 import WorldMap from '../Map/WorldMap';
 import { Crew } from '@/types/crew';
-import { mockCrews } from '@/lib/mockData';
-import { trackMockDataUsage } from '@/lib/mockDataTracker';
+// Removed mock data imports - using only real Airtable data
 
 interface CrewListProps {
   crews: Crew[];
@@ -23,14 +22,9 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
   // Activity level filter removed - schedules not available in basic crew data
   const [sortBy, setSortBy] = useState<'name' | 'country' | 'members'>('name');
   
-  // Use provided crews or fallback to mock data
+  // Use provided crews or empty array
   const allCrews = React.useMemo(() => {
-    if (crews && crews.length > 0) {
-      return crews;
-    } else {
-      trackMockDataUsage('CrewList_component', 'airtable_error', `No crews provided, using ${mockCrews.length} mock crews`);
-      return mockCrews;
-    }
+    return crews || [];
   }, [crews]);
   
 
@@ -405,7 +399,7 @@ const CrewList: React.FC<CrewListProps> = ({ crews, searchQuery = '', initialSea
         {/* Map View - Now using the same WorldMap component as homepage */}
         {viewMode === 'map' && (
           <div className="map-view-container">
-            <WorldMap />
+            <WorldMap crews={filteredCrews} />
           </div>
         )}
       </div>

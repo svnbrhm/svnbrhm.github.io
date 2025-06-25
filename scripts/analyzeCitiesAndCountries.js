@@ -33,7 +33,7 @@ loadEnvFile();
 
 // Airtable configuration from development server logs
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID || 'appmeNztbDlnHVW76';
-const AIRTABLE_TOKEN = process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN || process.env.AIRTABLE_API_KEY || 'patwpEkvioNoGvdsF.2bbb560e8664cf5387e24c1b7071a0c43ab452139856f749f0d8fbb465fa218c';
+const AIRTABLE_TOKEN = process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN || 'patwpEkvioNoGvdsF.2bbb560e8664cf5387e24c1b7071a0c43ab452139856f749f0d8fbb465fa218c';
 const CREWS_TABLE_ID = 'tbl76VCXwPoucGZxf'; // Correct table ID from AI_CONTEXT.md
 
 console.log('🔍 Using Airtable configuration:');
@@ -138,7 +138,7 @@ async function analyzeCitiesAndCountries() {
     console.log(`\n📊 Total crew records found: ${allCrews.length}`);
     
     // Filter for published crews only
-    const publishedCrews = allCrews.filter(crew => crew.fields.Status === 'publish');
+    const publishedCrews = allCrews.filter(crew => crew.fields.Status === 'Published');
     console.log(`✅ Published crews: ${publishedCrews.length}`);
     
     // Analyze cities

@@ -84,6 +84,17 @@
 ### 5. **Environment Configuration:**
 - `.env` - Configured with proper Airtable credentials (Personal Access Token and Base ID)
 
+### 6. **Environment Variable Naming Inconsistency (RESOLVED - June 25, 2025)**
+- **Problem**: Inconsistent usage of `AIRTABLE_API_KEY` vs `AIRTABLE_PERSONAL_ACCESS_TOKEN` across project files
+- **Impact**: Configuration confusion and potential setup errors for developers
+- **Files Affected**: `README.md`, `analyzeCitiesAndCountries.js`, various documentation files
+- **Fix**: 
+  - Updated `README.md` to use `AIRTABLE_PERSONAL_ACCESS_TOKEN` consistently in all examples
+  - Removed `AIRTABLE_API_KEY` fallback from `analyzeCitiesAndCountries.js`
+  - Standardized all documentation and configuration examples
+  - Maintained legacy references only in migration docs for compatibility
+- **Result**: Consistent environment variable naming across entire project
+
 ## Current Status
 
 ✅ **RESOLVED**: Statistics discrepancy between manual and automated counts  
@@ -91,6 +102,7 @@
 ✅ **RESOLVED**: Animation timing problems  
 ✅ **RESOLVED**: Airtable configuration and credentials  
 ✅ **RESOLVED**: Mock data accuracy and fallbacks  
+✅ **RESOLVED**: Environment variable naming inconsistency  
 ✅ **VERIFIED**: All statistics counts validated with test scripts
 
 ## Verification Results
@@ -98,6 +110,8 @@
 - ✅ Cities: 188 (matches manual count)
 - ✅ Countries: 60 (matches analysis)
 - ✅ Active crews: 362 (published only)
+- ✅ Environment variables: Consistent naming across all files
+- ✅ Configuration: Standardized setup process
 - ✅ Total crews: 449 (all statuses)
 - ✅ Real data integration operational
 - ✅ Mock data fallbacks updated

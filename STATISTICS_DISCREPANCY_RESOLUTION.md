@@ -39,11 +39,11 @@ Updated the `getGlobalStatistics()` function to:
 
 ```typescript
 // OLD: Only published crews for all statistics
-const publishedCrews = allCrews.filter(crew => crew.fields.Status === 'publish');
+const publishedCrews = allCrews.filter(crew => crew.fields.Status === 'Published');
 const transformedCrews = publishedCrews.map(transformCrewRecord);
 
 // NEW: Separate handling for different statistics
-const publishedCrews = allCrews.filter(crew => crew.fields.Status === 'publish');
+const publishedCrews = allCrews.filter(crew => crew.fields.Status === 'Published');
 const transformedPublishedCrews = publishedCrews.map(transformCrewRecord);
 const transformedAllCrews = allCrews.map(transformCrewRecord);
 

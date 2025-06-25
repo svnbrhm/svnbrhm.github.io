@@ -1,6 +1,6 @@
 import { GetStaticProps, NextPage } from 'next';
 import { useState } from 'react';
-import airtableService from '../lib/airtable';
+import { airtableService } from '../lib/airtable';
 import { Crew } from '../types/crew';
 
 interface DebugImagesProps {

@@ -2,9 +2,39 @@
 
 # RunningCrews.com - Project Documentation
 
-**Version:** 1.7
-**Date:** June 9, 2025
+**Version:** 1.9
+**Date:** June 25, 2025
 **Project Owner:** Sven
+
+## Recent Updates (Version 1.9 - June 25, 2025)
+
+### UI/UX Improvements
+- **Statistics Section Enhancement**: Centered "Global Impact" heading and removed grey gradient background
+- **CSS Modernization**: Replaced Tailwind utility classes with semantic CSS classes for better maintainability
+- **Visual Design**: Cleaner, more professional appearance with transparent background
+- **Code Quality**: Improved component structure while preserving all animations and functionality
+
+### CSS Architecture Improvements (11:02)
+- **WorldMap Component Modularization**: Extracted map-related styles from `globals.css` into dedicated `styles/components/map.css`
+- **Architectural Consistency**: Followed established modular CSS pattern used by other components
+- **Files Modified**: `styles/globals.css`, `styles/components/map.css`
+- **Styles Reorganized**: `#map`, `.map-section`, `.map-view-container` and responsive variants
+- **Maintainability**: Improved code organization and reduced global CSS bloat
+- **Visual Enhancement**: Added shadow effect to map component matching crew cards styling
+
+## Previous Updates (Version 1.8 - June 25, 2025)
+
+### Critical Bug Fixes
+- **Statistics Discrepancy Resolution**: Resolved 18-city discrepancy between manual (188) and automated (170) counts
+- **Environment Variable Standardization**: Unified all files to use `AIRTABLE_PERSONAL_ACCESS_TOKEN` consistently
+- **Data Accuracy**: Statistics now accurately reflect global crew reach with verified counts
+- **Performance Optimization**: Improved Airtable API efficiency and reduced N+1 query problems
+
+### Technical Improvements
+- **Verification Scripts**: Added comprehensive test scripts for statistics validation
+- **Documentation Updates**: Enhanced all brain files with latest bug fixes and resolutions
+- **Security Enhancements**: Standardized environment variable naming and removed deprecated references
+- **Mock Data Accuracy**: Updated fallback data to reflect real statistics (188 cities, 60 countries)
 
 ---
 

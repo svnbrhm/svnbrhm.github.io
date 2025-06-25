@@ -1,10 +1,30 @@
 /* Statistics Section Styles */
 .stats-section {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: transparent;
   padding: 4rem 2rem;
   margin: 3rem 0;
   position: relative;
   overflow: hidden;
+}
+
+.stats-heading {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.stats-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.stats-divider {
+  width: 4rem;
+  height: 0.25rem;
+  background-color: #10b981;
+  margin: 0 auto;
 }
 
 .stats-section::before {

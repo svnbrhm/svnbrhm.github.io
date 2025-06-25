@@ -1,7 +1,7 @@
 # RunningCrews.com - Project Status Log
 
 **Project Version:** 2.1  
-**Last Updated:** June 24, 2025  
+**Last Updated:** June 25, 2025  
 **Current Phase:** Phase 1 - Core Functionality (In Progress)
 
 ---
@@ -22,6 +22,7 @@
 - [x] **Image optimization and fallback system**
 - [x] Mock data structure in `lib/mockData.ts`
 - [x] CSS architecture with modular approach
+- [x] WorldMap component CSS modularization
 - [x] Typography and color system implementation
 - [x] Card component consistency across pages
 
@@ -48,6 +49,42 @@
 
 ## 📝 Work Session Log
 
+### June 25, 2025 - 09:56 - Statistics Section UI Improvements
+**Task:** Center "Global Impact" heading and remove grey gradient background
+**Status:** ✅ COMPLETED
+
+**Changes Made:**
+- **CSS Updates:** Modified `styles/components/statistics.css`
+  - Removed grey gradient background (`linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)`) → `transparent`
+  - Added semantic CSS classes: `.stats-heading`, `.stats-title`, `.stats-divider`
+  - Maintained responsive design and animations
+- **Component Updates:** Modified `components/Statistics.tsx`
+  - Replaced Tailwind utility classes with semantic CSS classes
+  - Improved heading structure for better maintainability
+  - Preserved all existing functionality (animations, loading states, data fetching)
+
+**Result:** Clean, centered "Global Impact" heading with transparent background
+**Testing:** Verified on development server (localhost:3000)
+**Files Modified:** `statistics.css`, `Statistics.tsx`
+
+### June 25, 2025 - 11:02 - WorldMap Component CSS Modularization
+**Task:** Extract map-related styles from globals.css into dedicated component file
+**Status:** ✅ COMPLETED
+
+**Changes Made:**
+- **CSS Architecture:** Created new `styles/components/map.css` file
+  - Moved `#map`, `.map-section`, `.map-view-container` styles from `globals.css`
+  - Included all responsive variants and media queries
+  - Added shadow effect to map matching crew cards styling
+- **Import Management:** Updated `styles/globals.css`
+  - Added `@import './components/map.css'` to maintain centralized CSS management
+  - Removed duplicate map styles from globals.css
+  - Preserved existing modular CSS architecture pattern
+
+**Result:** Improved CSS organization and maintainability following established modular pattern
+**Testing:** Verified on development server (localhost:3001)
+**Files Modified:** `globals.css`, `map.css` (new file)
+
 ### **Previous Session: May 24, 2025** 
 **Focus:** Homepage Crew Card Styling Consistency and MCP Integration
 
@@ -60,35 +97,56 @@
 
 ---
 
-### **Current Session: June 24, 2025**
-**Focus:** Date Correction & Project Timeline Updates
+### **Current Session: June 25, 2025**
+**Focus:** Statistics Bug Resolution & Environment Variable Standardization
 
 **Work Completed:**
-- ✅ **Date Correction:**
-  - Updated `status.md` "Last Updated" from May 24, 2025 to June 24, 2025
-  - Updated `AI_CONTEXT.md` "Last Updated" to June 24, 2025
-  - Updated `BUGREPORT.md` "Last Updated" to June 24, 2025
-  - Corrected current session date to June 24, 2025
+- ✅ **Critical Statistics Discrepancy Resolution:**
+  - Identified and resolved 18-city discrepancy between manual (188) and automated (170) counts
+  - Root cause: Manual count included ALL crew statuses, automated only published crews
+  - Updated `getGlobalStatistics()` in `/lib/airtable.ts` to count cities/countries from ALL crews
+  - Maintained published-only logic for active crews and total runners
+  - Created verification script `scripts/testUpdatedStatistics.js`
+  - All counts now verified: 188 cities, 60 countries, 362 active crews
 
-- ✅ **Project Timeline Recalculation:**
-  - Confirmed project coding started approximately 8 weeks ago (around April 26, 2025)
-  - Updated timeline to reflect June 24, 2025 as current date
-  - Maintained Phase 1 status as "In Progress"
-  - Preserved accurate project phase and development status
+- ✅ **Environment Variable Standardization:**
+  - Resolved inconsistent usage of `AIRTABLE_API_KEY` vs `AIRTABLE_PERSONAL_ACCESS_TOKEN`
+  - Updated `README.md` to use standardized environment variable names
+  - Updated `analyzeCitiesAndCountries.js` to remove deprecated fallback
+  - Maintained legacy references only in migration documentation
+  - Achieved consistent naming across entire project
 
-**Key Updates Made:**
-1. **Date Accuracy:** All documentation now reflects correct date of June 24, 2025
-2. **Timeline Consistency:** Project timeline updated from 4 weeks to 8 weeks of development
-3. **Documentation Sync:** All three key files now have consistent, accurate dates
-4. **Session Focus:** Updated current session to reflect date correction work
+- ✅ **Documentation Updates:**
+  - Updated all brain files with latest bug fixes and resolutions
+  - Added comprehensive resolution details to `BUGREPORT.md`
+  - Enhanced `AI_CONTEXT.md` with recent critical updates section
+  - Synchronized all documentation dates to June 25, 2025
 
-**Current Status:** Phase 1 core infrastructure is complete with live data integration
+**Key Achievements:**
+1. **Data Accuracy:** Statistics now accurately reflect global crew reach
+2. **Configuration Consistency:** Standardized environment variable naming
+3. **Verification:** All statistics validated with comprehensive test scripts
+4. **Documentation:** Complete tracking of all bug fixes and resolutions
 
-**Next Priority:** Complete remaining content pages (Blog, Events, Routes) and finalize Phase 1
+**Current Status:** Phase 1 core infrastructure complete with accurate data integration
+
+**Next Priority:** Address remaining crew page display issues and complete Phase 1 content pages
 
 ---
 
-### **Current Session: December 2024 (Latest)**
+### **Current Session: January 2025 (Latest)**
+**Focus:** Airtable Image Loading Optimization
+
+**Work Completed:**
+- ✅ **Airtable Image Loading Optimization:**
+  - Transitioned from three-tier (local → Airtable → default) to two-tier (local → default) image fallback system
+  - Removed unnecessary Airtable API calls for images despite having 300+ local logos and photos
+  - Deprecated problematic `getCrewImages()` method in `/lib/airtable.ts` that caused CREW_MEDIA table targeting issues
+  - Verified comprehensive local image collections: 300+ logos in `/public/images/crew/logos` and 300+ photos in `/public/images/crew/photos`
+  - Eliminated server crashes and improved performance by removing API overhead
+  - Updated documentation in `AI_CONTEXT.md` to reflect new local-first image loading system
+
+### **Previous Session: December 2024**
 **Focus:** Status Field Standardization & Data Consistency
 
 **Work Completed:**
