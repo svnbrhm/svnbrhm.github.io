@@ -5,15 +5,19 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run generate:crew-data && next build",
+    "build:fast": "next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "generate:crew-data": "node scripts/generateStaticCrewData.js",
+    "update:crew-data": "npm run generate:crew-data"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
     "airtable": "^0.12.2",
+    "dotenv": "^16.5.0",
     "framer-motion": "^10.16.16",
     "intersection-observer": "^0.12.2",
     "leaflet": "^1.9.4",

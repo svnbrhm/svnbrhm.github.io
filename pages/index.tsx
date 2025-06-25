@@ -12,7 +12,7 @@ import { Crew } from '../types/crew';
 import { airtableService } from '../lib/airtable';
 // Removed mock data imports - using only real Airtable data
 
-const WorldMap = dynamic(() => import('../components/Map/WorldMap'), { ssr: false });
+const WorldMapOptimized = dynamic(() => import('../components/Map/WorldMapOptimized'), { ssr: false });
 
 interface HomeProps {
   crews: Crew[];
@@ -53,7 +53,7 @@ const Home: NextPage<HomeProps> = ({ crews, routes, events, blogs }) => {
       
       {/* Kompaktere Sektion-Abstände */}
       <section className="homepage-section">
-        <WorldMap crews={crews} />
+        <WorldMapOptimized crews={crews} />
       </section>
       
       <div className="section-divider"></div>
