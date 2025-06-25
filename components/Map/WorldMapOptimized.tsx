@@ -62,13 +62,13 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
         
         setStaticCrews(data.crews);
         setDataSource('static');
-        setDebugInfo(`Loaded ${data.crews.length} crews from static data`);
+
         setIsLoading(false);
         
       } catch (error) {
         console.error('❌ Failed to load static data:', error);
         console.log('🔄 Falling back to SSG data...');
-        setDebugInfo('Static data failed, using fallback...');
+
         
         // Fallback to SSG data
         if (fallbackCrews && fallbackCrews.length > 0) {
