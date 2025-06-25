@@ -210,9 +210,8 @@ async function processCrewCoordinates(crew, index, total) {
   console.log(`Processing crew ${index + 1}/${total}: ${crew.name}`);
   
   // If crew already has coordinates from headquarters, use them
-  if (crew.headquarterCoordinates && 
-      crew.headquarterCoordinates.lat && 
-      crew.headquarterCoordinates.lng) {
+  if (crew.headquarterCoordinates?.lat && 
+      crew.headquarterCoordinates?.lng) {
     console.log(`  ✓ Using existing coordinates: ${crew.headquarterCoordinates.lat}, ${crew.headquarterCoordinates.lng}`);
     return {
       ...crew,

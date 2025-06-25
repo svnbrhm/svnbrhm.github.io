@@ -673,7 +673,7 @@ export const airtableService = {
       m.Status === 'Published' && 
       m.FileURL
     );
-    if (logoMedia && logoMedia.FileURL) {
+    if (logoMedia?.FileURL) {
       logoUrl = logoMedia.FileURL;
     }
 
@@ -683,7 +683,7 @@ export const airtableService = {
       m.Status === 'Published' && 
       m.FileURL
     );
-    if (heroMedia && heroMedia.FileURL) {
+    if (heroMedia?.FileURL) {
       heroImageUrl = heroMedia.FileURL;
     }
 
