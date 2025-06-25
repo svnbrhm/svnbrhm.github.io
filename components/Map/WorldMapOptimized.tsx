@@ -35,13 +35,13 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
   const [staticCrews, setStaticCrews] = useState<StaticCrewData['crews']>([]);
   const [error, setError] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<'static' | 'ssg'>('static');
-  const [debugInfo, setDebugInfo] = useState<string>('Initializing...');
+
 
   // Load static crew data
   useEffect(() => {
     const loadStaticData = async () => {
       try {
-        setDebugInfo('Loading static crew data...');
+
         console.log('📊 Loading static crew data...');
         const response = await fetch('/data/crews-with-coordinates.json');
         
@@ -305,7 +305,7 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
     });
     
     console.log(`🎉 Successfully added ${limitedCrews.length} markers to the map!`);
-    setDebugInfo(`Map loaded with ${limitedCrews.length} markers`);
+
   };
 
   // Get color based on crew status
@@ -330,9 +330,7 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
         <div className="map-error">
           <p>⚠️ {error}</p>
           <p>The map is using fallback data and may have limited functionality.</p>
-          <div className="debug-info" style={{ padding: '10px', backgroundColor: '#ffe', border: '1px solid #ddd', margin: '10px 0' }}>
-            <strong>Debug Info:</strong> {debugInfo}
-          </div>
+
         </div>
         <div ref={mapRef} className="world-map" style={{ height: '835px', width: '100%', backgroundColor: '#f0f0f0', border: '2px solid #ccc' }} />
         {isLoading && (
@@ -355,9 +353,7 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
             <p>⚠️ Using fallback data - static data unavailable</p>
           </div>
         )}
-        <div className="debug-info" style={{ padding: '10px', backgroundColor: '#ffe', border: '1px solid #ddd', margin: '10px 0' }}>
-          <strong>Debug Info:</strong> {debugInfo}
-        </div>
+
       </div>
       
       <div ref={mapRef} className="world-map" style={{ height: '835px', width: '100%', backgroundColor: '#f0f0f0', border: '2px solid #ccc' }} />
