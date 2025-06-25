@@ -146,12 +146,12 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
             display: window.getComputedStyle(mapContainer).display,
             visibility: window.getComputedStyle(mapContainer).visibility
           });
-          setDebugInfo(`Map container: ${rect.width}x${rect.height}`);
+
         }
         
         const L = await import('leaflet');
         console.log('✅ Leaflet imported successfully');
-        setDebugInfo('Leaflet loaded, creating map...');
+
         
 
         
@@ -198,7 +198,7 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
           staticCrewsLength: staticCrews.length
         });
         setError('Failed to initialize map: ' + errorMessage);
-        setDebugInfo(`Error: ${errorMessage}`);
+
         setIsLoading(false);
       }
     };
