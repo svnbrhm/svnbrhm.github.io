@@ -5,6 +5,37 @@ This document tracks all bugs encountered during the development and enhancement
 
 ---
 
+## 🟢 RECENTLY RESOLVED ISSUES
+
+### 1. Map Pins Not Displaying on WorldMap Component
+**Status:** RESOLVED  
+**Priority:** High  
+**Resolved Date:** December 19, 2024  
+**Description:** The WorldMap component was not displaying any crew location pins despite having crew data with coordinates.
+
+**Root Cause:**
+- Missing crew names in static data were causing the name requirement filter to exclude all crews
+- Filtering logic was too strict, requiring non-empty crew names
+- No fallback display mechanism for crews with missing names
+
+**Solution Implemented:**
+- Temporarily disabled name requirement filter in `WorldMapOptimized.tsx`
+- Added fallback display using city/country when crew name is empty
+- Enhanced popup content to show city/country information
+- Improved debug logging and error handling
+- Added static crew data generation script
+- Implemented comprehensive debugging panel
+
+**Files Modified:**
+- `components/Map/WorldMapOptimized.tsx` - Updated filtering and popup logic
+- `scripts/generateStaticCrewData.js` - New static data generation
+- `public/data/crews-with-coordinates.json` - Static crew data file
+- `pages/api/cron/update-crew-data.js` - Automated data updates
+
+**Result:** Map now displays pins for all crews with valid coordinates, showing city/country in popups when crew names are missing.
+
+---
+
 ## 🔴 OPEN ISSUES
 
 ### 1. Crews Page Displaying Incomplete Crew Cards
