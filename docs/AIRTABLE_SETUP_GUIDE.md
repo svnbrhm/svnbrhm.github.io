@@ -2,11 +2,11 @@
 
 This guide explains how to configure Airtable to fetch real statistics instead of mock data.
 
-**Last Updated:** June 25, 2025
+**Last Updated:** June 26, 2025
 
 ## Important: Environment Variable Standardization
 
-As of June 25, 2025, all project files use `AIRTABLE_PERSONAL_ACCESS_TOKEN` consistently. The deprecated `AIRTABLE_API_KEY` references have been removed from all configuration files and documentation.
+As of June 26, 2025, all project files use `AIRTABLE_PERSONAL_ACCESS_TOKEN` consistently. The deprecated `AIRTABLE_API_KEY` references have been removed from all configuration files and documentation.
 
 ## Prerequisites
 
@@ -54,7 +54,7 @@ Your Airtable base should contain these tables:
 2. Replace the placeholder values:
 
 ```env
-# Airtable Configuration (Standardized as of June 25, 2025)
+# Airtable Configuration (Standardized as of June 26, 2025)
 AIRTABLE_PERSONAL_ACCESS_TOKEN=your_actual_token_here
 AIRTABLE_BASE_ID=your_actual_base_id_here
 

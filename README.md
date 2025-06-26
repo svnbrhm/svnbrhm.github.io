@@ -83,8 +83,16 @@ npm run dev
 - **Blog System**: Articles about running culture, gear, and events
 - **Event Listings**: Upcoming running events and races
 - **Route Discovery**: Community-curated running routes
+- **Instant Statistics**: Server-side cached statistics for instant homepage loading
 - **Mobile-First Design**: Responsive design optimized for all devices
 - **SEO Optimized**: Built-in SEO optimization for better discoverability
+
+### ⚡ Performance Features
+
+- **Statistics Caching**: Homepage statistics load instantly from server-side cache
+- **Daily Auto-Updates**: Automated cron jobs keep data fresh
+- **Smart Fallbacks**: Graceful degradation ensures data always displays
+- **Optimized API Calls**: Reduced from every page load to once daily
 
 ## 🔧 Development
 
@@ -94,6 +102,9 @@ npm run dev
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
+- `npm run update:statistics` - Manually update statistics cache
+- `npm run generate:crew-data` - Generate static crew data
+- `npm run update:crew-data` - Update crew data cache
 
 ### Environment Variables
 

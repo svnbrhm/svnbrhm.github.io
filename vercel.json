@@ -28,6 +28,10 @@
     {
       "path": "/api/cron/update-crew-data",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/update-statistics",
+      "schedule": "0 3 * * *"
     }
   ]
 }

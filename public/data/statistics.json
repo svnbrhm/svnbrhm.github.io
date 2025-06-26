@@ -1,0 +1,12 @@
+{
+  "data": {
+    "activeCrews": 150,
+    "totalRunners": 4500,
+    "cities": 188,
+    "countries": 60,
+    "routes": 180,
+    "events": 45
+  },
+  "lastUpdated": "2025-06-26T10:11:47.175Z",
+  "nextUpdate": "2025-06-27T10:11:47.175Z"
+}

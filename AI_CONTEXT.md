@@ -20,11 +20,27 @@
 - **Phase 3:** Advanced features (GPX integration, mobile app, analytics)
 
 **Technology Stack:** Next.js, TypeScript, Tailwind CSS, Airtable  
-**Last Updated:** June 25, 2025
+**Last Updated:** June 26, 2025
 
-## Recent Critical Updates (June 25, 2025)
+## Recent Critical Updates (May 26, 2025)
 
-### Map Container Initialization Error Resolution (June 25, 2025 - 15:46)
+### Statistics Caching System Implementation (May 26, 2025)
+- **MAJOR FEATURE**: Implemented comprehensive server-side statistics caching system
+- **Problem Solved**: Eliminated "Loading statistics..." delay on homepage (2-5 seconds → instant)
+- **Architecture Change**: Moved from client-side Airtable calls to server-side cached API
+- **Key Components**:
+  - `pages/api/statistics.ts` - Main cached statistics API endpoint
+  - `pages/api/cron/update-statistics.ts` - Daily automated cache updates
+  - `public/data/statistics.json` - JSON cache file
+  - `scripts/updateStatistics.js` - Manual cache update script
+- **Component Refactor**: `Statistics.tsx` now fetches from `/api/statistics` instead of direct Airtable
+- **Performance**: Statistics load instantly from cache with smart fallback mechanisms
+- **Security**: Airtable credentials moved from client-side to server-side only
+- **Automation**: Daily Vercel cron job updates cache at 3:00 AM UTC
+- **Node.js Fix**: Resolved module resolution error by using `/api/simple-stats` endpoint fallback
+- **Documentation**: Created comprehensive `docs/STATISTICS_CACHING.md`
+
+### Map Container Initialization Error Resolution (June 26, 2025 - 15:46)
 - **RESOLVED**: "Map container is already initialized" error in WorldMapOptimized component
 - **Root Cause**: Leaflet map was being re-initialized when staticCrews data changed without proper cleanup
 - **Solution**: Added conditional check to prevent map re-initialization, update markers instead
@@ -57,7 +73,7 @@
 - **Fallback System**: Enhanced fallback mechanisms for missing data
 - **User Experience**: Improved loading states and error messages
 
-## Additional Updates (June 25, 2025)
+## Additional Updates (June 26, 2025)
 
 ### Statistics Discrepancy Resolution
 - **RESOLVED**: Critical statistics discrepancy between manual (188 cities) and automated (170 cities) counts
@@ -77,7 +93,7 @@
 - **Performance**: Optimized Airtable API calls, reduced N+1 query problems
 - **Image Loading**: Transitioned to two-tier fallback system (local → default)
 
-### Statistics Section UI Improvements (June 25, 2025 - 09:56)
+### Statistics Section UI Improvements (June 26, 2025 - 09:56)
 - **UI Enhancement**: Centered "Global Impact" heading and removed grey gradient background
 - **CSS Modernization**: Replaced Tailwind utility classes with semantic CSS classes
 - **Files Updated**: `styles/components/statistics.css`, `components/Statistics.tsx`
@@ -97,7 +113,7 @@
 - **Error Recovery**: Enhanced error handling and recovery mechanisms
 - **Development Workflow**: Improved debugging and development experience
 
-### WorldMap Component CSS Modularization (June 25, 2025 - 11:02)
+### WorldMap Component CSS Modularization (June 26, 2025 - 11:02)
 - **CSS Architecture**: Extracted map-related styles from `globals.css` into dedicated `styles/components/map.css`
 - **Modular Organization**: Created component-specific CSS file following established pattern
 - **Files Updated**: `styles/globals.css`, `styles/components/map.css`

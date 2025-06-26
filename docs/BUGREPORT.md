@@ -7,10 +7,10 @@ This document tracks all bugs encountered during the development and enhancement
 
 ## 🟢 RECENTLY RESOLVED ISSUES
 
-### 1. Map Container Initialization Error (June 25, 2025)
+### 1. Map Container Initialization Error (June 26, 2025)
 **Status:** RESOLVED  
 **Priority:** High  
-**Resolved Date:** June 25, 2025 - 15:46  
+**Resolved Date:** June 26, 2025 - 15:46  
 **Description:** "Map container is already initialized" error occurring in WorldMapOptimized component when staticCrews data changed.
 
 **Root Cause:**
@@ -109,7 +109,7 @@ This document tracks all bugs encountered during the development and enhancement
 ## 🟡 RESOLVED ISSUES
 
 ### 1. Statistics Discrepancy Between Manual and Automated Counts
-**Status:** RESOLVED (June 25, 2025)  
+**Status:** RESOLVED (June 26, 2025)  
 **Priority:** High  
 **Description:** Manual city count (188) differed from automated statistics calculation (170 cities), causing confusion about the actual global reach of running crews.
 
@@ -406,7 +406,7 @@ getStaticProps error in /pages/crews/index.tsx
 
 ---
 
-**Last Updated:** June 25, 2025  
+**Last Updated:** June 26, 2025  
 **Environment:** Development  
 **Next.js Version:** 14.2.29  
 **Node.js Version:** Latest LTS  

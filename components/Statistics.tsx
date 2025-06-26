@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { airtableService, GlobalStatistics } from '../lib/airtable';
+import { GlobalStatistics } from '../lib/airtable';
 
 interface StatItem {
   id: number;
@@ -30,14 +30,23 @@ const Statistics = () => {
   // Flag to prevent multiple animations
   const [hasAnimated, setHasAnimated] = useState(false);
 
-  // Fetch real statistics from Airtable
+  // Fetch cached statistics from API
   useEffect(() => {
     const fetchStatistics = async () => {
       try {
-        console.log('Statistics component: Starting to fetch statistics...');
+        console.log('Statistics component: Starting to fetch cached statistics...');
         setIsLoading(true);
-        const globalStats = await airtableService.getGlobalStatistics();
-        console.log('Statistics component: Received global stats:', globalStats);
+        
+        const response = await fetch('/api/statistics');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch statistics: ${response.status}`);
+        }
+        
+        const cachedData = await response.json();
+        const globalStats = cachedData.data;
+        
+        console.log('Statistics component: Received cached stats:', globalStats);
+        console.log('Statistics component: Cache info - Last updated:', cachedData.lastUpdated);
         
         const updatedStats: StatItem[] = [
           { id: 1, label: 'Active Crews', value: globalStats.activeCrews, priority: 'high' },

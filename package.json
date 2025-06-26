@@ -12,7 +12,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "generate:crew-data": "node scripts/generateStaticCrewData.js",
-    "update:crew-data": "npm run generate:crew-data"
+    "update:crew-data": "npm run generate:crew-data",
+    "update:statistics": "node scripts/updateStatistics.js"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
