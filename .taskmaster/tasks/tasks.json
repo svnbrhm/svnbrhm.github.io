@@ -1,0 +1,572 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Setup Next.js Project with TypeScript",
+        "description": "Initialize the project with Next.js 13+ and TypeScript, configure Tailwind CSS with CSS Modules, and set up the basic project structure.",
+        "details": "1. Create a new Next.js project with TypeScript support:\n```bash\nnpx create-next-app@latest running-crews --typescript\n```\n2. Install and configure Tailwind CSS with CSS Modules:\n```bash\nnpm install -D tailwindcss postcss autoprefixer\nnpx tailwindcss init -p\n```\n3. Configure Tailwind CSS in `tailwind.config.js`\n4. Set up folder structure for the app router:\n   - `/app`: Main application routes\n   - `/components`: Reusable UI components\n   - `/lib`: Utility functions and helpers\n   - `/public`: Static assets\n   - `/styles`: Global styles\n5. Configure environment variables and `.env` files\n6. Set up basic layout components (header, footer, main layout)\n7. Configure TypeScript settings in `tsconfig.json`\n8. Set up Vercel deployment configuration",
+        "testStrategy": "1. Verify project builds without errors\n2. Confirm TypeScript compilation works\n3. Test that Tailwind CSS is properly configured\n4. Ensure the development server runs correctly\n5. Validate the project structure follows Next.js 13+ best practices\n6. Test basic navigation between pages",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Implement Airtable Integration",
+        "description": "Set up Airtable as the primary data source, create API endpoints for data retrieval, and implement caching mechanisms.",
+        "details": "1. Install Airtable SDK:\n```bash\nnpm install airtable\n```\n2. Create Airtable base with the following tables:\n   - Crews (Name, Location, Coordinates, Images, Contact Info, Status)\n   - Statistics (Global metrics, country/city counts)\n   - Images (Crew logos, photos, hero images)\n3. Create API utility in `/lib/airtable.ts`:\n```typescript\nimport Airtable from 'airtable';\n\nconst base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);\n\nexport const getCrews = async () => {\n  // Implementation to fetch crews with caching\n};\n\nexport const getCrewById = async (id: string) => {\n  // Implementation to fetch a specific crew\n};\n\nexport const getStatistics = async () => {\n  // Implementation to fetch statistics\n};\n```\n4. Implement API routes in `/app/api/` for crews, statistics, and other data\n5. Add caching layer using ISR (Incremental Static Regeneration)\n6. Create mock data fallback system for development and testing\n7. Implement error handling and rate limit management",
+        "testStrategy": "1. Test API endpoints with mock requests\n2. Verify data fetching from Airtable works correctly\n3. Test caching mechanisms and verify they reduce API calls\n4. Validate error handling for API failures\n5. Test rate limit handling\n6. Verify mock data fallback works when Airtable is unavailable",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Create Core UI Components",
+        "description": "Develop reusable UI components for the application including buttons, cards, navigation, search inputs, and loading states.",
+        "details": "1. Create the following components in `/components/ui/`:\n   - Button.tsx: Primary, secondary, and tertiary button variants\n   - Card.tsx: For crew listings and content display\n   - Input.tsx: Form inputs with validation\n   - Select.tsx: Dropdown selection component\n   - Skeleton.tsx: Loading placeholder components\n   - Modal.tsx: For popups and dialogs\n   - Navigation.tsx: Header navigation component\n   - Footer.tsx: Site footer with links and information\n2. Implement responsive design using Tailwind CSS breakpoints\n3. Ensure accessibility compliance with proper ARIA attributes\n4. Create a component documentation system\n5. Implement dark/light mode support\n6. Add animations and transitions for interactive elements",
+        "testStrategy": "1. Test components in isolation using component testing\n2. Verify responsive behavior across different screen sizes\n3. Test accessibility using automated tools (e.g., axe-core)\n4. Validate component styling across browsers\n5. Test keyboard navigation and screen reader compatibility\n6. Verify components match the design specifications",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Implement Leaflet Map Integration",
+        "description": "Integrate Leaflet with OpenStreetMap tiles to create the interactive world map for displaying running crews.",
+        "details": "1. Install required packages:\n```bash\nnpm install leaflet react-leaflet\nnpm install -D @types/leaflet\n```\n2. Create a WorldMap component in `/components/map/WorldMap.tsx`:\n```typescript\nimport { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';\nimport 'leaflet/dist/leaflet.css';\nimport { useEffect, useState } from 'react';\nimport { CrewType } from '@/types';\n\ninterface WorldMapProps {\n  crews: CrewType[];\n  height?: string;\n  zoom?: number;\n  center?: [number, number];\n}\n\nexport default function WorldMap({ crews, height = '600px', zoom = 2, center = [20, 0] }: WorldMapProps) {\n  // Implementation\n}\n```\n3. Handle marker clustering for performance with many markers\n4. Implement custom markers with crew logos\n5. Create interactive popups with crew information\n6. Add map controls for zooming and filtering\n7. Implement responsive behavior for different screen sizes\n8. Handle map initialization errors and fallbacks",
+        "testStrategy": "1. Test map rendering with different datasets\n2. Verify marker placement accuracy\n3. Test popup functionality and content display\n4. Validate map performance with large numbers of markers\n5. Test responsive behavior on mobile devices\n6. Verify map controls work correctly\n7. Test error handling when map fails to load",
+        "priority": "high",
+        "dependencies": [
+          1,
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Develop Crew Listing and Detail Pages",
+        "description": "Create pages for displaying the crew directory with pagination, search, and filtering, plus detailed crew profile pages.",
+        "details": "1. Create crew listing page in `/app/crews/page.tsx`:\n```typescript\nimport { getCrews } from '@/lib/airtable';\nimport CrewCard from '@/components/crews/CrewCard';\nimport Pagination from '@/components/ui/Pagination';\nimport SearchFilters from '@/components/crews/SearchFilters';\n\nexport default async function CrewsPage({ searchParams }) {\n  const page = parseInt(searchParams.page || '1');\n  const crews = await getCrews(page);\n  // Implementation\n}\n```\n2. Implement crew detail page in `/app/crews/[id]/page.tsx`\n3. Create crew card component for listings\n4. Implement pagination system\n5. Add search and filtering functionality\n6. Create crew profile layout with images, information, and contact details\n7. Implement SEO optimization for crew pages\n8. Add structured data for better search engine visibility",
+        "testStrategy": "1. Test pagination with different page sizes\n2. Verify search and filtering functionality\n3. Test crew detail page rendering with various crew data\n4. Validate SEO elements and structured data\n5. Test responsive layout on different devices\n6. Verify image loading and optimization\n7. Test navigation between listing and detail pages",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Create Homepage with Hero Section",
+        "description": "Design and implement the homepage with hero section, featured crews, statistics overview, and main navigation.",
+        "details": "1. Create homepage in `/app/page.tsx`:\n```typescript\nimport { getStatistics, getFeaturedCrews } from '@/lib/airtable';\nimport Hero from '@/components/home/Hero';\nimport FeaturedCrews from '@/components/home/FeaturedCrews';\nimport StatisticsOverview from '@/components/home/StatisticsOverview';\n\nexport default async function HomePage() {\n  const stats = await getStatistics();\n  const featuredCrews = await getFeaturedCrews();\n  // Implementation\n}\n```\n2. Create Hero component with background image and call-to-action\n3. Implement FeaturedCrews component to showcase selected crews\n4. Create StatisticsOverview component with key metrics\n5. Add section for quick map access\n6. Implement responsive design for all screen sizes\n7. Optimize images and loading performance\n8. Add animations and transitions for visual appeal",
+        "testStrategy": "1. Test homepage rendering with different data sets\n2. Verify responsive layout across devices\n3. Test image loading and optimization\n4. Validate performance metrics (LCP, CLS, FID)\n5. Test navigation to other sections of the site\n6. Verify statistics display correctly\n7. Test animations and transitions",
+        "priority": "high",
+        "dependencies": [
+          2,
+          3,
+          5
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement Statistics Dashboard",
+        "description": "Create a comprehensive statistics dashboard with real-time metrics about crews, countries, cities, and global running statistics.",
+        "details": "1. Create statistics page in `/app/statistics/page.tsx`:\n```typescript\nimport { getDetailedStatistics } from '@/lib/airtable';\nimport StatisticsCard from '@/components/statistics/StatisticsCard';\nimport CountryBreakdown from '@/components/statistics/CountryBreakdown';\nimport CityBreakdown from '@/components/statistics/CityBreakdown';\nimport GrowthChart from '@/components/statistics/GrowthChart';\n\nexport default async function StatisticsPage() {\n  const statistics = await getDetailedStatistics();\n  // Implementation\n}\n```\n2. Implement caching with ISR for performance\n3. Create visualization components for different metrics\n4. Add filtering and sorting options for statistics\n5. Implement responsive design for the dashboard\n6. Create downloadable reports functionality\n7. Add tooltips and explanations for metrics\n8. Implement data refresh mechanism",
+        "testStrategy": "1. Test statistics calculations for accuracy\n2. Verify caching mechanisms work correctly\n3. Test visualizations with different data sets\n4. Validate responsive behavior on different devices\n5. Test filtering and sorting functionality\n6. Verify downloadable reports generate correctly\n7. Test data refresh mechanism",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Implement Search Functionality",
+        "description": "Create a global search system that allows users to search across crews by name, location, and other attributes.",
+        "status": "pending",
+        "dependencies": [
+          2,
+          5
+        ],
+        "priority": "medium",
+        "details": "1. Enhance existing SearchBar component in `/components/SearchBar.tsx`\n2. Create search utility in `/lib/search.ts`:\n```typescript\nimport { getCrews } from './airtable';\n\nexport async function searchCrews(query: string, filters?: object) {\n  // Implementation for searching crews by name, location (city, country), and other attributes\n}\n```\n3. Implement search API endpoint in `/app/api/search/route.ts` following established API structure\n4. Implement search results page in `/app/search/page.tsx`\n5. Add filtering options for search results\n6. Implement search highlighting for matching terms\n7. Create autocomplete suggestions\n8. Add geographic search capabilities (search by location/proximity)",
+        "testStrategy": "1. Test search with various queries and filters\n2. Verify search results accuracy\n3. Test performance with large result sets\n4. Validate highlighting of search terms\n5. Test autocomplete functionality\n6. Verify geographic search accuracy\n7. Test search API endpoint response times",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement search utility function in /lib/search.ts",
+            "description": "Create a utility function that searches crews by name, location (city, country), and other attributes using the existing getCrews function from Airtable.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "Implement the searchCrews function in /lib/search.ts that accepts a query string and optional filters. The function should: 1) Get all crews using getCrews() from the existing Airtable integration, 2) Filter crews based on the search query matching crew name, location (city, country), and other relevant attributes, 3) Apply any additional filters passed as parameters, 4) Return the filtered results sorted by relevance.",
+            "testStrategy": "Create unit tests with Jest to verify the search function returns correct results for different queries and filters. Test with empty queries, partial matches, and case insensitivity."
+          },
+          {
+            "id": 2,
+            "title": "Create search API endpoint in /app/api/search/route.ts",
+            "description": "Implement a REST API endpoint that accepts search queries and returns matching crew results.",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a new API route handler in /app/api/search/route.ts that follows the established API structure: 1) Accepts GET requests with query parameters for search term and filters, 2) Validates the input parameters, 3) Calls the searchCrews function with the parameters, 4) Returns the results as JSON with appropriate status codes and error handling.",
+            "testStrategy": "Test the API endpoint using tools like Postman or write integration tests that verify correct responses for valid queries and appropriate error handling for invalid requests."
+          },
+          {
+            "id": 3,
+            "title": "Enhance existing SearchBar component in /components/SearchBar.tsx",
+            "description": "Enhance the existing SearchBar component to support the global search functionality.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "Modify the existing SearchBar component in /components/SearchBar.tsx to: 1) Handle search queries for crews, 2) Support form submission for search, 3) Redirect to the search results page with the query as a URL parameter when submitted, 4) Maintain the input value when navigating back to a page with search results, 5) Follow existing component patterns for consistency.",
+            "testStrategy": "Write component tests using React Testing Library to verify the enhanced component handles user input correctly and triggers the proper navigation on submission."
+          },
+          {
+            "id": 4,
+            "title": "Implement search results page in /app/search/page.tsx",
+            "description": "Create a page that displays search results and handles the search query from URL parameters.",
+            "status": "pending",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Implement the search results page that: 1) Extracts the search query from URL parameters, 2) Calls the search API endpoint with the query, 3) Displays the results in a grid or list format similar to the crews listing page, 4) Shows a message when no results are found, 5) Includes loading states while fetching results, 6) Displays the search query prominently on the page, 7) Follows existing component patterns for consistency.",
+            "testStrategy": "Create integration tests that verify the page correctly displays results for various queries and handles edge cases like empty results or error states."
+          },
+          {
+            "id": 5,
+            "title": "Add filtering options for search results",
+            "description": "Implement UI controls that allow users to filter search results by various crew attributes.",
+            "status": "pending",
+            "dependencies": [
+              4
+            ],
+            "details": "Enhance the search results page with filtering capabilities: 1) Create filter controls (dropdowns, checkboxes, etc.) for attributes like location, crew size, or other relevant fields, 2) Update the UI to reflect active filters, 3) Modify the search API call to include the selected filters, 4) Implement client-side state management for the filters, 5) Ensure filters are reflected in the URL for shareable filtered searches, 6) Follow existing component patterns for consistency.",
+            "testStrategy": "Test the filtering functionality by verifying that applying filters correctly updates the displayed results and that filter combinations work as expected."
+          },
+          {
+            "id": 6,
+            "title": "Implement search highlighting for matching terms",
+            "description": "Add visual highlighting to show where search terms match in the search results.",
+            "status": "pending",
+            "dependencies": [
+              4
+            ],
+            "details": "Enhance the search results to highlight matching terms: 1) Create a utility function that identifies matching text in crew data, 2) Create a HighlightedText component that wraps matching text in styled spans, 3) Apply the highlighting to crew names, descriptions, and other text fields in search results, 4) Ensure highlighting works with partial matches and is case-insensitive, 5) Add appropriate styling for the highlighted text, 6) Follow existing component patterns for consistency.",
+            "testStrategy": "Write unit tests for the highlighting utility and component tests to verify the correct text portions are highlighted for various search queries."
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Create Contact Page with Form",
+        "description": "Implement a functional contact page with form submission, validation, and response handling.",
+        "status": "pending",
+        "dependencies": [
+          1,
+          3
+        ],
+        "priority": "medium",
+        "details": "1. Create contact page in `/app/contact/page.tsx` using Tailwind CSS styling consistent with the project:\n```typescript\n'use client';\nimport { useState } from 'react';\nimport { Button } from '@/components/ui/Button';\nimport { Input } from '@/components/ui/Input';\nimport { TextArea } from '@/components/ui/TextArea';\n\nexport default function ContactPage() {\n  const [formData, setFormData] = useState({});\n  const [status, setStatus] = useState('');\n  \n  // Implementation with form handling\n}\n```\n2. Create API endpoint for form submission in `/app/api/contact/route.ts` using Next.js API routes\n3. Implement form validation with error messages following existing component patterns\n4. Add reCAPTCHA or similar for spam protection\n5. Create success and error states for form submission with appropriate user feedback\n6. Implement email notification system for form submissions\n7. Add FAQ section to the contact page with expandable/collapsible questions\n8. Ensure mobile-first responsive design approach consistent with the rest of the project",
+        "testStrategy": "1. Test form submission with valid and invalid data\n2. Verify validation error messages\n3. Test CAPTCHA functionality\n4. Validate email notification system\n5. Test form accessibility\n6. Verify success and error states display correctly\n7. Test form on different devices and browsers, ensuring mobile-first responsive design\n8. Verify integration with existing component patterns and Tailwind CSS styling",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Contact Form UI Components",
+            "description": "Complete the contact form UI with all necessary input fields, styling, and layout in the ContactPage component.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "Extend the existing `/app/contact/page.tsx` file to include: 1) Name field (required), 2) Email field (required), 3) Subject dropdown, 4) Message textarea (required), 5) Submit button. Use the imported UI components and implement proper form layout with responsive design. Add appropriate labels, placeholders, and initial state in the formData object for all fields. Use Tailwind CSS styling consistent with the project's design system and follow the mobile-first responsive approach.",
+            "testStrategy": "Verify all form elements render correctly across different screen sizes. Check that the form layout matches the design system and follows the project's Tailwind CSS styling patterns."
+          },
+          {
+            "id": 2,
+            "title": "Implement Form Validation Logic",
+            "description": "Add client-side validation for all form fields with appropriate error messages.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "Create validation functions that check: 1) Name is not empty, 2) Email is valid format, 3) Message is not empty and has minimum length. Add error state to the component (e.g., `const [errors, setErrors] = useState({})`). Implement validation on blur and before submission. Display inline error messages below each field when validation fails. Add visual indicators for invalid fields (red borders, etc.). Follow existing component patterns for form validation in the project.",
+            "testStrategy": "Test validation by submitting the form with invalid data. Verify each validation rule triggers appropriate error messages. Ensure validation patterns are consistent with other forms in the project."
+          },
+          {
+            "id": 3,
+            "title": "Create API Endpoint for Form Submission",
+            "description": "Implement the server-side API endpoint to handle form submissions and integrate reCAPTCHA verification.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "Create `/app/api/contact/route.ts` with POST handler using Next.js API routes. Implement request validation. Add reCAPTCHA verification using the Google reCAPTCHA API. Store form submissions in database or send to external service. Return appropriate success/error responses with status codes. Include proper error handling for all potential failure points.",
+            "testStrategy": "Test the API endpoint with valid and invalid submissions. Verify reCAPTCHA validation works correctly. Check error handling for various scenarios."
+          },
+          {
+            "id": 4,
+            "title": "Implement Form Submission and Response Handling",
+            "description": "Connect the form to the API endpoint and handle submission states (loading, success, error).",
+            "status": "pending",
+            "dependencies": [],
+            "details": "Create a handleSubmit function that: 1) Prevents default form submission, 2) Validates all fields, 3) Shows loading state, 4) Submits data to API endpoint, 5) Handles response appropriately. Implement loading state with disabled submit button. Create success state with thank you message. Implement error handling with user-friendly messages. Add form reset functionality after successful submission. Ensure user feedback is clear and follows project patterns.",
+            "testStrategy": "Test the full submission flow. Verify loading states display correctly. Check success and error messages appear appropriately. Ensure feedback is consistent with other interactive elements in the project."
+          },
+          {
+            "id": 5,
+            "title": "Add FAQ Section to Contact Page",
+            "description": "Design and implement an FAQ section below the contact form with common questions and answers.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "Create a new component for FAQs with expandable/collapsible questions. Add at least 5 relevant FAQ items with answers. Implement accordion-style interaction for questions. Style according to the design system using Tailwind CSS. Add a heading and introduction text for the FAQ section. Ensure the section is responsive and accessible, following the mobile-first approach used throughout the project.",
+            "testStrategy": "Test accordion functionality. Verify all FAQs display correctly. Check accessibility of the interactive elements. Ensure responsive behavior works on all device sizes."
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Implement SEO Optimization",
+        "description": "Optimize the website for search engines with meta tags, structured data, sitemaps, and performance improvements.",
+        "details": "1. Create SEO component in `/components/SEO.tsx`:\n```typescript\nimport Head from 'next/head';\n\ninterface SEOProps {\n  title: string;\n  description: string;\n  canonicalUrl?: string;\n  ogImage?: string;\n  ogType?: string;\n}\n\nexport default function SEO({ title, description, canonicalUrl, ogImage, ogType = 'website' }: SEOProps) {\n  // Implementation\n}\n```\n2. Implement dynamic meta tags for all pages\n3. Add structured data (JSON-LD) for crews and events\n4. Create sitemap generation in `/app/sitemap.ts`\n5. Implement robots.txt in `/app/robots.ts`\n6. Add canonical URLs to prevent duplicate content\n7. Optimize images with next/image\n8. Implement performance monitoring and optimization",
+        "testStrategy": "1. Validate meta tags with testing tools\n2. Test structured data with Google's Rich Results Test\n3. Verify sitemap generation and format\n4. Test robots.txt configuration\n5. Validate canonical URLs\n6. Test image optimization\n7. Measure and verify performance improvements\n8. Run Lighthouse audits to verify SEO score above 90",
+        "priority": "high",
+        "dependencies": [
+          5,
+          6
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Implement Performance Optimization",
+        "description": "Optimize the application for fast loading times, efficient rendering, and improved user experience.",
+        "details": "1. Implement code splitting and lazy loading:\n```typescript\nimport dynamic from 'next/dynamic';\n\nconst WorldMap = dynamic(() => import('@/components/map/WorldMap'), {\n  loading: () => <MapSkeleton />,\n  ssr: false\n});\n```\n2. Optimize images with next/image and proper sizing\n3. Implement caching strategies for API responses\n4. Add skeleton loading states for components\n5. Optimize CSS and JavaScript bundles\n6. Implement prefetching for common navigation paths\n7. Add service worker for offline capabilities\n8. Implement performance monitoring and reporting",
+        "testStrategy": "1. Measure Core Web Vitals (LCP, FID, CLS)\n2. Test loading performance across different network conditions\n3. Verify bundle sizes and code splitting\n4. Test caching effectiveness\n5. Validate skeleton loading states\n6. Measure Time to Interactive on various devices\n7. Verify service worker functionality\n8. Ensure page load times are under 3 seconds",
+        "priority": "high",
+        "dependencies": [
+          1,
+          3,
+          4,
+          5
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Implement Error Handling and Monitoring",
+        "description": "Create a robust error handling system with fallbacks, error boundaries, and monitoring integration.",
+        "details": "1. Create error boundary component in `/components/ErrorBoundary.tsx`:\n```typescript\n'use client';\nimport { Component, ErrorInfo, ReactNode } from 'react';\n\ninterface ErrorBoundaryProps {\n  children: ReactNode;\n  fallback: ReactNode;\n}\n\ninterface ErrorBoundaryState {\n  hasError: boolean;\n}\n\nexport default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {\n  // Implementation\n}\n```\n2. Create error page in `/app/error.tsx`\n3. Implement API error handling and fallbacks\n4. Add logging system for client and server errors\n5. Integrate with error tracking service (e.g., Sentry)\n6. Create fallback UI components for failed data fetching\n7. Implement retry mechanisms for failed API calls",
+        "testStrategy": "1. Test error boundary with simulated errors\n2. Verify error page displays correctly\n3. Test API error handling with mocked failures\n4. Validate logging system captures errors\n5. Test integration with error tracking service\n6. Verify fallback UI components render correctly\n7. Test retry mechanisms for API calls",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Implement Blog System",
+        "description": "Create a blog system for running-related content with article listings, categories, and detail pages.",
+        "details": "1. Create blog models in Airtable\n2. Implement blog listing page in `/app/blog/page.tsx`:\n```typescript\nimport { getBlogPosts } from '@/lib/airtable';\nimport BlogCard from '@/components/blog/BlogCard';\nimport Pagination from '@/components/ui/Pagination';\n\nexport default async function BlogPage({ searchParams }) {\n  const page = parseInt(searchParams.page || '1');\n  const posts = await getBlogPosts(page);\n  // Implementation\n}\n```\n3. Create blog post detail page in `/app/blog/[slug]/page.tsx`\n4. Implement rich text rendering for blog content\n5. Add category and tag filtering\n6. Create related posts functionality\n7. Implement social sharing features\n8. Add author information and profiles",
+        "testStrategy": "1. Test blog listing with pagination\n2. Verify blog post detail rendering\n3. Test rich text rendering with various content types\n4. Validate category and tag filtering\n5. Test related posts algorithm\n6. Verify social sharing functionality\n7. Test author information display",
+        "priority": "low",
+        "dependencies": [
+          2,
+          3,
+          5
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Blog Models in Airtable",
+            "description": "Define and set up the data structure for blog posts in Airtable, including fields for title, slug, content, categories, tags, author information, and publication date.",
+            "dependencies": [],
+            "details": "Create a new table in Airtable called 'Blog Posts' with fields: id (primary), title (text), slug (text), content (long text), excerpt (text), featured_image (attachment), categories (multiple select), tags (multiple select), author_id (linked record to Users/Crew), published_date (date), status (single select: draft/published). Also create a 'Blog Categories' table with id, name, and slug fields.",
+            "status": "pending",
+            "testStrategy": "Verify all fields are correctly set up in Airtable and test creating sample blog posts with various field combinations."
+          },
+          {
+            "id": 2,
+            "title": "Implement Airtable API Integration for Blog",
+            "description": "Create API functions to fetch blog data from Airtable, including listing posts with pagination, filtering by category/tag, and retrieving individual posts by slug.",
+            "dependencies": [
+              1
+            ],
+            "details": "Extend the existing lib/airtable.ts file to add functions: getBlogPosts(page, limit, filters), getBlogPostBySlug(slug), getBlogCategories(), and getRelatedPosts(postId, limit). Implement proper caching and error handling. Use ISR (Incremental Static Regeneration) with a revalidation period of 1 hour for optimal performance.",
+            "status": "pending",
+            "testStrategy": "Create unit tests for each API function, testing pagination, filtering, and error scenarios."
+          },
+          {
+            "id": 3,
+            "title": "Create Blog Listing Page with Filtering",
+            "description": "Implement the main blog listing page with pagination, category/tag filtering, and responsive grid layout of blog post cards.",
+            "dependencies": [
+              2
+            ],
+            "details": "Complete the implementation of /app/blog/page.tsx using the getBlogPosts function. Add filter UI for categories and tags. Implement server-side pagination with 9 posts per page. Create a BlogList component that renders a grid of BlogCard components. Add proper loading and error states. Implement category and tag filtering through URL parameters.",
+            "status": "pending",
+            "testStrategy": "Test pagination navigation, filter application, and responsive layout across different device sizes."
+          },
+          {
+            "id": 4,
+            "title": "Implement Blog Post Detail Page",
+            "description": "Create the individual blog post page that displays the full content of a post, including rich text rendering, author information, and metadata.",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement /app/blog/[slug]/page.tsx to fetch and display a single blog post using getBlogPostBySlug. Create a BlogPostHeader component for the title, featured image, author, and date. Implement proper metadata for SEO. Add structured data for blog posts using JSON-LD. Handle 404 cases for non-existent slugs.",
+            "status": "pending",
+            "testStrategy": "Test rendering of various content types, verify SEO metadata, and check 404 handling for invalid slugs."
+          },
+          {
+            "id": 5,
+            "title": "Develop Rich Text Content Renderer",
+            "description": "Create a component to render rich text content from Airtable, supporting formatting, images, links, and other embedded content.",
+            "dependencies": [
+              4
+            ],
+            "details": "Create a RichTextRenderer component in /components/blog/RichTextRenderer.tsx that parses and renders Markdown or rich text from Airtable. Support headings, lists, blockquotes, code blocks, images with captions, and embedded content. Ensure proper styling with Tailwind CSS. Add syntax highlighting for code blocks if needed.",
+            "status": "pending",
+            "testStrategy": "Test rendering of various rich text elements, verify responsive image handling, and check accessibility of rendered content."
+          },
+          {
+            "id": 6,
+            "title": "Implement Related Posts and Author Profiles",
+            "description": "Add related posts section to blog detail pages and create author profile components with links to author's other content.",
+            "dependencies": [
+              4,
+              5
+            ],
+            "details": "Create a RelatedPosts component that displays 3-4 related posts based on shared categories or tags. Implement an AuthorCard component showing the author's photo, bio, and link to their profile page. Create /app/blog/author/[id]/page.tsx to display all posts by a specific author. Use the getRelatedPosts function from the Airtable API integration.",
+            "status": "pending",
+            "testStrategy": "Verify related posts algorithm returns relevant content, test author profile page with various authors having different numbers of posts."
+          },
+          {
+            "id": 7,
+            "title": "Add Social Sharing and SEO Optimization",
+            "description": "Implement social sharing buttons for blog posts and ensure proper SEO metadata for all blog pages.",
+            "dependencies": [
+              4,
+              6
+            ],
+            "details": "Create a SocialShare component with buttons for sharing on Twitter, Facebook, LinkedIn, and copying the link. Add Open Graph and Twitter Card metadata to all blog pages. Implement proper canonical URLs. Add a BlogSEO component that handles all metadata for blog pages. Ensure all images have proper alt text. Add schema.org structured data for blog posts and author pages.",
+            "status": "pending",
+            "testStrategy": "Test social sharing functionality across platforms, verify metadata using tools like the Facebook Sharing Debugger and Twitter Card Validator, and check structured data using Google's Rich Results Test."
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "title": "Implement Event Listing and Management",
+        "description": "Create an event system for displaying running events, races, and crew meetups with filtering and details.",
+        "details": "1. Create event models in Airtable\n2. Implement event listing page in `/app/events/page.tsx`:\n```typescript\nimport { getEvents } from '@/lib/airtable';\nimport EventCard from '@/components/events/EventCard';\nimport EventFilters from '@/components/events/EventFilters';\n\nexport default async function EventsPage({ searchParams }) {\n  const filters = {\n    date: searchParams.date,\n    location: searchParams.location,\n    type: searchParams.type\n  };\n  const events = await getEvents(filters);\n  // Implementation\n}\n```\n3. Create event detail page in `/app/events/[id]/page.tsx`\n4. Implement date filtering and calendar view\n5. Add location-based event search\n6. Create event type categorization\n7. Implement event registration links\n8. Add event reminders and sharing functionality",
+        "testStrategy": "1. Test event listing with different filters\n2. Verify event detail page rendering\n3. Test date filtering and calendar view\n4. Validate location-based event search\n5. Test event type categorization\n6. Verify event registration links\n7. Test event reminders and sharing",
+        "priority": "low",
+        "dependencies": [
+          2,
+          3,
+          5
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Event Models and Airtable Integration",
+            "description": "Define event data models in Airtable and implement the getEvents function to fetch and filter events from the backend.",
+            "dependencies": [],
+            "details": "Create Airtable tables for events with fields for title, description, date, location, type, image, registration link, and any other relevant information. Implement the getEvents function in lib/airtable.ts that accepts filter parameters (date, location, type) and returns filtered events. Use ISR (Incremental Static Regeneration) for performance optimization.",
+            "status": "pending",
+            "testStrategy": "Write unit tests for the getEvents function with various filter combinations. Test edge cases like no events found and invalid filter parameters."
+          },
+          {
+            "id": 2,
+            "title": "Implement Event Card Component",
+            "description": "Create a reusable EventCard component to display event information in a consistent format across the application.",
+            "dependencies": [],
+            "details": "Build the EventCard component in components/events/EventCard.tsx that displays event image, title, date, location, type, and a brief description. Include a link to the event detail page. Style using Tailwind CSS following the mobile-first responsive design approach. Add hover effects and appropriate spacing.",
+            "status": "pending",
+            "testStrategy": "Create component tests to ensure the EventCard renders correctly with different event data. Test responsive behavior across different screen sizes."
+          },
+          {
+            "id": 3,
+            "title": "Implement Event Filters Component",
+            "description": "Create an EventFilters component that allows users to filter events by date, location, and type.",
+            "dependencies": [],
+            "details": "Build the EventFilters component in components/events/EventFilters.tsx with filter controls for date (calendar picker), location (dropdown or search), and event type (checkboxes or dropdown). Implement URL-based filtering using searchParams. Style filters to be mobile-friendly and collapsible on smaller screens. Include a clear filters button.",
+            "status": "pending",
+            "testStrategy": "Test filter interactions and ensure URL parameters correctly update. Verify filter combinations work as expected."
+          },
+          {
+            "id": 4,
+            "title": "Implement Events Listing Page",
+            "description": "Create the main events page that displays filtered event cards and allows users to browse all events.",
+            "dependencies": [],
+            "details": "Implement the EventsPage component in app/events/page.tsx that uses the getEvents function to fetch events based on filter parameters. Integrate the EventFilters component at the top and display events using a grid of EventCard components. Add pagination or infinite scrolling if there are many events. Include a 'no events found' state when filters return no results.",
+            "status": "pending",
+            "testStrategy": "Test page rendering with various filter combinations. Ensure proper loading states and error handling."
+          },
+          {
+            "id": 5,
+            "title": "Implement Event Detail Page",
+            "description": "Create a detailed view page for individual events with comprehensive information and registration options.",
+            "dependencies": [],
+            "details": "Build the event detail page in app/events/[id]/page.tsx that fetches a specific event by ID. Display all event details including full description, date and time, location with map integration if possible, event type, registration information, and related events. Add registration button linking to external registration or internal registration form. Include social sharing buttons and add-to-calendar functionality.",
+            "status": "pending",
+            "testStrategy": "Test page rendering with various event types. Verify dynamic routes work correctly with different event IDs. Test registration links and calendar integration."
+          },
+          {
+            "id": 6,
+            "title": "Implement Event Registration and Reminders",
+            "description": "Add functionality for users to register for events and set up reminders.",
+            "dependencies": [],
+            "details": "Create a registration component that either links to external registration platforms or handles registration directly. Implement event reminder functionality that allows users to set up email or browser notifications for upcoming events. Add to calendar integration supporting iCal, Google Calendar, and Outlook. Store user registrations in Airtable and provide a way for users to view their registered events in their profile.",
+            "status": "pending",
+            "testStrategy": "Test the registration flow end-to-end. Verify reminder settings are saved correctly. Test calendar export functionality with different calendar types."
+          }
+        ]
+      },
+      {
+        "id": 15,
+        "title": "Setup CI/CD and Deployment Pipeline",
+        "description": "Configure continuous integration, deployment, and code quality monitoring for the application.",
+        "details": "1. Set up GitHub Actions workflow in `.github/workflows/main.yml`:\n```yaml\nname: CI/CD Pipeline\n\non:\n  push:\n    branches: [ main ]\n  pull_request:\n    branches: [ main ]\n\njobs:\n  build-and-test:\n    runs-on: ubuntu-latest\n    steps:\n      # Implementation steps\n```\n2. Configure Vercel deployment settings\n3. Integrate DeepSource for code quality monitoring\n4. Set up environment variable management\n5. Implement automated testing in CI pipeline\n6. Configure preview deployments for pull requests\n7. Add deployment notifications\n8. Implement rollback mechanisms for failed deployments",
+        "testStrategy": "1. Test CI pipeline with various commit scenarios\n2. Verify Vercel deployment process\n3. Validate DeepSource integration\n4. Test environment variable handling\n5. Verify automated testing in CI\n6. Test preview deployments for pull requests\n7. Validate deployment notifications\n8. Test rollback mechanisms",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 16,
+        "title": "Implement Comprehensive Bug Tracking and Resolution System",
+        "description": "Create an integrated bug tracking and resolution system that works with existing documentation, automates detection, and builds a knowledge base to prevent recurring issues.",
+        "details": "1. Set up a centralized bug tracking database:\n   - Use a NoSQL database (e.g., MongoDB) to store bug reports, their status, and related information.\n   - Create schemas for bug reports, including fields like id, title, description, severity, status, assignee, created_at, updated_at, and resolution.\n\n2. Develop API endpoints for bug management:\n   - Create RESTful API routes in `/app/api/bugs/` for CRUD operations on bug reports.\n   - Implement authentication and authorization for these endpoints.\n\n3. Create UI components for bug reporting and viewing:\n   - Develop a BugReportForm component in `/components/bugs/BugReportForm.tsx`.\n   - Create a BugList component in `/components/bugs/BugList.tsx` for displaying and filtering bugs.\n   - Implement a BugDetails component in `/components/bugs/BugDetails.tsx` for viewing and updating individual bug reports.\n\n4. Integrate with existing documentation:\n   - Parse BUGREPORT.md, SECURITY_FIXES.md, STATISTICS_ISSUES_FIXED.md, and STATISTICS_DISCREPANCY_RESOLUTION.md to import existing bug data.\n   - Develop a script to keep these files in sync with the new bug database.\n\n5. Implement automated bug detection:\n   - Set up error logging and monitoring using a service like Sentry or LogRocket.\n   - Create a system to automatically generate bug reports from logged errors.\n\n6. Develop resolution documentation templates:\n   - Create standardized templates for bug resolution documentation.\n   - Implement a system to automatically generate initial documentation based on bug report data.\n\n7. Build a knowledge base system:\n   - Develop a tagging system for categorizing bugs and their solutions.\n   - Create a search functionality to easily find similar past issues.\n   - Implement a suggestion system that recommends potential solutions based on similar past bugs.\n\n8. Integrate with development workflow:\n   - Set up webhooks to connect the bug tracking system with GitHub (or your VCS).\n   - Automatically update bug statuses based on commit messages or pull request activities.\n   - Implement a system to link bugs with related code changes.\n\n9. Create analytics and reporting features:\n   - Develop dashboards for visualizing bug trends, resolution times, and other key metrics.\n   - Implement automated report generation for weekly/monthly bug status updates.\n\n10. Ensure security and data protection:\n    - Implement proper access controls and data encryption for sensitive bug information.\n    - Set up regular backups of the bug database.\n\n11. Provide user training and documentation:\n    - Create user guides for different roles (developers, QA, project managers) on how to use the new system.\n    - Conduct training sessions for team members on effective use of the bug tracking and resolution system.",
+        "testStrategy": "1. Unit Testing:\n   - Write unit tests for all API endpoints related to bug management.\n   - Create unit tests for utility functions used in bug processing and analysis.\n\n2. Integration Testing:\n   - Test the integration between the bug database and the API layer.\n   - Verify correct interaction between the bug tracking system and version control webhooks.\n\n3. UI Testing:\n   - Conduct thorough testing of all bug reporting, viewing, and management UI components.\n   - Test responsiveness and usability across different devices and screen sizes.\n\n4. Automated Bug Detection Testing:\n   - Simulate various error scenarios to verify that the automated bug detection system correctly logs and reports issues.\n\n5. Documentation Integration Testing:\n   - Verify that existing documentation (BUGREPORT.md, etc.) is correctly parsed and imported.\n   - Test the synchronization between the bug database and markdown files.\n\n6. Knowledge Base Testing:\n   - Test the accuracy of the tagging system for categorizing bugs.\n   - Verify the effectiveness of the search functionality in finding similar past issues.\n   - Test the suggestion system with various bug scenarios to ensure relevant solutions are recommended.\n\n7. Workflow Integration Testing:\n   - Verify that bug statuses are correctly updated based on VCS activities.\n   - Test the linking between bugs and related code changes.\n\n8. Security Testing:\n   - Conduct penetration testing on the bug tracking system to ensure data security.\n   - Verify that access controls are working as expected for different user roles.\n\n9. Performance Testing:\n   - Test the system's performance under high load (e.g., many simultaneous bug reports or queries).\n   - Verify that the analytics and reporting features can handle large datasets efficiently.\n\n10. User Acceptance Testing:\n    - Conduct UAT with different user groups (developers, QA, project managers) to ensure the system meets their needs.\n    - Gather feedback on the usability and effectiveness of the new bug tracking and resolution system.\n\n11. Backup and Recovery Testing:\n    - Test the backup process for the bug database.\n    - Conduct recovery drills to ensure data can be successfully restored from backups.\n\n12. Compatibility Testing:\n    - Verify that the bug tracking system works correctly across different browsers and operating systems.\n\n13. Accessibility Testing:\n    - Ensure that the bug tracking interface is accessible and complies with WCAG guidelines.",
+        "status": "pending",
+        "dependencies": [
+          1,
+          2,
+          3,
+          12
+        ],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up centralized bug tracking database",
+            "description": "Implement a NoSQL database system to store and manage bug reports and related information.",
+            "dependencies": [],
+            "details": "Use MongoDB to create a database with schemas for bug reports, including fields like id, title, description, severity, status, assignee, created_at, updated_at, and resolution.",
+            "status": "pending",
+            "testStrategy": "Verify database connection, schema validation, and basic CRUD operations on bug reports."
+          },
+          {
+            "id": 2,
+            "title": "Develop API endpoints for bug management",
+            "description": "Create RESTful API routes for CRUD operations on bug reports with proper authentication and authorization.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement API routes in /app/api/bugs/ for creating, reading, updating, and deleting bug reports. Ensure proper authentication and authorization mechanisms are in place.",
+            "status": "pending",
+            "testStrategy": "Use Postman or similar tool to test all API endpoints for correct functionality and security."
+          },
+          {
+            "id": 3,
+            "title": "Create UI components for bug reporting and viewing",
+            "description": "Develop React components for bug reporting, listing, and detailed view.",
+            "dependencies": [
+              2
+            ],
+            "details": "Create BugReportForm, BugList, and BugDetails components in the /components/bugs/ directory. Ensure these components interact correctly with the API endpoints.",
+            "status": "pending",
+            "testStrategy": "Conduct unit tests for each component and integration tests for component interactions."
+          },
+          {
+            "id": 4,
+            "title": "Integrate with existing documentation",
+            "description": "Parse existing markdown files and import data into the new bug database.",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop scripts to parse BUGREPORT.md, SECURITY_FIXES.md, STATISTICS_ISSUES_FIXED.md, and STATISTICS_DISCREPANCY_RESOLUTION.md. Import the data into the MongoDB database and create a system to keep these files in sync with the database.",
+            "status": "pending",
+            "testStrategy": "Verify correct parsing of all markdown files and accurate data import into the database."
+          },
+          {
+            "id": 5,
+            "title": "Implement automated bug detection",
+            "description": "Set up error logging and monitoring with automatic bug report generation.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Integrate a service like Sentry or LogRocket for error logging. Develop a system that automatically generates bug reports in the database from logged errors.",
+            "status": "pending",
+            "testStrategy": "Simulate various error scenarios and verify automatic creation of corresponding bug reports."
+          },
+          {
+            "id": 6,
+            "title": "Develop resolution documentation templates",
+            "description": "Create standardized templates for bug resolution documentation with auto-generation capabilities.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Design and implement standardized templates for bug resolution documentation. Create a system that automatically generates initial documentation based on the data in bug reports.",
+            "status": "pending",
+            "testStrategy": "Test the auto-generation of documentation for various types of bug reports and verify template adherence."
+          },
+          {
+            "id": 7,
+            "title": "Build a knowledge base system",
+            "description": "Implement a tagging system, search functionality, and solution suggestion mechanism for bugs.",
+            "dependencies": [
+              1,
+              2,
+              6
+            ],
+            "details": "Develop a tagging system for categorizing bugs and solutions. Implement robust search functionality and a system that suggests potential solutions based on similar past bugs.",
+            "status": "pending",
+            "testStrategy": "Test the accuracy of the tagging system, search functionality, and solution suggestions with a diverse set of bug scenarios."
+          },
+          {
+            "id": 8,
+            "title": "Integrate with development workflow",
+            "description": "Connect the bug tracking system with version control and implement automated status updates.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Set up webhooks to connect the bug tracking system with GitHub. Implement automatic bug status updates based on commit messages or pull request activities. Create a system to link bugs with related code changes.",
+            "status": "pending",
+            "testStrategy": "Simulate various Git activities and verify correct automatic updates in the bug tracking system."
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-06-26T15:08:41.580Z",
+      "updated": "2025-06-26T15:33:48.138Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

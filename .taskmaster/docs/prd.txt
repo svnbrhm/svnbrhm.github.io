@@ -1,0 +1,198 @@
+# RunningCrews.com - Global Running Community Platform
+
+## Project Overview
+
+**RunningCrews.com** is a Next.js-based website that connects running enthusiasts with local running crews worldwide. The project uses Airtable as a headless CMS and implements Incremental Static Regeneration (ISR) for optimal performance.
+
+**Project Version:** 2.2  
+**Last Updated:** June 26, 2025  
+**Current Phase:** Phase 1 - Core Functionality (73% Complete)
+
+## Core Features
+
+### Primary Features
+- **Running Crew Discovery:** Browse and search local running crews with detailed profiles (449 crews)
+- **Interactive World Map:** Leaflet-based map showing crew locations globally
+- **Event Management:** Comprehensive event listings (marathons, local runs, crew events)
+- **Blog System:** Community-driven content with crew stories and running tips
+- **Route Sharing:** Discover and share running routes with GPX data support
+- **Global Search:** Advanced search across crews, events, blog posts, and routes
+- **Statistics Dashboard:** Real-time metrics (188 cities, 60 countries)
+
+### Technical Features
+- **Performance:** ISR implementation with server-side caching for instant statistics loading
+- **Responsive Design:** Mobile-first approach with optimized user experience
+- **Error Handling:** Comprehensive error boundaries and fallback systems
+- **SEO Optimization:** Meta tags, structured data, and performance optimization
+- **Admin Panel:** Mock data monitoring and manual revalidation capabilities
+
+## User Experience
+
+### Target Personas
+1. **Running Enthusiasts:** Individuals looking to join local running communities
+2. **Crew Organizers:** Leaders managing running groups and events
+3. **Event Participants:** Runners seeking races and community events
+4. **Content Creators:** Contributors sharing running stories and routes
+
+### User Flows
+1. **Discovery Flow:** Homepage → Map/Search → Crew Details → Contact
+2. **Content Flow:** Homepage → Blog/Events → Article/Event Details
+3. **Community Flow:** Search → Results → Crew Profile → Join/Contact
+
+## Technical Architecture
+
+### Technology Stack
+- **Frontend:** Next.js 13+, TypeScript, Tailwind CSS
+- **Backend:** Next.js API Routes, Airtable integration
+- **Mapping:** Leaflet with OpenStreetMap tiles
+- **Deployment:** Vercel with automated CI/CD
+- **Caching:** ISR with server-side statistics caching
+- **Monitoring:** Error boundaries, mock data tracking
+
+### Key Components
+- **Layout:** Header, Footer, Navigation
+- **Crew:** CrewCard, CrewDetail, CrewList, CrewStats, FeaturedCrews
+- **Map:** WorldMap, WorldMapOptimized, WorldMapFast
+- **Content:** Blog, Event, Route components
+- **UI:** SearchBar, Statistics, Pagination, InfoCard
+- **Admin:** MockDataMonitor, RevalidationPanel
+
+### Data Models
+- **Crews:** Name, location, description, contact, statistics
+- **Events:** Title, date, location, type, registration
+- **Blog Posts:** Title, content, author, date, categories
+- **Routes:** Name, distance, difficulty, GPX data
+
+### APIs & Integration
+- **Airtable API:** Primary data source with pagination support
+- **Statistics API:** Cached endpoint for performance (`/api/statistics`)
+- **Search API:** Global search across all content types
+- **Revalidation API:** On-demand ISR cache updates
+- **Cron Jobs:** Daily statistics cache updates (3:00 AM UTC)
+
+## Development Roadmap
+
+### Phase 1: Core Functionality (73% Complete)
+**Status:** In Progress
+**Completed:**
+- ✅ Next.js setup with TypeScript and Tailwind CSS
+- ✅ Airtable integration with full pagination (449 crews)
+- ✅ Core UI components and layout
+- ✅ Leaflet map integration with optimization
+- ✅ Crew listing and detail pages
+- ✅ Homepage with hero section and statistics
+- ✅ Statistics caching system (instant loading)
+- ✅ SEO optimization and performance improvements
+- ✅ Error handling and monitoring systems
+- ✅ CI/CD pipeline setup
+
+**Remaining:**
+- 🔄 Search functionality implementation
+- 🔄 Contact page with form
+- 🔄 Blog system development
+- 🔄 Event listing and management
+
+### Phase 2: Community Features (Planned)
+- User account system and authentication
+- Crew submission and management portal
+- Advanced search with filters and geolocation
+- Community reviews and ratings
+- Event registration system
+
+### Phase 3: Advanced Features (Future)
+- Mobile application development
+- GPX route integration and visualization
+- Advanced analytics and insights
+- Social features and crew messaging
+- API for third-party integrations
+
+## Current Status & Immediate Priorities
+
+### Recently Completed (June 26, 2025)
+- **Statistics Caching System:** Eliminated 2-5 second loading delay
+- **Map Container Bug Fix:** Resolved Leaflet re-initialization errors
+- **CSS Architecture:** Modularized map styles for better maintainability
+- **Data Accuracy:** Fixed 18-city discrepancy in statistics (188 cities confirmed)
+- **Environment Variables:** Standardized to `AIRTABLE_PERSONAL_ACCESS_TOKEN`
+
+### Current Issues & Technical Debt
+- Search functionality needs implementation (Task #8 with 6 subtasks)
+- Contact form requires completion (Task #9 with 5 subtasks)
+- Blog system pending development (Task #13)
+- Event management system pending (Task #14)
+
+### Immediate Next Steps
+1. **Search Implementation:** Complete global search with existing SearchBar component
+2. **Contact Form:** Implement functional contact page with validation
+3. **Content Systems:** Develop blog and event management features
+4. **Testing:** Comprehensive testing across all components
+
+## Risks & Mitigations
+
+### Technical Risks
+- **Airtable Rate Limits:** Mitigated by caching and ISR implementation
+- **Map Performance:** Addressed with optimized WorldMap component
+- **Data Consistency:** Resolved with standardized environment variables
+- **Statistics Accuracy:** Fixed with comprehensive validation scripts
+
+### Business Risks
+- **Content Scalability:** Addressed with modular component architecture
+- **User Adoption:** Mitigated by mobile-first responsive design
+- **SEO Performance:** Addressed with comprehensive optimization
+
+## Project Management & Workflow
+
+### Task Master Integration
+- **Central Management:** All project information consolidated in Task Master
+- **Progress Tracking:** 15 tasks with 73% completion rate
+- **Subtask Management:** Detailed breakdown for complex features
+- **Dependency Tracking:** Clear task relationships and prerequisites
+
+### Development Workflow
+- **Version Control:** Git with feature branches and CI/CD
+- **Code Quality:** ESLint, TypeScript, and automated testing
+- **Deployment:** Vercel with preview deployments
+- **Monitoring:** Error tracking and performance monitoring
+
+### AI Tool Consolidation
+This PRD replaces scattered brain files across:
+- `.clinerules/`, `.cursor/`, `.roo/`, `.trae/`, `.windsurf/` directories
+- `AGENTS.md`, `AI_CONTEXT.md`, `CLAUDE.md`, `project.md`, `status.md`
+- `.github/instructions/` documentation
+
+All project context, rules, and status information is now centralized in Task Master for consistent project management across all AI tools and team members.
+
+## Success Metrics
+
+### Technical Metrics
+- **Performance:** Page load times < 2 seconds (achieved with caching)
+- **Availability:** 99.9% uptime with Vercel hosting
+- **SEO:** Core Web Vitals optimization
+- **Error Rate:** < 1% with comprehensive error handling
+
+### Business Metrics
+- **Content Coverage:** 449 crews across 188 cities in 60 countries
+- **User Engagement:** Search functionality and interactive map
+- **Community Growth:** Crew submissions and user-generated content
+- **Global Reach:** International running community connections
+
+## Appendix
+
+### Research Findings
+- Running community platforms lack comprehensive global coverage
+- Map-based discovery significantly improves user engagement
+- Performance optimization critical for mobile users
+- Community-driven content essential for platform growth
+
+### Technical Specifications
+- **Node.js:** v18+ for optimal performance
+- **Next.js:** v13+ with App Router
+- **TypeScript:** Strict mode for type safety
+- **Tailwind CSS:** v3+ with custom configuration
+- **Leaflet:** v1.9+ for map functionality
+
+### Development Resources
+- **Task Master Commands:** Comprehensive project management
+- **Component Library:** Reusable UI components
+- **API Documentation:** Airtable integration patterns
+- **Deployment Guide:** Vercel configuration and optimization
