@@ -5,7 +5,7 @@ async function checkStatusValues() {
   try {
     console.log('Checking actual status values in Airtable...');
     console.log('Base ID:', process.env.AIRTABLE_BASE_ID);
-    console.log('Token exists:', !!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN);
+    console.log('Token exists:', Boolean(process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN));
     
     // Make a direct request to get all crews without filtering
     const response = await fetch(`https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/tblCjQYcLlC3cNB1E`, {

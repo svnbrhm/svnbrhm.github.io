@@ -16,12 +16,14 @@
     "update:statistics": "node scripts/updateStatistics.js"
   },
   "dependencies": {
+    "@types/leaflet.markercluster": "^1.5.5",
     "@vercel/analytics": "^1.5.0",
     "airtable": "^0.12.2",
     "dotenv": "^16.5.0",
     "framer-motion": "^10.16.16",
     "intersection-observer": "^0.12.2",
     "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
     "next": "^14.2.29",
     "next-seo": "^6.4.0",
     "node-fetch": "^3.3.2",

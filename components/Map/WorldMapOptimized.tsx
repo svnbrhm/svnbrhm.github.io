@@ -106,9 +106,9 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
   // Initialize map
   useEffect(() => {
     console.log('🗺️ Map initialization check:', {
-      mapRefExists: !!mapRef.current,
+      mapRefExists: Boolean(mapRef.current),
       staticCrewsLength: staticCrews.length,
-      shouldInitialize: !!(mapRef.current && staticCrews.length > 0),
+      shouldInitialize: Boolean(mapRef.current && staticCrews.length > 0),
       isClient: typeof window !== 'undefined'
     });
     
@@ -194,7 +194,7 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
         console.error('Error details:', {
           message: errorMessage,
           stack: error instanceof Error ? error.stack : undefined,
-          mapRef: !!mapRef.current,
+          mapRef: Boolean(mapRef.current),
           staticCrewsLength: staticCrews.length
         });
         setError('Failed to initialize map: ' + errorMessage);
@@ -255,8 +255,8 @@ const WorldMapOptimized: React.FC<WorldMapOptimizedProps> = ({ crews: fallbackCr
     console.log('🔍 Debug info:', {
       staticCrewsLength: staticCrews.length,
       limitedCrewsLength: limitedCrews.length,
-      mapInstance: !!mapInstanceRef.current,
-      markersLayer: !!markersLayerRef.current
+      mapInstance: Boolean(mapInstanceRef.current),
+      markersLayer: Boolean(markersLayerRef.current)
     });
     
     // Add markers for visible crews

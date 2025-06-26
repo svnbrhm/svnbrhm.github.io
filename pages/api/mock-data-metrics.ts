@@ -18,7 +18,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       summary24h: summary,
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
-      airtableConfigured: !!(process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN && process.env.AIRTABLE_BASE_ID)
+      airtableConfigured: Boolean(process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN && process.env.AIRTABLE_BASE_ID)
     };
 
     // Set appropriate cache headers

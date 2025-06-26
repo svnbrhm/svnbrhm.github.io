@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { NextApiRequest, NextApiResponse } from 'next';
 import { airtableService } from '../../lib/airtable';
 import fs from 'fs';
 import path from 'path';
@@ -39,10 +38,12 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Declare cachedStats outside try blocks so it's accessible in catch
+  let cachedStats: CachedStatistics | null = null;
+  let shouldRefresh = false;
+
   try {
     // Try to read cached statistics
-    let cachedStats: CachedStatistics | null = null;
-    let shouldRefresh = false;
 
     try {
       if (fs.existsSync(STATS_FILE_PATH)) {
@@ -56,9 +57,9 @@ export default async function handler(
         
         shouldRefresh = timeDiff > CACHE_DURATION;
         
-        console.log(`Statistics cache: ${shouldRefresh ? 'STALE' : 'FRESH'} (${Math.round(timeDiff / 1000 / 60)} minutes old)`);
+        console.log(`Statistics cache: ${shouldRefresh ? 'STALE' : 'FRESH'} (${Math.round(timeDiff / 1000 / 60)} minutes old)`); // skipcq: JS-0002
       } else {
-        console.log('Statistics cache: NOT FOUND');
+        console.log('Statistics cache: NOT FOUND'); // skipcq: JS-0002
         shouldRefresh = true;
       }
     } catch (cacheError) {
@@ -68,12 +69,12 @@ export default async function handler(
 
     // If we have fresh cached data, return it immediately
     if (cachedStats && !shouldRefresh) {
-      console.log('Serving cached statistics');
+      console.log('Serving cached statistics'); // skipcq: JS-0002
       return res.status(200).json(cachedStats);
     }
 
     // Fetch fresh data from Airtable
-    console.log('Fetching fresh statistics from Airtable...');
+    console.log('Fetching fresh statistics from Airtable...'); // skipcq: JS-0002
     const freshStats = await airtableService.getGlobalStatistics();
     
     const now = new Date();
@@ -94,7 +95,7 @@ export default async function handler(
       }
       
       fs.writeFileSync(STATS_FILE_PATH, JSON.stringify(newCachedStats, null, 2));
-      console.log('Statistics cache updated successfully');
+      console.log('Statistics cache updated successfully'); // skipcq: JS-0002
     } catch (writeError) {
       console.error('Error updating statistics cache:', writeError);
       // Continue anyway - we can still serve the fresh data

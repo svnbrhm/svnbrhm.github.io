@@ -106,6 +106,7 @@ interface AirtableCrewFields {
   SEO_Slug?: string;
   LocalLogoFilename?: string;
   Status?: 'Draft' | 'Published' | 'Archived' | 'Featured' | 'Pending Review';
+  CrewStatus?: 'Running' | 'Not running' | 'Not sure';
 }
 
 // Airtable field mappings for TeamMembers table

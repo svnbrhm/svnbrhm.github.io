@@ -1,31 +1,10 @@
 /**
  * Optimized utility functions for crew image resolution.
- * Prioritizes local images over Airtable API calls for better performance.
+ * Simplified approach that works reliably in both client and server environments.
  */
-
-// Cache for local image availability to avoid repeated file system checks
-const localImageCache = new Map<string, boolean>();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-const cacheTimestamps = new Map<string, number>();
 
 // Check if we're running on server side
 const isServer = typeof window === 'undefined';
-
-// Dynamic imports for server-side only
-let fs: any = null;
-let path: any = null;
-
-if (isServer) {
-  try {
-    // Use dynamic require to prevent webpack from bundling these modules
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    fs = require('fs');
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    path = require('path');
-  } catch (error) {
-    console.warn('Failed to load Node.js modules:', error);
-  }
-}
 
 // Function to get default logo if crew logo doesn't exist
 export function getDefaultCrewLogo(): string {
@@ -37,48 +16,88 @@ export function getDefaultCrewPicture(): string {
   return '/images/crew/photos/default-crew-picture.svg';
 }
 
-// Check if local image exists with caching (server-side only)
+// Check if local image exists
 function checkLocalImageExists(imagePath: string): boolean {
-  // On client side, assume images exist (they'll be checked by browser)
-  if (!isServer || !fs || !path) {
-    return true; // Optimistically assume image exists on client side
-  }
+  console.log(`Checking if image exists: ${imagePath}`);
   
-  const now = Date.now();
-  const cacheKey = imagePath;
-  
-  // Check cache first
-  if (localImageCache.has(cacheKey)) {
-    const timestamp = cacheTimestamps.get(cacheKey) || 0;
-    if (now - timestamp < CACHE_TTL) {
-      return localImageCache.get(cacheKey) || false;
+  // Server-side: use fs to check file existence
+  if (typeof window === 'undefined') {
+    try {
+      // Use dynamic import for Node.js modules in a way that works with Next.js
+      const Module = eval('module');
+      const fs = Module.require('fs');
+      const path = Module.require('path');
+      
+      const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+      const fullPath = path.join(process.cwd(), 'public', cleanPath);
+      const exists = fs.existsSync(fullPath);
+      console.log(`Server-side check for ${imagePath}: ${exists}`);
+      return exists;
+    } catch (error) {
+      console.log(`Server-side file check failed: ${error}`);
+      return false;
     }
   }
   
-  // Check file system (server-side only)
-  try {
-    const fullPath = path.join(process.cwd(), 'public', imagePath);
-    const exists = fs.existsSync(fullPath);
-    
-    // Update cache
-    localImageCache.set(cacheKey, exists);
-    cacheTimestamps.set(cacheKey, now);
-    
-    return exists;
-  } catch (error) {
-    console.warn(`Error checking local image ${imagePath}:`, error);
-    return false;
-  }
+  // Client-side: return false for now, we'll implement async checking separately
+  console.log(`Client-side check for ${imagePath}: returning false (will be handled by async check)`);
+  return false;
 }
 
-// Normalize crew name for file matching
-function normalizeCrewName(crewName: string): string {
+// Base normalization function for common patterns
+function normalizeCrewNameBase(crewName: string): string {
   return crewName
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    // Handle specific patterns first
+    .replace(/AM:PM\.RC/g, 'AM-PM-RC') // AM:PM.RC -> AM-PM-RC
+    .replace(/FatBetty\.Run/g, 'Fat-Betty-Run') // FatBetty.Run -> Fat-Betty-Run
+    .replace(/No Reason Co\./g, 'No-Reason-Co') // No Reason Co. -> No-Reason-Co
+    .replace(/R\.I\.O\.T\./g, 'RIOT') // R.I.O.T. -> RIOT
+    .replace(/Run3\+/g, 'Run3') // Run3+ -> Run3
+    .replace(/T&C/g, 'TC') // T&C -> TC
+    .replace(/M'Attraper/g, 'MAttraper') // M'Attraper -> MAttraper
+    .replace(/24x7/g, '24x7') // Keep 24x7 as is
+    .replace(/\./g, '') // Remove remaining dots
+    .replace(/:/g, '') // Remove colons
+    .replace(/\+/g, '') // Remove plus signs
+    .replace(/'/g, '') // Remove apostrophes
+    .trim();
+}
+
+// Normalize crew name for logos (& becomes 'and')
+function normalizeCrewNameForLogo(crewName: string): string {
+  let normalized = normalizeCrewNameBase(crewName)
+    .replace(/&/g, 'and') // Replace & with 'and' for logos
+    .replace(/[^a-zA-Z0-9\s-]/g, '') // Remove other special characters
     .replace(/\s+/g, '-') // Replace spaces with hyphens
     .replace(/-+/g, '-') // Replace multiple hyphens with single
-    .trim();
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+  
+  console.log(`Normalized for logo "${crewName}" to "${normalized}"`);
+  return normalized;
+}
+
+// Normalize crew name for photos (& becomes '-')
+function normalizeCrewNameForPhoto(crewName: string): string {
+  let normalized = normalizeCrewNameBase(crewName)
+    .replace(/&/g, '-') // Replace & with '-' for photos
+    .replace(/[^a-zA-Z0-9\s-]/g, '') // Remove other special characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+  
+  console.log(`Normalized for photo "${crewName}" to "${normalized}"`);
+  return normalized;
+}
+
+// Legacy function for backward compatibility
+function normalizeCrewName(crewName: string): string {
+  return normalizeCrewNameForLogo(crewName);
+}
+
+// Additional normalization for lowercase matching
+function normalizeLowercase(crewName: string): string {
+  const normalized = normalizeCrewName(crewName).toLowerCase();
+  return normalized;
 }
 
 // Get crew logo with local priority
@@ -87,22 +106,28 @@ export function getCrewLogoWithLocalPriority(crewName: string, airtableUrl?: str
     return airtableUrl || getDefaultCrewLogo();
   }
   
-  // Try exact match first
-  const normalizedName = normalizeCrewName(crewName);
+  const titleCaseName = normalizeCrewNameForLogo(crewName);
+  const lowerCaseName = normalizeCrewNameForLogo(crewName).toLowerCase();
   const possibleExtensions = ['.png', '.jpg', '.jpeg', '.svg'];
+  const nameVariants = [titleCaseName, lowerCaseName];
   
-  for (const ext of possibleExtensions) {
-    const localPath = `/images/crew/logos/${normalizedName}${ext}`;
-    if (checkLocalImageExists(localPath)) {
-      return localPath;
+  // Try exact match first with both name variants
+  for (const name of nameVariants) {
+    for (const ext of possibleExtensions) {
+      const localPath = `/images/crew/logos/${name}${ext}`;
+      if (checkLocalImageExists(localPath)) {
+        return localPath;
+      }
     }
   }
   
   // Try with "-Logo" suffix (common pattern in existing files)
-  for (const ext of possibleExtensions) {
-    const localPath = `/images/crew/logos/${normalizedName}-Logo${ext}`;
-    if (checkLocalImageExists(localPath)) {
-      return localPath;
+  for (const name of nameVariants) {
+    for (const ext of possibleExtensions) {
+      const localPath = `/images/crew/logos/${name}-Logo${ext}`;
+      if (checkLocalImageExists(localPath)) {
+        return localPath;
+      }
     }
   }
   
@@ -116,21 +141,28 @@ export function getCrewPhotoWithLocalPriority(crewName: string, airtableUrl?: st
     return airtableUrl || getDefaultCrewPicture();
   }
   
-  const normalizedName = normalizeCrewName(crewName);
+  const titleCaseName = normalizeCrewNameForPhoto(crewName);
+  const lowerCaseName = normalizeCrewNameForPhoto(crewName).toLowerCase();
   const possibleExtensions = ['.jpg', '.jpeg', '.png', '.svg'];
+  const nameVariants = [titleCaseName, lowerCaseName];
   
-  for (const ext of possibleExtensions) {
-    const localPath = `/images/crew/photos/${normalizedName}${ext}`;
-    if (checkLocalImageExists(localPath)) {
-      return localPath;
+  // Try exact match first with both name variants
+  for (const name of nameVariants) {
+    for (const ext of possibleExtensions) {
+      const localPath = `/images/crew/photos/${name}${ext}`;
+      if (checkLocalImageExists(localPath)) {
+        return localPath;
+      }
     }
   }
   
   // Try with "-Photo" suffix
-  for (const ext of possibleExtensions) {
-    const localPath = `/images/crew/photos/${normalizedName}-Photo${ext}`;
-    if (checkLocalImageExists(localPath)) {
-      return localPath;
+  for (const name of nameVariants) {
+    for (const ext of possibleExtensions) {
+      const localPath = `/images/crew/photos/${name}-Photo${ext}`;
+      if (checkLocalImageExists(localPath)) {
+        return localPath;
+      }
     }
   }
   
@@ -140,15 +172,21 @@ export function getCrewPhotoWithLocalPriority(crewName: string, airtableUrl?: st
 
 // Clear image cache (useful for development)
 export function clearImageCache(): void {
-  localImageCache.clear();
-  cacheTimestamps.clear();
+  // Cache functionality removed for simplicity
+  console.log('Image cache cleared');
 }
 
 // Get image with hybrid approach (local first, then Airtable)
 export function getOptimizedCrewImage(crewName: string, type: 'logo' | 'photo', airtableUrl?: string): string {
+  console.log(`getOptimizedCrewImage called with: crewName="${crewName}", type="${type}", airtableUrl="${airtableUrl}"`);
+  
   if (type === 'logo') {
-    return getCrewLogoWithLocalPriority(crewName, airtableUrl);
+    const result = getCrewLogoWithLocalPriority(crewName, airtableUrl);
+    console.log(`Logo result for "${crewName}": ${result}`);
+    return result;
   } else {
-    return getCrewPhotoWithLocalPriority(crewName, airtableUrl);
+    const result = getCrewPhotoWithLocalPriority(crewName, airtableUrl);
+    console.log(`Photo result for "${crewName}": ${result}`);
+    return result;
   }
 }

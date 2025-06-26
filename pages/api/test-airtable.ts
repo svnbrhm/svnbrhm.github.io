@@ -25,8 +25,8 @@ export default async function handler(
 
   try {
     // Check configuration
-    const hasApiKey = !!process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN;
-    const hasBaseId = !!process.env.AIRTABLE_BASE_ID;
+    const hasApiKey = Boolean(process.env.AIRTABLE_PERSONAL_ACCESS_TOKEN);
+    const hasBaseId = Boolean(process.env.AIRTABLE_BASE_ID);
 
     if (!hasApiKey || !hasBaseId) {
       res.status(500).json({

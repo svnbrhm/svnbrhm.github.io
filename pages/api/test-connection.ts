@@ -24,12 +24,12 @@ export default async function handler(
     const isConnected = await airtableService.testConnection();
     
     const envCheck = {
-      hasPersonalAccessToken: !!process.env.NEXT_PUBLIC_AIRTABLE_PERSONAL_ACCESS_TOKEN,
-      hasBaseId: !!process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID,
+      hasPersonalAccessToken: Boolean(process.env.NEXT_PUBLIC_AIRTABLE_PERSONAL_ACCESS_TOKEN),
+      hasBaseId: Boolean(process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID),
       personalAccessTokenLength: process.env.NEXT_PUBLIC_AIRTABLE_PERSONAL_ACCESS_TOKEN?.length || 0,
       baseIdLength: process.env.NEXT_PUBLIC_AIRTABLE_BASE_ID?.length || 0,
       // Legacy API key check (deprecated)
-      hasLegacyApiKey: !!process.env.NEXT_PUBLIC_AIRTABLE_API_KEY,
+      hasLegacyApiKey: Boolean(process.env.NEXT_PUBLIC_AIRTABLE_API_KEY),
     };
 
     res.status(200).json({

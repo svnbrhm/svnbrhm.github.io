@@ -48,6 +48,10 @@ export interface Crew {
   ShortURL?: string;
   PrimaryImageUrl?: string;
   
+  // Status fields
+  Status?: 'Draft' | 'Published' | 'Archived' | 'Featured' | 'Pending Review';
+  CrewStatus?: 'Running' | 'Not running' | 'Not sure';
+  
   // Image URLs from Airtable Media
   logoUrl?: string;
   heroImageUrl?: string;
